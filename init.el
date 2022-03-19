@@ -222,7 +222,8 @@ only a setup-test.el' file for easy testing.")
   '(lem-setup-settings
     lem-setup-libraries
     lem-setup-functions
-    lem-setup-macros)
+    lem-setup-macros
+    lem-setup-icomplete)
   "Core modules for lambda-emacs.")
 
 (defun lem--emacs-switches (switch)
