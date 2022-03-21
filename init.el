@@ -35,7 +35,7 @@ contains non-essential files and emphemera.")
   "The directory for Lisp libraries. This will house any personal
 Lisp libraries as well as all setup libraries and external packages.")
 
-(defconst lem-private-dir (concat lem-library-dir "lambda-private/")
+(defconst lem-user-dir (concat lem-library-dir "lambda-user/")
   "Storage for personal elisp, scripts, and any other private files.")
 
 (defconst lem-setup-dir (concat lem-library-dir "lambda-setup/")
@@ -59,35 +59,41 @@ problems.")
 
 ;;;;; User Configuration Variables
 ;; Find the user configuration file
-(defvar lem-config-file (expand-file-name "lambda-config.el" lem-private-dir)
+(defvar lem-config-file (expand-file-name "config.el" lem-user-dir)
   "The user's configuration file.")
 
 ;;;;; Path Settings
 ;; Directory paths
-(dolist (dir (list lem-local-dir lem-library-dir lem-etc-dir lem-cache-dir lem-private-dir lem-setup-dir))
+(dolist (dir (list lem-local-dir lem-library-dir lem-etc-dir lem-cache-dir lem-user-dir lem-setup-dir))
   (unless (file-directory-p dir)
     (make-directory dir t)))
 
 ;;;;; Load Path
-;; Add config files to load-path
+;; Add all configuration files to load-path
 (eval-and-compile
   (progn
-    (push lem-setup-dir load-path)))
+    (push lem-setup-dir load-path)
+    (push lem-user-dir load-path)))
 
 ;; Set PATH properly for emacs. This should make a package like
 ;; `exec-path-from-shell' unnecessary
 
-;; Set local bin path
-(defconst lem-local-bin (concat (getenv "HOME") "/bin") "Local execs.")
+;; Set local (i.e. current user) bin path
+(when (file-directory-p (concat (getenv "HOME") "/bin"))
+  (defconst lem-local-bin (concat (getenv "HOME") "/bin") "Local execs."))
+
 ;; If on a mac using homebrew set path correctly
 ;; NOTE the location of homebrew depends on whether we're on mac silicon
-(when (shell-command "command -v brew")
-  (defconst homebrew (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin/"
-                       "/usr/local/bin/") "Path to homebrew packages."))
+(when (shell-command-to-string "command -v brew")
+  (defconst homebrew (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin/" "/usr/local/bin/") "Path to homebrew packages."))
+
+;; Define the system local bins
 (defconst usr-local-bin "/usr/local/bin" "System bin.")
 (defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
-(setenv "PATH" (concat homebrew ":" usr-local-bin ":" usr-local-sbin ":" (getenv "PATH") ":" lem-local-bin))
-(setq exec-path (append exec-path (list homebrew lem-local-bin usr-local-sbin usr-local-bin)))
+
+;; Set paths
+(setenv "PATH" (concat homebrew ":" (getenv "PATH") ":" lem-local-bin ":" usr-local-bin ":" usr-local-sbin))
+(setq exec-path (append exec-path (list homebrew lem-local-bin usr-local-bin usr-local-sbin)))
 
 ;;;; Package Settings
 ;; Use straight and use-package to manage settings. Defer package loading as
@@ -216,15 +222,7 @@ problems.")
   "Custom switches for conditional loading from command line.
 `clean' loads only the init.el file w/no personal config; `core'
 loads the set of modules set in `lem-core-modules'; `test' loads
-only a setup-test.el' file for easy testing.")
-
-(defvar lem-core-modules
-  '(lem-setup-settings
-    lem-setup-libraries
-    lem-setup-functions
-    lem-setup-macros
-    lem-setup-icomplete)
-  "Core modules for lambda-emacs.")
+only a lem-setup-test.el' file for easy testing.")
 
 (defun lem--emacs-switches (switch)
   "Depending on command line argument SWITCH, load Emacs with minimal settings & no modules; useful for testing."
@@ -282,21 +280,48 @@ only a setup-test.el' file for easy testing.")
                     'outline-minor-faces-add-font-lock-keywords))
 
 ;;;; Load Configuration
-(unless (lem--emacs-switches "-clean")
-  (message "Loading config.el")
-  ;; Load the user configuration file if it exists
-  (when (file-exists-p lem-config-file)
-    (load lem-config-file nil 'nomessage)))
+;; What counts as a `core' module is open to debate, but the below are recommended
+(defun lem--core-modules ()
+  "Load 𝛌-Emacs's core files for an interactive session."
+  (require 'lem-setup-libraries)
+  (require 'lem-setup-settings)
+  (require 'lem-setup-keybindings)
+  (require 'lem-setup-functions)
+  (require 'lem-setup-macros)
+  (require 'lem-setup-dired)
+  (require 'lem-setup-completion)
+  (require 'lem-setup-ui)
+  (require 'lem-setup-scratch)
+  (require 'lem-setup-server)
+  (require 'lem-setup-search)
+  (require 'lem-setup-vc)
+  (require 'lem-setup-splash))
 
-;; Switch for testing packages
-(when (lem--emacs-switches "-test")
-  (require 'setup-test))
-
-;; Switch for loading only core modules
-(if (lem--emacs-switches "-core")
+;; Conditionally load configuration files based on switches.
+(cond
+ ;; Load core modules only, ignore other configuration.
+ ((lem--emacs-switches "-core")
+  (progn
+    (message "*Loading core configuration files *only*, ignoring personal user configuration.*")
+    (lem--core-modules)
+    (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-theme)))
+ ;; Load test module only
+ ((lem--emacs-switches "-test")
+  (progn
+    (message "*Loading test file*")
+    (require 'lem-setup-test)))
+ ;; Load no modules other than the internal icomplete, for better completion.
+ ((lem--emacs-switches "-clean")
+  (message "*Loading a clean setup plus icomplete*")
+  (require 'lem-setup-icomplete))
+ ;; Load user's personal config file (if it exists).
+ ((when (file-exists-p lem-config-file)
     (progn
-      (message "Loading core modules *only*")
-      (mapcar 'require lem-core-modules)))
+      (message "*Loading 𝛌-Emacs & user config*")
+      (load lem-config-file 'noerror))))
+ ;; Otherwise load core modules
+ ((message "*Loading 𝛌-Emacs*")
+  (lem--core-modules)))
 
 ;;;; After Startup
 

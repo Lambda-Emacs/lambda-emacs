@@ -37,11 +37,10 @@
 (defvar lem-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
-
 ;;;; Garbage collection
 
-;; Defer garbage collection further back in the startup process We'll lower this
-;; to a more reasonable number at the end of the init process (at end of
+;; Defer garbage collection further back in the startup process. We'll lower
+;; this to a more reasonable number at the end of the init process (i.e. at end of
 ;; init.el)
 
 (setq gc-cons-threshold most-positive-fixnum)
@@ -76,9 +75,8 @@
                 (native-comp-available-p)))
   (message "Native complation is *not* available"))
 
-;; Set eln-cache dir
-;; NOTE this only works for emacs≥29
-;; TODO add conditional if not emacs 29...
+;; Put eln-cache dir in cache directory
+;; NOTE the method for setting the eln-cache dir depends on the emacs version
 (when (fboundp 'startup-redirect-eln-cache)
   (if (version< emacs-version "29")
       (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))
@@ -175,5 +173,36 @@
 ;; https://emacs.stackexchange.com/a/437/11934
 (defun display-startup-echo-area-message ()
   (message ""))
+
+;;;; Default Theme & Custom Settings
+;; Ordinarily we might leave theme loading until later in the init process, but
+;; this leads to the initial frame flashing either light or dark color,
+;; depending on the system settings. Let's avoid that by loading a default theme
+;; before initial frame creation. The modus themes are built in and excellent.
+;; NOTE: 1. The default theme is set only if there are no user configuration
+;; files, otherwise it is left to the user to do; 2. This system check only
+;; works for MacOS, with an emacs build with the ns-system-appearance patch. For
+;; examples of such builds see https://github.com/mclear-tools/build-emacs-macos
+;; or https://github.com/d12frosted/homebrew-emacs-plus
+
+;; Use this variable for checking what the active them setting is vis-a-vis the
+;; system light or dark mode.
+(defconst active-theme nil "Variable for holding value of theme appearance.")
+
+(defun lem--apply-default-theme (appearance)
+  "If no other theme is set, load a default theme (modus-themes),taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (progn (load-theme 'modus-operandi t) (setq active-theme 'light-theme)))
+    ('dark  (progn (load-theme 'modus-vivendi t) (setq active-theme 'dark-theme)))))
+
+;; Check if there are any user config files. If not then load modus-themes as default.
+(let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/"))
+      (user-config-file (expand-file-name "config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
+  (if (not (or (file-exists-p user-config-file)
+               (file-exists-p early-config-file)))
+      (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-theme)
+    ;; Otherwise if the user early-config file exists then load it.
+    (load early-config-file nil 'nomessage)))
 
 ;;; early-init.el ends here
