@@ -88,8 +88,7 @@
           (note ,(all-the-icons-octicon "file-text" :face 'bespoke-brown) . " ")
           (link ,(all-the-icons-octicon "link-external" :face 'bespoke-green) . " ")))
   ;; edit notes
-  (setq citar-notes-paths `(,lem-bib-notes))
-  (setq citar-library-paths '("/Users/roambot/Library/Mobile Documents/iCloud~com~sonnysoftware~bot/Documents/be-library")))
+  (setq citar-notes-paths `(,lem-bib-notes)))
 
 ;; Citar & Bookends
 (defun citar-get-beref (entry)

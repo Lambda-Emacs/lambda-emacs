@@ -40,7 +40,7 @@
 ;;; Code:
 (require 'cl-lib)
 
-(defgroup emacs-splash nil
+(defgroup lem-splash nil
   "Extensible splash screen."
   :group 'applications)
 
@@ -62,10 +62,10 @@
         (format "%d packages loaded in %s" package-count time))))
   "Init info with packages loaded and init time."
   :type '(function string)
-  :group 'emacs-splash)
+  :group 'lem-splash)
 
 ;;; Define Splash
-(defun emacs-splash-screen ()
+(defun lem-splash-screen ()
   "A custom splash screen for Emacs"
 
   (interactive)
@@ -81,13 +81,13 @@
         (setq header-line-format nil)
         (setq mode-line-format nil)))
 
-    (let* ((buffer-read-only)
+    (let* ((buffer-read-only t)
            (splash-buffer  (get-buffer-create "*splash*"))
            (height         (- (window-body-height nil) 1))
            (width          (+ (window-body-width) 5))
            ;; ascii image from here:
            ;; https://github.com/Triagle/emax/blob/master/boot.txt
-           (image          (lem/get-string-from-file (concat lem-local-dir "lambda-splash.txt"))))
+           (image          (lem/get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
 
 
       (with-current-buffer splash-buffer
@@ -117,43 +117,42 @@
         ;; Insert text
         (goto-char width)
         (save-excursion
-          (insert (concat
-                   (propertize "Welcome to GNU Emacs"  'face 'bold)
-                   " "
-                   (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'bold))))
+          (insert (propertize "Welcome to 𝛌-Emacs"  'face 'bold)))
 
         (goto-char (+ width 140))
-        (save-excursion (insert (propertize "Bespoke elisp for your yak shaving pleasure" 'face 'shadow)))
+        (save-excursion (insert (concat (propertize "GNU Emacs version" 'face 'shadow)
+                                        " "
+                                        (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'shadow))))
 
-        (goto-char (+ width 310))
+        (goto-char (+ width 278))
         (save-excursion (let ((init-info (funcall splash-init-info)))
                           (insert (propertize init-info 'face 'shadow))))
 
-        (goto-char (+ width 608))
+        (goto-char (+ width 578))
         (save-excursion (insert-text-button " [a] Agenda "
                                             'action (lambda (_) (lem/open-agenda-in-workspace))
                                             'help-echo "Visit setup directory"
                                             'face 'warning
                                             'follow-link t))
-        (goto-char (+ width 744))
+        (goto-char (+ width 714))
         (save-excursion (insert-text-button " [c] Config "
                                             'action (lambda (_) (lem/open-emacsd-in-workspace))
                                             'help-echo "Visit setup directory"
                                             'face 'warning
                                             'follow-link t))
-        (goto-char (+ width 880))
+        (goto-char (+ width 850))
         (save-excursion (insert-text-button " [m] Mail "
                                             'action (lambda (_)  (lem/open-notes-in-workspace))
                                             'help-echo "Open Email in Mu4e"
                                             'face 'warning
                                             'follow-link t))
-        (goto-char (+ width 1014))
+        (goto-char (+ width 984))
         (save-excursion (insert-text-button " [n] Notes "
                                             'action (lambda (_)  (lem/open-notes-in-workspace))
                                             'help-echo "Visit setup directory"
                                             'face 'warning
                                             'follow-link t))
-        (goto-char (+ width 1149))
+        (goto-char (+ width 1119))
         (save-excursion (insert-text-button " [p] Projects "
                                             'action (lambda (_)  (emacs-workspaces/open-existing-project-and-workspace))
                                             'help-echo "Open project & workspace"
@@ -164,27 +163,29 @@
         (goto-char (point-max))
 
         ;; Footer text
+        (defvar lem-splash-footer "   " "Footer text.")
         (save-excursion (insert-char ?\n 4)
                         (insert
-                         (propertize
-                          "                              Aus so krummem Holze, als woraus der Mensch gemacht ist, kann nichts ganz Gerades gezimmert werden" 'face 'shadow)))
+                         (propertize lem-splash-footer 'face 'shadow)))
+
+
 
         (goto-char (point-min))
         (display-buffer-same-window splash-buffer nil))
       (switch-to-buffer "*splash*")))
-  (emacs-splash-mode))
+  (lem-splash-mode))
 
 (defun splash-screen-kill ()
   "Kill the splash screen buffer (immediately)."
   (interactive)
   (if (get-buffer "*splash*")
       (progn
-        (emacs-splash-mode)
+        (lem-splash-mode)
         (kill-buffer "*splash*"))))
 
 ;;; Define Minor Mode
 ;; Custom splash screen
-(defvar emacs-splash-mode-map
+(defvar lem-splash-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "a") 'lem/open-agenda-in-workspace)
     (define-key map (kbd "c") 'lem/open-emacsd-in-workspace)
@@ -193,19 +194,20 @@
     (define-key map (kbd "p") 'lem/open-existing-project-and-workspace)
     (define-key map (kbd "q") 'splash-screen-kill)
     map)
-  "Keymap for emacs-splash-mode.")
+  "Keymap for lem-splash-mode.")
 
-(define-minor-mode emacs-splash-mode
+(define-minor-mode lem-splash-mode
   "Emacs minor mode for splash screen."
   :global nil
-  :group 'emacs-splash
+  :group 'lem-splash
   :require 'setup-splash.el
 
   (buffer-disable-undo)
   (whitespace-mode -1)
   (linum-mode -1)
+  (setq-local buffer-read-only t)
   (setq-local cursor-type nil)
-  ;; cursor with meow
+  ;; ;; cursor with meow
   (meow-motion-mode 1)
   (setq-local meow-cursor-type-motion nil)
   (setq-local hl-line-mode nil)
@@ -214,7 +216,6 @@
   (when (>= emacs-major-version 26)
     (display-line-numbers-mode -1))
   (setq inhibit-startup-screen t
-        buffer-read-only t
         truncate-lines nil
         inhibit-startup-message t
         inhibit-startup-echo-area-message t)
@@ -229,10 +230,10 @@
          (not (member "--file"      command-line-args))
          (not (member "--insert"    command-line-args))
          (not (member "--find-file" command-line-args)))
-    (add-hook 'window-setup-hook 'emacs-splash-screen))
+    (add-hook 'window-setup-hook 'lem-splash-screen))
 
 ;; don't highlight when idle
-(add-hook 'emacs-splash-mode-hook (lambda () (when emacs-splash-mode (toggle-hl-line-when-idle))))
+(add-hook 'lem-splash-mode-hook (lambda () (when lem-splash-mode (toggle-hl-line-when-idle))))
 
 
 ;;; Provide Splash

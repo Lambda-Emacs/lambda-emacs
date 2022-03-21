@@ -1,11 +1,11 @@
 ;;; Notebook Setup
 ;; I use hugo so define a setup file variable
-(defvar hugo-notebook-setup-file  "~/Dropbox/Work/projects/notebook/content-org/hugo-notebook-setup.org"
+(defvar hugo-notebook-setup-file nil
   "Variable for notebook setup using hugo")
 
 (defun lem/notebook ()
   (interactive)
-  (find-file (concat (getenv "HOME") "/Dropbox/Work/projects/notebook/content-org")))
+  (find-file org-roam-directory))
 
 ;;; Remember Notes
 (use-package remember
@@ -20,11 +20,11 @@
 ;;; Search Notes
 ;;;; Zettelkasten Search
 
-(defvar lem-zettelkasten "~/Dropbox/Work/projects/notebook/content-org")
+(defvar lem-zettelkasten nil "Variable for zettelkasten search.")
 (defun lem/zettelkasten-search ()
-  "Search in Zettelkasten with affe-grep."
+  "Search in Zettelkasten with consult-ripgrep."
   (interactive)
-  (affe-grep lem-zettelkasten))
+  (consult-ripgrep lem-zettelkasten))
 
 
 ;;;; Consult Notes
@@ -33,15 +33,8 @@
   :straight (:local-repo "/Users/roambot/bin/lisp-projects/consult-notes")
   :commands (consult-notes consult-notes-search-all)
   :config
-  ;; Sources for file search
-  (setq consult-notes-sources-data
-        '(("Zettel"          ?z "~/Dropbox/Work/projects/notebook/content-org/")
-          ("Org"             ?o "~/Dropbox/org-files/")
-          ("Lecture Notes"   ?l "~/Dropbox/Work/projects/notebook/content-org/lectures/")
-          ("Reference Notes" ?r "~/Dropbox/Work/projects/notebook/content-org/ref-notes/")
-          ("Org Refile"      ?R "~/Dropbox/Work/projects/notebook/org-refile/")))
-  ;; Dir for affe-grep of all notes
-  (setq consult-notes-all-notes "~/Dropbox/Work/projects/notes-all/"))
+  (defvar consult-notes-sources-data nil "Sources for file search.")
+  (defvar consult-notes-all-notes nil "Dir for search of all notes."))
 
 ;;; Org Roam (Wiki & Notes)
 ;; Good notes package but a lot is still in flux
@@ -61,7 +54,6 @@
   :hook (org-mode . org-roam-setup)
   :custom
   ;; Configure dirs
-  (org-roam-directory "~/Dropbox/Work/projects/notebook/content-org/")
   (org-roam-db-location (concat org-roam-directory "org-roam.db"))
   (org-roam-completion-everywhere t)
   :init
@@ -185,9 +177,6 @@
 
 ;;   ;; we'll only start updating db if we've been idle for this many seconds
 ;;   (run-with-idle-timer 5 t #'org-roam-db-idle-update-files))
-
-
-
 
 ;;;; Fancy Node Icons
 ;; Fancy org-roam-node-find with icons and overlays (which allow for better searching whilst keeping the icons
@@ -319,23 +308,6 @@
   :straight (:host github :repo "org-roam/org-roam-ui" :branch "main" :files ("*.el" "out"))
   :after org-roam
   :commands (org-roam-ui-mode))
-
-;;;; Delve (Collections of Notes in Org-Roam)
-(use-package delve
-  :straight (:repo "publicimageltd/delve"
-             :host github
-             :type git)
-  :after org-roam
-  :bind
-  ;; the main entry point, offering a list of all stored collections
-  ;; and of all open Delve buffers:
-  (("<f12>" . delve))
-  :config
-  ;; set meaningful tag names for the dashboard query
-  (setq delve-dashboard-tags '("german-idealism" "kant" "hegel"))
-  (setq delve-store-directory (concat lem-cache-dir "delve-store"))
-  ;; turn on delve-minor-mode when org roam file is opened:
-  (delve-global-minor-mode))
 
 ;;; Provide Setup-Notes
 (provide 'lem-setup-notes)

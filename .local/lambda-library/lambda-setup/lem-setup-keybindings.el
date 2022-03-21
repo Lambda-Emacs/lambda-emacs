@@ -99,8 +99,8 @@
    '("E" . restart-emacs-start-new-emacs)
    '("f" . lem+file-keys)
    '("F" . lem+flycheck-keys)
-   '("i" . lem/find-files-setup-config-directory)
-   '("I" . lem/search-setup-config-files)
+   '("i" . lem/find-lambda-file)
+   '("I" . lem/search-lambda-files)
    '("j" . avy-goto-char-timer)
    '("J" . crux-top-join-line)
    '("k" . consult-yank-from-kill-ring)
@@ -265,7 +265,7 @@
            ("d" . goto-dotfiles.org                     )
            ("D" . goto-emacs-dir                        )
            ("e" . goto-early-init.el                    )
-           ("f" . lem/find-files-setup-config-directory )
+           ("f" . lem/find-lambda-file                  )
            ("k" . lem/byte-compile-dotemacs             )
            ("K" . lem/delete-byte-compiled-files        )
            ("l" . load-config                           )
@@ -273,7 +273,7 @@
            ("I" . lem/load-init-file                    )
            ("o" . goto-org-files                        )
            ("p" . goto-pandoc-config                    )
-           ("s" . lem/search-setup-config-files         ))
+           ("s" . lem/search-lambda-files               ))
 
 ;;;;; Compile Keybindings
 (bind-keys :prefix-map lem+compile-keys

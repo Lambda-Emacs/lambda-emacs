@@ -18,7 +18,7 @@
   (tab-bar-show nil)
   :config
   ;; https://protesilaos.com/codelog/2020-08-03-emacs-custom-functions-galore/
-  (defun cpm/tab-bar-select-tab-dwim ()
+  (defun lem/tab-bar-select-tab-dwim ()
     "Do-What-I-Mean function for getting to a `tab-bar-mode' tab.
 If no other tab exists, create one and switch to it.  If there is
 one other tab (so two in total) switch to it without further
@@ -43,9 +43,6 @@ questions.  Else use completion to select the tab to switch to."
   :bind (:map tab-prefix-map
          ("c" . tab-bar-echo-area-display-tab-name)
          ("a" . tab-bar-echo-area-display-tab-names))
-  :custom-face
-  (tab-bar-echo-area-tab ((t (:foreground ,bespoke-faded :underline t :weight bold))))
-  (tab-bar-echo-area-tab-group-current ((t (:foreground ,bespoke-faded))))
   :config
   (setq tab-bar-echo-area-trigger-display-functions nil)
   (tab-bar-echo-area-mode 1))

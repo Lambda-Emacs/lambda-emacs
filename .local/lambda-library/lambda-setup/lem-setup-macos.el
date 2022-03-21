@@ -38,10 +38,7 @@
 
 ;;;; General Settings
 
-(setq IS-LINUX (eq system-type 'gnu/linux)
-      IS-MAC (eq system-type 'darwin))
-
-(when IS-MAC
+(when sys-mac
   ;; make fonts look better with anti-aliasing
   (setq mac-allow-anti-aliasing t)
 

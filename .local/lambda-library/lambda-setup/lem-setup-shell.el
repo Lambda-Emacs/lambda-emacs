@@ -199,10 +199,10 @@
 (use-package eshell
   :commands eshell
   :init
-  (setq eshell-directory-name (concat lem-local-dir "eshell/")
-        eshell-history-file-name (concat lem-local-dir "eshell/history")
-        eshell-aliases-file (concat lem-local-dir "eshell/alias")
-        eshell-last-dir-ring-file-name (concat lem-local-dir "eshell/lastdir")
+  (setq eshell-directory-name (concat lem-etc-dir "eshell/")
+        eshell-history-file-name (concat lem-etc-dir "eshell/history")
+        eshell-aliases-file (concat lem-etc-dir "eshell/alias")
+        eshell-last-dir-ring-file-name (concat lem-etc-dir "eshell/lastdir")
         eshell-highlight-prompt nil
         eshell-buffer-shorthand t
         eshell-cmpl-ignore-case t

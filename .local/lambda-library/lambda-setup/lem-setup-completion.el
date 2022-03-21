@@ -354,7 +354,7 @@ targets."
 
   (setq consult-ripgrep-args
         "rg --null --line-buffered --color=never --max-columns=1000 --path-separator /\
-   --smart-case --no-heading --line-number .")
+   --smart-case --no-heading --line-number --hidden --glob=!.git/ .")
 
   ;; Make consult locate work with macos spotlight
   (setq consult-locate-args "mdfind -name")
@@ -729,6 +729,8 @@ If TOP-NODE is provided, then just select from its sub-nodes."
   (defalias 'org-block-capf (cape-interactive-capf (cape-company-to-capf 'company-org-block))))
 
 ;;;;; Yasnippet
+(defvar lem-all-snippets-dir (concat lem-etc-dir "all-snippets/") "DIR for all snippet files.")
+
 (use-package yasnippet
   :straight (:type git :host github :repo "joaotavora/yasnippet")
   :defer 1
@@ -736,8 +738,9 @@ If TOP-NODE is provided, then just select from its sub-nodes."
          ("C-'" . yas-expand))
   :config
   ;; NOTE: need to specify dirs; does not look in non-snippet subdirs
-  (setq yas-snippet-dirs '("~/.emacs.d/.local/all-snippets/lem-snippets/"
-                           "~/.emacs.d/.local/all-snippets/yasnippet-snippets/"))
+  (setq yas-snippet-dirs `(,(concat lem-all-snippets-dir "lem-snippets/") ; custom snippets
+                           ,(concat lem-all-snippets-dir "yasnippet-snippets/") ; yas snippets
+                           ))
   (setq yas--loaddir yas-snippet-dirs)
   (setq yas-installed-snippets-dir yas-snippet-dirs)
   (setq yas--default-user-snippets-dir yas-snippet-dirs)
@@ -746,17 +749,14 @@ If TOP-NODE is provided, then just select from its sub-nodes."
     (setq-local yas-buffer-local-condition
                 '(not (org-in-src-block-p t))))
   (add-hook 'org-mode-hook #'lem/yas-org-mode-hook)
-  ;; Adding yasnippet support to company
-  (with-eval-after-load 'company-mode
-    (add-to-list 'company-backends '(company-yasnippet)))
   (yas-global-mode 1))
 
-;; ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
-;; (use-package yasnippet-snippets
-;;   :straight (:type git :host github :repo "AndreaCrotti/yasnippet-snippets")
-;;   :after (yasnippet)
-;;   :config
-;;   (setq yasnippet-snippets-dir (concat lem-local-dir "all-snippets/yasnippet-snippets")))
+;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
+(use-package yasnippet-snippets
+  :straight (:type git :host github :repo "AndreaCrotti/yasnippet-snippets")
+  :after (yasnippet)
+  :config
+  (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "all-snippets/yasnippet-snippets")))
 
 
 ;;;; Completion Icons

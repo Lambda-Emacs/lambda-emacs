@@ -1,13 +1,6 @@
 ;;; lem-setup-functions.el --- summary -*- lexical-binding: t -*-
 
 ;; Author: Colin McLear
-;; Maintainer: Colin McLear
-;; Version: version
-;; Package-Requires: (dependencies)
-;; Homepage: homepage
-;; Keywords: keywords
-
-
 ;; This file is not part of GNU Emacs
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -23,7 +16,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
 
 ;; Useful functions
@@ -32,18 +24,44 @@
 
 ;;;; Config Helper Functions
 
-;; Function to navigate config files
-(defun lem/find-files-setup-config-directory ()
-  "Find lem-setup files."
-  (interactive)
-  (let ((default-directory lem-setup-dir))
-    (call-interactively 'find-file)))
+(defvar lem-files-sources-data
+  `(("Init Files"      ?i ,lem-emacs-dir)
+    ("Setup Files"     ?s ,lem-setup-dir)
+    ("User Files"      ?u ,lem-user-dir)))
 
-;; Function to search in config files
-(defun lem/search-setup-config-files ()
-  "Async fuzzy search with ripgrep for all lem configuration files"
+(defun lem--files-make-source (name char dir)
+  "Return a notes source list suitable for `consult--multi'.
+  NAME is the source name, CHAR is the narrowing character,
+  and DIR is the directory to find notes. "
+  (let ((idir (propertize (file-name-as-directory dir) 'invisible t)))
+    `(:name     ,name
+      :narrow   ,char
+      :category file
+      :face     consult-file
+      :items    ,(lambda () (mapcar (lambda (f) (concat idir f))
+				               ;; filter files that glob *.*
+				               (directory-files dir nil "[^.].*[.].+")))
+      :action   ,(lambda (f) (find-file f)))))
+
+;;;###autoload
+(defun lem/find-lambda-file ()
+  "Find a file from list of 𝛌-Emacs configuration files."
   (interactive)
-  (consult-ripgrep lem-setup-dir))
+  (require 'consult)
+  (consult--multi (mapcar #'(lambda (s) (apply 'lem--files-make-source s))
+			              lem-files-sources-data)
+		          :prompt "𝛌-files: "
+		          :history 'file-name-history))
+
+;;;###autoload
+(defun lem/search-lambda-files ()
+  "Search all configuration files in 𝛌-Emacs with consult-ripgrep."
+  (interactive)
+  (require 'consult)
+  (let ((consult-ripgrep-args
+         "rg --null --line-buffered --max-columns=1000 --path-separator /\
+   --smart-case --no-heading --line-number --hidden --glob=!straight --glob=!temp --glob=!.git/ ."))
+    (consult-ripgrep lem-emacs-dir)))
 
 ;; Load init file
 (defun lem/load-init-file ()
@@ -157,10 +175,7 @@
   :defer 1
   :bind
   ("C-k"   . crux-smart-kill-line)
-  ("C-a"   . crux-move-beginning-of-line)
-  (:map lem+buffer-keys
-   ("C"    . crux-cleanup-buffer-or-region)))
-
+  ("C-a"   . crux-move-beginning-of-line))
 
 ;;;; Delete Current File
 ;; from magnars
@@ -233,30 +248,7 @@
 (global-set-key [escape] 'evil-exit-emacs-state))
 
 
-;;;; Fill or Unfill
-;; See https://sachachua.com/dotemacs/
-;; and https://endlessparentheses.com/fill-and-unfill-paragraphs-with-a-single-key.html
-(defun endless/fill-or-unfill ()
-  "Like `fill-paragraph', but unfill if used twice."
-  (interactive)
-  (let ((fill-column
-         (if (eq last-command 'endless/fill-or-unfill)
-             (progn (setq this-command nil)
-                    (point-max))
-           fill-column)))
-    (call-interactively #'fill-paragraph)))
-
-;;FIXME: I can't get this to work properly in org-mode
-(defun lem/fill-or-unfill ()
-  "Like `fill-paragraph', but unfill if used twice."
-  (interactive)
-  (let ((fill-column
-         (if (eq last-command 'lem/fill-or-unfill)
-             (progn (setq this-command nil)
-                    (point-max))
-           fill-column)))
-    (call-interactively #'lem/fill-paragraph)))
-
+;;;; Fill
 (defun lem/fill-paragraph ()
   "if in an org buffer use org-fill-paragraph; else use fill-paragraph"
   (interactive)
@@ -266,7 +258,6 @@
 
 (global-set-key [remap fill-paragraph]
                 #'lem/fill-paragraph)
-
 
 ;;;; Unfill
 ;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
@@ -322,7 +313,6 @@ with no seperation"
     (call-interactively #'write-file)
     (when old-location
       (delete-file old-location))))
-
 
 ;;;; Clipboard Transforms Using Pandoc
 (defun lem/org-to-markdown ()
@@ -410,7 +400,6 @@ with no seperation"
   end tell
   end if"))
 
-
 ;;;; Mailmate save mail and kill client
 ;; Save buffer and exit emacsclient for Mailmate
 (defun lem/email-save-and-kill ()
@@ -471,7 +460,6 @@ with no seperation"
  #'set-point-before-yanking-if-in-text-mode)
 ;; http://lists.gnu.org/archive/html/help-gnu-emacs/2007-05/msg00975.html
 
-
 ;;;; Transpose hydra
 ;; From the hydra wiki https://github.com/abo-abo/hydra/wiki/Emacs#transpose
 
@@ -489,8 +477,6 @@ with no seperation"
               ("t" org-table-transpose-table-at-point "Org mode table")
               ("q" nil "cancel" :color blue))))
 
-
-
 ;;;; Toggle markup
 (defun lem/toggle-display-markup ()
   "Toggle the display of markup in markdown and org modes"
@@ -500,8 +486,6 @@ with no seperation"
     (if markdown-hide-markup
         (markdown-toggle-markup-hiding 0)
       (markdown-toggle-markup-hiding))))
-
-
 
 ;;;; Wrap in Yaml block
 (defun lem/yaml-wrap ()
@@ -515,15 +499,15 @@ with no seperation"
     (insert "---" "\n")))
 
 ;;;; Quit Function
-(defun doom-quit-p (&optional prompt)
+(defun lem--quit-p (&optional prompt)
   "Return t if this session should be killed. Prompts the user for
  confirmation."
   (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
       (ignore (message "Aborted"))))
 (setq confirm-kill-emacs nil)
-(add-hook 'kill-emacs-query-functions #'doom-quit-p)
-(defvar +doom-quit-messages
-  '(;; from Doom 1
+(add-hook 'kill-emacs-query-functions #'lem--quit-p)
+(defvar lem-quit-messages
+  '(;; from Doom
     "Let's beat it -- This is turning into a bloodbath!"
     "I wouldn't leave if I were you. DOS is much worse."
     "Ya know, next time you come in here I'm gonna toast ya."
@@ -542,17 +526,17 @@ with no seperation"
     "Hey! Hey, M-x listen!"
     "Okay, look. We've both said a lot of things you're going to regret..."
     "You are *not* prepared!")
-  "A list of quit messages, picked randomly by `+doom-quit'. Taken from
+  "A list of quit messages, picked randomly by `lem-quit'. Taken from
  http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
 
-(defun +doom|quit (&rest _)
-  (doom-quit-p
+(defun lem--quit (&rest _)
+  (lem--quit-p
    (format "%s  Quit?"
-           (nth (random (length +doom-quit-messages))
-                +doom-quit-messages))))
+           (nth (random (length lem-quit-messages))
+                lem-quit-messages))))
 
-(remove-hook 'kill-emacs-query-functions #'doom-quit-p)
-(add-hook 'kill-emacs-query-functions #'+doom|quit)
+(remove-hook 'kill-emacs-query-functions #'lem--quit-p)
+(add-hook 'kill-emacs-query-functions #'lem--quit)
 
 ;;; End Funtions-Macros
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

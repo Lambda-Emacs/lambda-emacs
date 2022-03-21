@@ -104,7 +104,7 @@
   :defer 2
   :config
   ;; (add-hook 'text-mode-hook #'abbrev-mode)
-  (setq abbrev-file-name (concat lem-local-dir "abbrev/.abbrev_defs")
+  (setq abbrev-file-name (concat lem-temp-dir "abbrev/.abbrev_defs")
         save-abbrevs 'nil)
   (if (file-exists-p abbrev-file-name)
       (quietly-read-abbrev-file)))
@@ -232,7 +232,7 @@
       (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".pdf"))))
   :init
   (progn
-    (setq pandoc-data-dir (concat lem-local-dir "pandoc-mode/"))
+    (setq pandoc-data-dir (concat lem-etc-dir "pandoc-mode/"))
     ;; help pandoc find xelatex
     (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin"))))
 

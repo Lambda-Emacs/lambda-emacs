@@ -27,9 +27,10 @@
 (setq custom-safe-themes t)
 
 ;;;; Custom Theme Folder
-(defvar lem-custom-themes-dir (concat lem-local-dir "custom-themes/"))
+(defvar lem-custom-themes-dir (concat lem-user-dir "custom-themes/"))
 (mkdir lem-custom-themes-dir t)
 (setq-default custom-theme-directory lem-custom-themes-dir)
+
 ;; find all themes recursively in custom-theme-folder
 (let ((basedir custom-theme-directory))
   (dolist (f (directory-files basedir))
@@ -47,18 +48,15 @@
 
 ;;;; Bespoke Theme
 (use-package bespoke-themes
-  :straight (:type git :host github :repo "mclear-tools/bespoke-themes")
+  ;; :straight (:type git :host github :repo "mclear-tools/bespoke-themes")
+  :straight nil
+  :load-path "~/.emacs.d/.local/lambda-library/lambda-user/custom-themes/bespoke-themes"
   :config
   ;; Set use of italics
   (setq bespoke-set-italic-comments t
         bespoke-set-italic-keywords t)
   ;; Set variable pitch
-  (setq bespoke-set-variable-pitch t)
-  ;; Set initial theme variant
-  (setq bespoke-set-theme 'dark)
-  ;; Load theme
-  (load-theme 'bespoke t))
-
+  (setq bespoke-set-variable-pitch t))
 
 ;;;; Disable All Custom Themes
 (defun lem/disable-all-themes ()
@@ -109,7 +107,7 @@
   (shell-command "dark-mode on"))
 
 ;;;; Theme & menubar toggle
-(setq active-theme 'light-theme)
+;; (setq active-theme 'light-theme)
 (defun toggle-dark-light-theme ()
   "Coordinate setting of theme with os theme and toggle"
   (interactive)
@@ -125,24 +123,6 @@
 (defadvice load-theme (after run-after-load-theme-hook activate)
   "Run `after-load-theme-hook'."
   (run-hooks 'lem-after-load-theme-hook))
-
-
-;;;; System Appearance Hook
-;; See https://github.com/d12frosted/homebrew-emacs-plus#system-appearance-change
-(defun lem/system-apply-theme (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (mapc #'disable-theme custom-enabled-themes)
-  (pcase appearance
-    ('light (progn
-              (setq bespoke-set-theme 'light)
-              (load-theme 'bespoke t)
-              (setq active-theme 'light-theme)))
-    ('dark (progn
-             (setq bespoke-set-theme 'dark)
-             (load-theme 'bespoke t)
-             (setq active-theme 'dark-theme)))))
-
-(add-hook 'ns-system-appearance-change-functions #'lem/system-apply-theme)
 
 ;;;; Reload Active Theme
 (defun lem/bespoke-reload-theme ()

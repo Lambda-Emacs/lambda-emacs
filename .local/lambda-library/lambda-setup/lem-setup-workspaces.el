@@ -102,7 +102,7 @@
     (progn
       (emacs-workspaces/create-workspace)
       (tab-bar-rename-tab "emacs.d")
-      (find-file-other-window user-init-file)
+      (find-file-other-window lem-config-file)
       (project-magit-dir))))
 
 (bind-key* "s-2" 'lem/open-emacsd-in-workspace)

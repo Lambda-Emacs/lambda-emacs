@@ -44,8 +44,6 @@
   :straight (:type git :host github :repo "camdez/goto-last-change.el")
   :bind (("C-\"" . goto-last-change)))
 
-;;;; Hydra
-(use-package hydra :defer 1)
 
 ;;;; Recent files
 (use-package recentf
@@ -84,7 +82,7 @@
 ;;;; Goto Files
 (defun lem/goto-private ()
   (interactive)
-  (find-file (concat lem-elisp-dir "private.el")))
+  (find-file (concat lem-user-dir "private.el")))
 (defun lem/goto-journal ()
   (interactive)
   (find-file (concat org-directory "journal.org")))

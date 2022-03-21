@@ -24,10 +24,7 @@
          ("s-v" . org-yank))
   :init
 ;;; Org Settings
-;;;; Org Directories
-  (setq-default org-directory "~/Dropbox/org-files/")
-  (setq-default org-default-notes-file (concat org-directory "inbox.org"))
-  (setq-default org-agenda-files (list org-directory))
+
 
 ;;;; Org Regex (Emphasis)
   ;; Set regex boundaries for emphasis.
@@ -255,7 +252,7 @@
   (defun lem/toggle-org-agenda-file-set ()
     (interactive)
     (if (equal org-agenda-files (list org-directory))
-        (setq org-agenda-files (list "~/Dropbox/Work/projects/notebook/content-org/"))
+        (setq org-agenda-files (list org-roam-directory))
       (setq org-agenda-files (list org-directory)))
     (message "Using %s" org-agenda-files))
 
@@ -413,21 +410,6 @@ _vr_ reset      ^^                       ^^                 ^^
                                               '(category-keep))))))
           ("w" todo "WAITING")
           ("A" "Super Agenda" ((agenda "" ((org-agenda-span 'day)))))
-          ;; (alltodo "" ((org-agenda-overriding-header "")
-          ;; (org-super-agenda-groups
-          ;;  '(
-          ;;    (:name "Priority"
-          ;;     :priority>= "C")
-          ;;    (:name "Next to do"
-          ;;     :todo "NEXT")
-          ;;    (:name "In Progress"
-          ;;     :todo "DOING")
-          ;;    (:todo ("WAITING" "HOLD"))
-          ;;    (:todo "MAYBE")
-          ;;    (:name "Reading List"
-          ;;     :todo "TOREAD")
-          ;;    ))
-          ;; )
           ("W" "Week's agenda and all TODOs"
            ((tags "PRIORITY=\"A\""
                   ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))

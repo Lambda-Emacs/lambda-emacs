@@ -46,7 +46,7 @@
 
 ;;;;; Private File
 ;; where to store private or "secret" info
-(let ((private (expand-file-name "private.el" lem-private-dir)))
+(let ((private (expand-file-name "private.el" lem-user-dir)))
   (if (file-exists-p private)
 	  (load-file private)))
 
@@ -279,9 +279,8 @@
 ;; Emacs has problems with reading files with long lines. This package helps with that
 ;; https://www.emacswiki.org/emacs?action=browse;oldid=OverLongLineMode;id=SoLong
 ;; Prior to 27.1, not included.
+;; "https://git.savannah.gnu.org/git/so-long.git"
 (use-package so-long
-  ;; :straight (so-long :type git
-  ;; :repo "https://git.savannah.gnu.org/git/so-long.git")
   :straight (:type built-in)
   :hook (after-init . global-so-long-mode)
   :config
