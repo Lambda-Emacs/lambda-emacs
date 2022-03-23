@@ -40,9 +40,8 @@ elisp files grouped according to the following areas:
 
 
 * Contributing
-- Please consult the elisp [[https://github.com/bbatsov/emacs-lisp-style-guide][style guide]] for all conventions with regard to
-  naming, etc. 
-   + Note that all functions and variables with be preceded by the "lambda emacs"
-     or "lem" namespace.
-   + Internal functions will have their namespace delineated by "--"
-   + Interactive functions will have their namespace delineated by "/"
+- Please consult the elisp [[https://github.com/bbatsov/emacs-lisp-style-guide][style guide]] for all style conventions with regard to
+  naming, etc.
+   + Note that all functions and variables with use the "lem" namespace.
+   + Internal functions have their namespace delineated by "-\-"
+   + Interactive functions have their namespace delineated by "/"
