@@ -136,4 +136,5 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'lem-setup-navigation)
+
 ;;; lem-setup-navigation.el ends here

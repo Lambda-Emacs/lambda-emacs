@@ -52,7 +52,7 @@
 
 ;;;;; Attachments
   ;; Set default dir
-  (setq mu4e-attachment-dir (concat (getenv "HOME") "/Downloads/"))
+  (setq mu4e-attachment-dir (concat (getenv "HOME") "/Downloads"))
   ;; Save all attachments to specified dir without asking about each one
   (setq mu4e-save-multiple-attachments-without-asking t)
   (bind-key "e" #'mu4e-views-mu4e-save-all-attachments mu4e-headers-mode-map)

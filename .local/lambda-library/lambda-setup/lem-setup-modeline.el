@@ -42,7 +42,10 @@
   :config
   (bespoke-modeline-mode))
 
-
+;;;; Hide Modeline
+(use-package emacs-hide-mode-line
+  :straight (:type git :host github :repo "hlissner/emacs-hide-mode-line")
+  :commands hide-mode-line-mode)
 
 
 (provide 'lem-setup-modeline)

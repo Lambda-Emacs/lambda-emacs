@@ -16,9 +16,10 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 ;;; Commentary:
 
-;; Window settings & useful functions
+;; Setup for windows
 
 ;;; Code:
 
@@ -34,17 +35,20 @@
 ;; Make sure new frames use window-divider
 (add-hook 'before-make-frame-hook 'window-divider-mode)
 
-;;;; Window Movement
-
+;;;;; Window Movement
+;;FIXME: Figure out how best to streamline window movement.
 ;; Quickly switch windows in Emacs
 (use-package ace-window
-  :commands (ace-window ace-swap-window aw-flip-window lem/window-exchange))
+  :commands (ace-window
+             ace-swap-window
+             aw-flip-window))
 
 (defun lem/other-window ()
   (interactive)
   (other-window 1))
 (bind-key* "C-c C-o" 'lem/other-window)
 
+;; Move by window numbers
 (use-package emacs-winum
   :straight (winum :type git :host github :repo "deb0ch/emacs-winum")
   :hook (after-init . winum-mode)
@@ -60,14 +64,21 @@
         winum-ignored-buffers             '(" *which-key*")
         winum-ignored-buffers-regexp      '(" \\*Treemacs-.*")))
 
+;; Easy window movement by key
 (use-package windmove
-  :commands (windmove-up windmove-down windmove-left windmove-right)
-  :bind (("H-l" . #'windmove-right)
-         ("H-j" . #'windmove-down)
-         ("H-h" . #'windmove-left)
-         ("H-k" . #'windmove-up))
+  :straight (:type built-in)
+  :commands (windmove-up
+             windmove-down
+             windmove-left
+             windmove-right)
+  :bind (("C-<left>" . #'windmove-left)
+         ("C-<right>" . #'windmove-right)
+         ("C-<down>" . #'windmove-down)
+         ("C-<up>" . #'windmove-up))
   :config
   (windmove-default-keybindings))
+
+;; Easy split and move functions
 (defun lem/split-window-right-and-focus ()
   "Split the window horizontally and focus the new window."
   (interactive)
@@ -81,111 +92,43 @@
   (split-window-below)
   (windmove-down))
 
-;;;; Window Restore
+;;;;; Window Restore
 ;; Winner mode is a built-in package for restoring window configurations
 ;; https://www.emacswiki.org/emacs/WinnerMode
 (use-package winner
   :straight nil
   :hook (after-init . winner-mode))
 
-;;;; Toggle Dedicated Window
-(defun lem/toggle-window-dedicated ()
-  "Toggle whether the current active window is dedicated or not"
-  (interactive)
-  (message
-   (if (let (window (get-buffer-window (current-buffer)))
-         (set-window-dedicated-p window (not (window-dedicated-p window))))
-       "Window '%s' is dedicated"
-     "Window '%s' is normal")
-   (current-buffer)))
+;;;; Dialogs, Menus, & Popups
 
-;;;; Exchange Windows
-;; Swap buffers in windows and leave the cursor in the original window. Courtesy of
-;; Mike Zamansky's video.
-;; http://cestlaz.github.io/posts/using-emacs-36-touch-of-elisp/#.WX5Wg0czpcx
+;;;;; Dialogs and popups
+;; No file dialog
+(setq use-file-dialog nil)
+;; No dialog box
+(setq use-dialog-box nil)
+;; No confirmation for visiting non-existent files
+(setq confirm-nonexistent-file-or-buffer nil)
+;; Set popup windows
+(setq-default pop-up-windows t)
+;; Set popup frames
+(setq-default pop-up-frames nil)
 
-(defun lem/window-exchange-buffer ()
-  "Swap buffer in windows and leave focus in original window"
-  (interactive)
-  (ace-swap-window)
-  (aw-flip-window))
+;;;;; Hydra Menus
+(use-package hydra :defer 1)
 
-;;;; Rotate Windows
-;; from magnars modified by ffevotte for dedicated windows support
-(defun lem/rotate-windows (count)
-  "Rotate your windows.
-  Dedicated windows are left untouched. Giving a negative prefix
-  argument takes the kindows rotate backwards."
-  (interactive "p")
-  (let* ((non-dedicated-windows (cl-remove-if 'window-dedicated-p (window-list)))
-         (num-windows (length non-dedicated-windows))
-         (i 0)
-         (step (+ num-windows count)))
-    (cond ((not (> num-windows 1))
-           (message "You can't rotate a single window!"))
-          (t
-           (dotimes (counter (- num-windows 1))
-             (let* ((next-i (% (+ step i) num-windows))
-
-                    (w1 (elt non-dedicated-windows i))
-                    (w2 (elt non-dedicated-windows next-i))
-
-                    (b1 (window-buffer w1))
-                    (b2 (window-buffer w2))
-
-                    (s1 (window-start w1))
-                    (s2 (window-start w2)))
-               (set-window-buffer w1 b2)
-               (set-window-buffer w2 b1)
-               (set-window-start w1 s2)
-               (set-window-start w2 s1)
-               (setq i next-i)))))))
-
-(defun lem/rotate-windows-backward (count)
-  "Rotate your windows backward."
-  (interactive "p")
-  (lem/rotate-windows (* -1 count)))
-
-;;;; Split Windows
-(defun lem/toggle-window-split ()
-  "Move from a horizontal to a vertical split and vice versa"
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-             (next-win-buffer (window-buffer (next-window)))
-             (this-win-edges (window-edges (selected-window)))
-             (next-win-edges (window-edges (next-window)))
-             (this-win-2nd (not (and (<= (car this-win-edges)
-                                         (car next-win-edges))
-                                     (<= (cadr this-win-edges)
-                                         (cadr next-win-edges)))))
-             (splitter
-              (if (= (car this-win-edges)
-                     (car (window-edges (next-window))))
-                  'split-window-horizontally
-                'split-window-vertically)))
-        (delete-other-windows)
-        (let ((first-win (selected-window)))
-          (funcall splitter)
-          (if this-win-2nd (other-window 1))
-          (set-window-buffer (selected-window) this-win-buffer)
-          (set-window-buffer (next-window) next-win-buffer)
-          (select-window first-win)
-          (if this-win-2nd (other-window 1))))))
-
-
-;;;; Jump to Minibuffer Window
-(defun lem/goto-minibuffer-window ()
-  "locate point to minibuffer window if it is active."
-  (interactive)
-  (if (active-minibuffer-window)
-      (select-window (active-minibuffer-window))
-    (error "Minibuffer is not active")))
-
-;; (with-eval-after-load 'general
-;; (general-def "C-c m" #'lem/goto-minibuffer-window))
-
-
+;;;;; Transient Menus
+(use-package transient
+  :defer 1
+  :custom
+  (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
+  (transient-values-file (concat lem-cache-dir "transient/values.el"))
+  (transient-history-file (concat lem-cache-dir "transient/history.el"))
+  ;; set transient popop to top of window
+  (transient-display-buffer-action '(display-buffer-in-side-window
+                                     (side . top)
+                                     (dedicated . t)
+                                     (inhibit-same-window . t)
+                                     (window-parameters (no-other-window . t)))))
 
 
 (provide 'lem-setup-windows)

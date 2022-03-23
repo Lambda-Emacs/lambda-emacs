@@ -11,18 +11,25 @@
   ;; much data and bog down the rest of Emacs.
   (autoload 'comint-truncate-buffer "comint" nil t)
   (add-hook 'compilation-filter-hook #'comint-truncate-buffer)
-  ;;  Whenever I run ~compile~, the buffer stays even after a successful compilation.
-  ;;  Let's make it close automatically if the compilation is successful.
-  (setq compilation-finish-functions
-        (lambda (buf str)
-          (if (null (string-match ".*exited abnormally.*" str))
-              ;;no errors, make the compilation window go away in a few seconds
-              (progn
-                (run-at-time "0.4 sec" nil
-                             (lambda ()
-                               (select-window (get-buffer-window (get-buffer-create "*compilation*")))
-                               (delete-window))))
-            (message "No Compilation Errors!")))))
+  ;; ;;  Whenever I run ~compile~, the buffer stays even after a successful compilation.
+  ;; ;;  Let's make it close automatically if the compilation is successful.
+  ;; (setq compilation-finish-functions
+  ;;       (lambda (buf str)
+  ;;         (if (null (string-match ".*exited abnormally.*" str))
+  ;;             ;;no errors, make the compilation window go away in a few seconds
+  ;;             (progn
+  ;;               (run-at-time "0.4 sec" nil
+  ;;                            (lambda ()
+  ;;                              (display-buffer (get-buffer-create "*compilation*") '(display-buffer-at-bottom (window-height . 0.15)))
+  ;;                              (delete-window)
+  ;;                               ;; (select-window (get-buffer-window (get-buffer-create "*compilation*")))
+  ;;                               ;; (delete-window)
+  ;;                               ;; (let ((count (count-windows)))
+  ;;                               ;;   (unless (= count 1)
+  ;;                               ;;     (winner-undo))))
+  ;;                               )
+  ;;                            (message "No Compilation Errors!")))))
+  )
 
 ;;; Completion Buffer
 ;; Remove completion buffer when done

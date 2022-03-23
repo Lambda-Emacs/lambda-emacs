@@ -22,14 +22,16 @@
         (with-current-buffer (get-buffer "*scratch*")
           (delete-region (point-min) (point-max))
           (insert-file-contents scratch-file))))
-  ;; don't auto-save scratch in home dir
+  ;; don't auto-save scratch in home dir; put them all in the system tmp
+  ;; directory
   (with-current-buffer (get-buffer "*scratch*")
     (setq-local default-directory "/tmp/")))
 
 
+;; Hooks for loading and saving the scratch buffer
 (add-hook 'after-init-hook 'load-persistent-scratch)
 (add-hook 'kill-emacs-hook 'save-persistent-scratch)
-
+;; Save scratch buffer every 5 minutes (300 seconds)
 (run-with-idle-timer 300 t 'save-persistent-scratch)
 
 ;;; End Setup-Scratch

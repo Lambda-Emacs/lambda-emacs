@@ -23,6 +23,13 @@
 
 ;;; Code:
 
+;;;; Anaphora
+;; Useful macro library: Anaphoric expressions implicitly create one or more
+;; temporary variables which can be referred to during the expression. This
+;; technique can improve clarity in certain cases. It also enables recursion for
+;; anonymous functions.
+(use-package anaphora :straight t :defer 1)
+
 ;;;; Toggle macro
 
 (defun deftoggle-var-doc (name)

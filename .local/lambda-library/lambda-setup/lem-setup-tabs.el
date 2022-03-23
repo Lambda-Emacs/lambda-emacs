@@ -1,6 +1,29 @@
+;;; lem-setup-tabs.el --- summary -*- lexical-binding: t -*-
+
+;; Author: Colin McLear
+;; This file is not part of GNU Emacs
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
 ;; Tab-bar -- use tab-bar for window & buffer management -*- lexical-binding: t; -*-
 
-;;; Tab Bar
+;;; Code:
+
+;;;; Tab Bar
 ;; Use tab-bar for window grouping and configuration within a project (replaces eyebrowse)
 (use-package tab-bar
   :straight (:type built-in)
@@ -36,7 +59,7 @@ questions.  Else use completion to select the tab to switch to."
               (completing-read "Select tab: " tabs nil t))))))
   (setq tab-bar-mode t))
 
-;;;; Tab Bar Echo
+;;;;; Tab Bar Echo
 ;; Use echo area for tab name display
 (use-package tab-bar-echo-area
   :straight (:type git :host github :repo "fritzgrabo/tab-bar-echo-area")
@@ -50,7 +73,7 @@ questions.  Else use completion to select the tab to switch to."
 ;; display all tabs when idle
 ;; (run-with-idle-timer 5 t (lambda () (message nil) (tab-bar-echo-area-display-tab-names)))
 
-;;;; Echo-Bar
+;;;;; Echo-Bar
 ;; Display info in the echo area -- using just for tabs/workspaces right now
 (use-package echo-bar
   :straight (echo-bar :type git :host github :repo "qaiviq/echo-bar.el")
@@ -85,7 +108,7 @@ questions.  Else use completion to select the tab to switch to."
   (let ((tab-names (mapcar (lambda (tab) (alist-get 'name tab)) (tab-bar-tabs))))
     (mapconcat 'identity tab-names " ")))
 
-;;;; Tab Bookmark
+;;;;; Tab Bookmark
 ;; Bookmark window configurations in a tab
 ;; NOTE: would be good to get this working with emacs-workspaces
 (use-package tab-bookmark
@@ -94,5 +117,44 @@ questions.  Else use completion to select the tab to switch to."
   :bind (:map project-prefix-map
          ("m" . tab-bookmark)))
 
-;;; Provide Tabs
+
+;;;; Workspaces
+;; Workspaces leveraging tab-bar and project.el
+(use-package emacs-workspaces
+  :straight (:type git :host github :repo "mclear-tools/emacs-workspaces")
+  ;; Add some functions to the project map
+  :bind (:map project-prefix-map
+         ("p" . emacs-workspaces/open-existing-project-and-workspace)
+         ("n" . emacs-workspaces/create-new-project-and-workspace))
+  :commands (emacs-workspaces/create-workspace
+             emacs-workspaces/create-new-project-and-workspace
+             emacs-workspaces/open-existing-project-and-workspace)
+  :config
+  (setq emacs-workspaces-use-consult-project t))
+
+;;;;; Per Workspace Buffers with Consult
+;; Filter Buffers for Consult-Buffer
+
+(with-eval-after-load 'consult
+  ;; hide full buffer list (still available with "b")
+  (consult-customize consult--source-buffer :hidden t :default nil)
+  ;; set consult-workspace buffer list
+  (defvar consult--source-workspace
+    (list :name     "Workspace Buffers"
+          :narrow   ?w
+          :category 'buffer
+          :state    #'consult--buffer-state
+          :default  t
+          :items    (lambda ()
+                      (emacs-workspaces--tab-bar-buffer-name-filter ((lambda () (consult--buffer-query :sort 'visibility
+                                                                                                  :as #'buffer-name))))))
+
+    "Set workspace buffer list for consult-buffer.")
+  (push consult--source-workspace consult-buffer-sources))
+
+;;;; Set Workspace  Variables
+
+(setq lem-open-agenda-in-workspace #'lem/open-agenda-in-workspace)
+
 (provide 'lem-setup-tabs)
+;;; lem-setup-tabs.el ends here

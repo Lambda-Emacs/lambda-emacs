@@ -34,14 +34,14 @@
 
 ;;;; Deadgrep
 (use-package deadgrep
-  :bind (:map cpm+search-keys
+  :bind (:map lem+search-keys
          ("g" . deadgrep)))
 
 ;;;; Ripgrep
 (use-package rg :commands rg)
 
 ;;;; Search given directory
-(defun cpm/search-in-input-dir ()
+(defun lem/search-in-input-dir ()
   "Grep for a string in the input directory using completing read function"
   (interactive)
   (let ((current-prefix-arg '(4))) (call-interactively #'consult-ripgrep)))

@@ -207,12 +207,15 @@
   (linum-mode -1)
   (setq-local buffer-read-only t)
   (setq-local cursor-type nil)
-  ;; ;; cursor with meow
-  (meow-motion-mode 1)
-  (setq-local meow-cursor-type-motion nil)
   (setq-local hl-line-mode nil)
   (setq-local mode-line-format nil)
   (setq-local header-line-format nil)
+
+  ;; No margin or fringe in splash buffer
+  (setq-local left-margin-width nil
+              right-margin-width nil)
+  (set-window-fringes (selected-window) 0 0 nil)
+
   (when (>= emacs-major-version 26)
     (display-line-numbers-mode -1))
   (setq inhibit-startup-screen t
@@ -224,20 +227,15 @@
 ;; Suppress any startup message in the echo area
 (run-with-idle-timer 0.05 nil (lambda() (message nil)))
 
+
 ;; Install hook after frame parameters have been applied and only if
 ;; no option on the command line
 (if (and (not (member "--no-splash" command-line-args))
          (not (member "--file"      command-line-args))
          (not (member "--insert"    command-line-args))
          (not (member "--find-file" command-line-args)))
-    (add-hook 'window-setup-hook 'lem-splash-screen))
+    (progn
+      (add-hook 'window-setup-hook 'lem-splash-screen)))
 
-;; don't highlight when idle
-(add-hook 'lem-splash-mode-hook (lambda () (when lem-splash-mode (toggle-hl-line-when-idle))))
-
-
-;;; Provide Splash
 (provide 'lem-setup-splash)
-
-
 ;;; setup-splash.el ends here

@@ -459,4 +459,12 @@
 
 
 (provide 'lem-setup-writing)
+;;;; Line Numbers
+(use-package display-line-numbers
+  :straight (:type built-in)
+  ;; :hook (markdown-mode prog-mode)
+  :commands display-line-numbers-mode
+  :init
+  (setq-default display-line-numbers-type 'visual)
+  (setq-default display-line-numbers-width-start t))
 ;;; lem-setup-writing.el ends here

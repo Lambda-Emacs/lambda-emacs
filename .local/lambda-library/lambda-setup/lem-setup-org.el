@@ -148,6 +148,7 @@
               ;; (centered-cursor-mode)
               (turn-on-auto-fill)
               (visual-line-mode)))
+  (add-hook 'org-open-at-point-functions (require 'mu4e) nil)
   ;; this auto-save seems like overkill?
   ;; (add-hook 'auto-save-hook 'org-save-all-org-buffers)
 

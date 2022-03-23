@@ -128,6 +128,11 @@
 ;; (Don't) Blink the cursor
 (blink-cursor-mode 0)
 
+;; The menu bar in MacOS GUI takes no additional window space, so enable it.
+(if (and sys-mac (display-graphic-p))
+    (menu-bar-mode 1)
+  (menu-bar-mode -1))
+
 ;;;;; Search and Replace
 (use-package visual-regexp
   :commands (vr/query-replace)

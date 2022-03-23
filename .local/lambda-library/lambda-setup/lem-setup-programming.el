@@ -47,12 +47,6 @@
   :bind (:map lem+search-keys
          ("c" . iedit-mode)))
 
-
-;;; Colors
-;; https://github.com/emacsmirror/rainbow-mode Colorize color names in buffers
-(use-package rainbow-mode
-  :commands rainbow-mode)
-
 ;;; Languages
 ;;;; Applescript
 (use-package applescript-mode
