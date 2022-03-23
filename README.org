@@ -9,38 +9,37 @@
    + User Emacs directory (.emacs.d)
       - Local directory (.local)
          + Library directory (lambda-library)
+            - Setup files (labda-setup)
+            - External packages (straight)
          + User directory (lambda-user)
          + Temp directory (temp)
             - Volatile storage (cache)
             - Non-volatile storage (etc)
-
 
 * 𝛌-Emacs Features
 
 𝛌-Emacs is a "modular" distribution of Emacs. It consists of a set of "setup"
 elisp files grouped according to the following areas:
 
-- Core: These files load essential libraries, useful functions, macros, and sane
+- *Core*: These files load essential libraries, useful functions, macros, and sane
   settings. This group of files consists of the following:
    + lem-setup-libraries
    + lem-setup-settings
    + lem-setup-functions
    + lem-setup-macros
-   + 
-- UI: Primary settings concerning frame, window, and buffer interaction, along
+- *UI*: Primary settings concerning frame, window, and buffer interaction, along
   with fonts, faces, themeing, completion, and navigation all belong to this group.
-- Writing & Editing: Settings for spelling, citation, dictionary, notes,
+- *Writing & Editing*: Settings for spelling, citation, dictionary, notes,
   typesetting (LaTeX) and writing-specific modes (markdown).
-- Org: Writing, Project management, TODOs, Literate programming. What doesn't
+- *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
   org do? Since many people use Emacs almost exclusively for org-mode, it
   warrants its own group. 
-   + 
-- Languages: Programming languages. 
-- Shell: Configuration for shell and terminal commands and applications
+- *Languages*: Programming languages. 
+- *Shell*: Configuration for shell and terminal commands and applications
+- *Project*: Version control settings and configuration for the built-in project.el
 
 
-
-
+* Contributing
 - Please consult the elisp [[https://github.com/bbatsov/emacs-lisp-style-guide][style guide]] for all conventions with regard to
   naming, etc. 
    + Note that all functions and variables with be preceded by the "lambda emacs"
