@@ -285,26 +285,75 @@ only a lem-setup-test.el' file for easy testing.")
   "Load 𝛌-Emacs's core files for an interactive session."
   (require 'lem-setup-libraries)
   (require 'lem-setup-settings)
-  (require 'lem-setup-keybindings)
   (require 'lem-setup-functions)
   (require 'lem-setup-macros)
-  (require 'lem-setup-dired)
+  (require 'lem-setup-server))
+
+(defun lem--ui-modules ()
+  (require 'lem-setup-frames)
+  (require 'lem-setup-windows)
+  (require 'lem-setup-buffers)
+  (require 'lem-setup-splash)
+  (require 'lem-setup-colors)
   (require 'lem-setup-completion)
-  (require 'lem-setup-ui)
-  (require 'lem-setup-scratch)
-  (require 'lem-setup-server)
+  (require 'lem-setup-fonts)
+  (require 'lem-setup-faces)
+  (require 'lem-setup-keybindings)
+  (require 'lem-setup-navigation)
+  (require 'lem-setup-dired)
+  (require 'lem-setup-help)
+  (require 'lem-setup-tabs)
+  (require 'lem-setup-theme)
+  (require 'lem-setup-modeline)
   (require 'lem-setup-search)
+  (when sys-mac
+    (require 'lem-setup-macos))
+  )
+
+(defun lem--project-modules ()
+  (require 'lem-setup-projects)
   (require 'lem-setup-vc)
-  (require 'lem-setup-splash))
+  )
+
+(defun lem--editing-modules ()
+  (require 'lem-setup-citation)
+  (require 'lem-setup-writing)
+  (require 'lem-setup-programming) ;; some of this should go in language module
+  (require 'lem-setup-debug)
+  (require 'lem-setup-notes)
+  )
+(defun lem--language-modules ()
+  )
+(defun lem--shell-modules ()
+  (require 'lem-setup-shell)
+  )
+(defun lem--org-modules ()
+  (require 'lem-setup-org)
+  (require 'lem-setup-org-extensions)
+  )
+(defun lem--misc-modules ()
+  (require 'lem-setup-pdf)
+  (require 'lem-setup-email)
+  (require 'lem-setup-scratch)
+  )
 
 ;; Conditionally load configuration files based on switches.
 (cond
  ;; Load core modules only, ignore other configuration.
  ((lem--emacs-switches "-core")
   (progn
-    (message "*Loading core configuration files *only*, ignoring personal user configuration.*")
+    (message "*Loading 𝛌-Emacs core configuration files *only*, ignoring personal user configuration.*")
+    (set-window-margins (selected-window) 30 15)
+    (set-window-fringes (selected-window) 0 0 nil)
+    ;; FIXME: Would be good to have a real splash page here but the screen flashes when frame changes size.
+    (setq initial-scratch-message "Welcome to 𝛌-Emacs")
+    (lem--core-modules)))
+ ;; Load the just essential modules
+ ((lem--emacs-switches "-basic")
+  (progn
+    (message "*Loading basic 𝛌-Emacs configuration*")
     (lem--core-modules)
-    (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-theme)))
+    (lem--ui-modules)))
  ;; Load test module only
  ((lem--emacs-switches "-test")
   (progn
@@ -312,7 +361,7 @@ only a lem-setup-test.el' file for easy testing.")
     (require 'lem-setup-test)))
  ;; Load no modules other than the internal icomplete, for better completion.
  ((lem--emacs-switches "-clean")
-  (message "*Loading a clean setup plus icomplete*")
+  (message "*Do not load 𝛌-Emacs setup files. Loading a clean setup plus icomplete*")
   (require 'lem-setup-icomplete))
  ;; Load user's personal config file (if it exists).
  ((when (file-exists-p lem-config-file)
@@ -321,7 +370,14 @@ only a lem-setup-test.el' file for easy testing.")
       (load lem-config-file 'noerror))))
  ;; Otherwise load core modules
  ((message "*Loading 𝛌-Emacs*")
-  (lem--core-modules)))
+  (lem--core-modules)
+  (lem--ui-modules)
+  (lem--project-modules)
+  (lem--editing-modules)
+  (lem--language-modules)
+  (lem--shell-modules)
+  (lem--org-modules)
+  (lem--misc-modules)))
 
 ;;;; After Startup
 
@@ -333,6 +389,6 @@ only a lem-setup-test.el' file for easy testing.")
                                 (setq gc-cons-threshold 800000)
                                 ;; Startup time
                                 (message (format ";; ======================================================\n;; Emacs ready in %.2f seconds with %d garbage collections.\n;; ======================================================"
-                                                 (float-time
-                                                  (time-subtract after-init-time before-init-time)) gcs-done)
-                                         (put 'narrow-to-page 'disabled nil))))
+ (float-time
+  (time-subtract after-init-time before-init-time)) gcs-done)
+    (put 'narrow-to-page 'disabled nil))))

@@ -187,20 +187,22 @@
 
 ;; Use this variable for checking what the active them setting is vis-a-vis the
 ;; system light or dark mode.
-(defconst active-theme nil "Variable for holding value of theme appearance.")
+(defconst active-theme nil "Variable for holding light/dark value of theme appearance.")
 
 (defun lem--apply-default-theme (appearance)
   "If no other theme is set, load a default theme (modus-themes),taking current system APPEARANCE into consideration."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
-    ('light (progn (load-theme 'modus-operandi t) (setq active-theme 'light-theme)))
-    ('dark  (progn (load-theme 'modus-vivendi t) (setq active-theme 'dark-theme)))))
+    ('light (progn
+              (load-theme 'modus-operandi t)
+              (setq active-theme 'light-theme)))
+    ('dark  (progn
+              (load-theme 'modus-vivendi t)
+              (setq active-theme 'dark-theme)))))
 
-;; Check if there are any user config files. If not then load modus-themes as default.
-(let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/"))
-      (user-config-file (expand-file-name "config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
-  (if (not (or (file-exists-p user-config-file)
-               (file-exists-p early-config-file)))
+;; Check if there is a user early-config file. If not then load modus-themes as default.
+(let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
+  (if (not (file-exists-p early-config-file))
       (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-theme)
     ;; Otherwise if the user early-config file exists then load it.
     (load early-config-file nil 'nomessage)))
