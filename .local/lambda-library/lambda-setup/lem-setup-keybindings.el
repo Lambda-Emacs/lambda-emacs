@@ -332,6 +332,30 @@
 
 ;;;; Hydras
 
+;;;; Ediff Hydra
+;; From the hydra wiki https://github.com/abo-abo/hydra/wiki/Emacs#ediff
+
+(with-eval-after-load 'ediff
+  (with-eval-after-load 'hydra
+    (defhydra hydra-ediff (:color blue :hint nil)
+      "
+      ^Buffers           Files           VC                     Ediff regions
+      ----------------------------------------------------------------------
+      _b_uffers           _f_iles (_=_)       _r_evisions              _l_inewise
+      _B_uffers (3-way)   _F_iles (3-way)                          _w_ordwise
+      _c_urrent file
+      "
+      ("b" ediff-buffers)
+      ("B" ediff-buffers3)
+      ("=" ediff-files)
+      ("f" ediff-files)
+      ("F" ediff-files3)
+      ("c" ediff-current-file)
+      ("r" ediff-revision)
+      ("l" ediff-regions-linewise)
+      ("w" ediff-regions-wordwise))))
+;; esc quits
+
 ;;;;; Transpose hydra
 ;; From the hydra wiki https://github.com/abo-abo/hydra/wiki/Emacs#transpose
 

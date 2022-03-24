@@ -21,37 +21,30 @@
 ;; Useful functions
 
 ;;; Code:
+;;;; 𝛌-Emacs Configuration Functions
+;;;;; Call an emacs instance
+;; Call an emacs instance for testing
 
-;;;; Package Setup Skeleton
-;; When writing lem-modules, insert header from skeleton
-(auto-insert-mode)
-(with-eval-after-load "autoinsert"
-  (define-auto-insert
-    (cons (concat (expand-file-name lem-setup-dir) "lem-setup-.*\\.el")
-          "𝛌-Emacs Lisp Skeleton")
-    '("𝛌-Emacs Module Description: "
-      ";;;; " (file-name-nondirectory (buffer-file-name)) " --- " str
-      (make-string (max 2 (- 80 (current-column) 27)) ?\s)
-      "-*- lexical-binding: t; -*-" '(setq lexical-binding t)
-      "
-;; Copyright (C) " (format-time-string "%Y") "
-;; SPDX-License-Identifier: MIT
-;; Author: Colin McLear
-;;; Commentary:
-;; " _ "
-;;; Code:
-(provide '"
-      (file-name-base (buffer-file-name))
-      ")
-;;; " (file-name-nondirectory (buffer-file-name)) " ends here\n")))
+(defun lem/call-emacs ()
+  (interactive)
+  (start-process "Emacs" nil
+                 ;; (executable-find "/usr/local/bin/emacs")))
+                 (executable-find "/Applications/Emacs.app/Contents/MacOS/Emacs")))
+;; (executable-find "Emacs")))
+;;;;; Archive region to setup-archive
+(defun lem/setup-kill-and-archive-region ()
+  "Delete & append region to end of setup-archive.el"
+  (interactive)
+  (append-to-file (region-beginning) (region-end) (concat lem-setup-dir "setup-files-archive/setup-archive.el"))
+  (delete-region (region-beginning) (region-end)))
 
-
-;;;; Config Helper Functions
+;;;;; Config Helper Functions
 
 (defvar lem-files-sources-data
   `(("Init Files"      ?i ,lem-emacs-dir)
     ("Setup Files"     ?s ,lem-setup-dir)
-    ("User Files"      ?u ,lem-user-dir)))
+    ("User Files"      ?u ,lem-user-dir))
+  "Define titles, quick-keys, and directories to be searched for files.")
 
 (defun lem--files-make-source (name char dir)
   "Return a notes source list suitable for `consult--multi'.
@@ -97,6 +90,49 @@
   "Load the user config file."
   (interactive)
   (load-file lem-config-file))
+
+;;;; Built-in Functions
+;; These are useful built-in functions, but you have to enable them
+(put 'erase-buffer 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'dired-find-alternate-file 'disabled nil)
+
+;; Not going to use these commands
+(put 'ns-print-buffer 'disabled t)
+(put 'suspend-frame 'disabled t)
+
+;;;; CRUX
+;; A Collection of Ridiculously Useful eXtensions for Emacs. Crux bundles many
+;; useful interactive commands to enhance your overall Emacs experience. Most of
+;; the crux commands are related to the editing experience, but there are also a
+;; bunch of utility commands that are just very useful to have (e.g.
+;; crux-open-with and crux-reopen-as-root). Originally part of Emacs Prelude.
+(use-package crux
+  :straight (:type git :host github :repo "bbatsov/crux")
+  :defer 1
+  :bind
+  ("C-k"   . crux-smart-kill-line)
+  ("C-a"   . crux-move-beginning-of-line))
+
+;;;; Search Functions
+;;;;; Search given directory
+(defun lem/search-in-input-dir ()
+  "Grep for a string in the input directory using completing read function"
+  (interactive)
+  (let ((current-prefix-arg '(4))) (call-interactively #'consult-ripgrep)))
+
+
+;;;; Frame Functions
+;;;;; Delete Frame or Quit
+(defun lem/delete-frame-or-quit ()
+  "Delete the selected frame & kill terminal buffers. If the last frame, kill Emacs."
+  (interactive)
+  (kill-matching-buffers "*vterm" nil t)
+  (when (condition-case nil (delete-frame)
+          (error (save-buffers-kill-emacs))))
+  (select-frame-set-input-focus (selected-frame)))
 
 ;;;; Window Functions
 ;;;;; Toggle Dedicated Window
@@ -355,110 +391,7 @@ will be killed."
 
 ;;;; File Functions
 
-;;;; Get string from file
-(defun lem/get-string-from-file (filePath)
-  "Read a file and return the contents as a string"
-  (with-temp-buffer
-    (insert-file-contents filePath)
-    (buffer-string)))
-
-;;;; Archive region to setup-archive
-(defun lem/setup-kill-and-archive-region ()
-  "Delete & append region to end of setup-archive.el"
-  (interactive)
-  (append-to-file (region-beginning) (region-end) (concat lem-setup-dir "setup-files-archive/setup-archive.el"))
-  (delete-region (region-beginning) (region-end)))
-
-;;;; Insert Comment Seperator
-;; ======================================================
-;; Insert commented seperator like this line
-;; ======================================================
-;; https://github.com/kuanyui/writing-utils.el/blob/db29d30e11b6d6d96c0d351b642af97631f3365f/writing-utils.el#L85
-
-(defun lem/insert-commented-separator()
-  "Insert a commented separator in your code. Like this in
-  ELisp:
-  ;; ======================================================
-  ;; Title
-  ;; ======================================================
-  Which makes code easier to read.
-  "
-  (interactive)
-  (let* ((line (make-string 54 (string-to-char "=")))
-	     (comment-start (if (member major-mode '(emacs-lisp-mode lisp-mode))
-			                ";; " comment-start))
-         (seperator (concat comment-start line)))
-    (when (> (current-column) 0) (end-of-line) (newline))
-    (insert (format "%s\n%s\n%s"
-		            seperator comment-start seperator))
-    (previous-line)
-    ))
-
-;;;; Delete Frame or Quit
-(defun lem/delete-frame-or-quit ()
-  "Delete the selected frame & kill terminal buffers. If the last frame, kill Emacs."
-  (interactive)
-  (kill-matching-buffers "*vterm" nil t)
-  (when (condition-case nil (delete-frame)
-          (error (save-buffers-kill-emacs))))
-  (select-frame-set-input-focus (selected-frame)))
-
-;;;; Insert Weather
-;; From [[https://www.baty.blog/2019/insert-weather-into-emacs-buffer][Jack Baty]] with some slight modifications for formatting. See also [[https://github.com/chubin/wttr.in][wttr.in]]. 
-(defun lem/insert-weather ()
-  (interactive)
-  (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT'")))
-    (insert (mapconcat (function (lambda (x) (format ": %s" x)))
-                       (split-string w "\n")
-                       "\n")))
-  (newline))
-
-;;;; Built-in Functions
-;; These are useful built-in functions, but you have to enable them
-(put 'erase-buffer 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-(put 'dired-find-alternate-file 'disabled nil)
-
-;; Not going to use these commands
-(put 'ns-print-buffer 'disabled t)
-(put 'suspend-frame 'disabled t)
-
-;;;; Call an emacs instance
-;; Call an emacs instance for testing
-
-(defun lem/call-emacs ()
-  (interactive)
-  (start-process "Emacs" nil
-                 ;; (executable-find "/usr/local/bin/emacs")))
-                 (executable-find "/Applications/Emacs.app/Contents/MacOS/Emacs")))
-;; (executable-find "Emacs")))
-
-;;;; Formatted Copy
-(defun formatted-copy ()
-  "Export region to HTML, and copy it to the clipboard."
-  (interactive)
-  (save-window-excursion
-    (let* ((buf (org-export-to-buffer 'html "*Formatted Copy*" nil nil t t))
-           (html (with-current-buffer buf (buffer-string))))
-      (with-current-buffer buf
-        (shell-command-on-region
-         (point-min)
-         (point-max)
-         "textutil -stdin -format html -convert rtf -stdout | pbcopy"))
-      (kill-buffer buf))))
-
-(global-set-key (kbd "H-w") 'formatted-copy)
-
-;;;; CRUX
-(use-package crux
-  :defer 1
-  :bind
-  ("C-k"   . crux-smart-kill-line)
-  ("C-a"   . crux-move-beginning-of-line))
-
-;;;; Delete Current File
+;;;;; Delete Current File
 ;; from magnars
 
 (defun lem/delete-current-buffer-file ()
@@ -474,108 +407,31 @@ will be killed."
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
-;;;; Duplicate file
+;;;;; Get string from file
+(defun lem/get-string-from-file (filePath)
+  "Read a file and return the contents as a string"
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
+
+;;;;; Duplicate file
 ;; Duplicate a file in dired or deer
 (defun lem/duplicate-file ()
   (interactive)
   (dired-do-copy-regexp "\\(.*\\)\\.\\(.*\\)" "\\1 (copy).\\2"))
 
-;;;; Ediff Hydra
-;; From the hydra wiki https://github.com/abo-abo/hydra/wiki/Emacs#ediff
-
-(with-eval-after-load 'ediff
-  (with-eval-after-load 'hydra
-  (defhydra hydra-ediff (:color blue :hint nil)
-    "
-  ^Buffers           Files           VC                     Ediff regions
-  ----------------------------------------------------------------------
-  _b_uffers           _f_iles (_=_)       _r_evisions              _l_inewise
-  _B_uffers (3-way)   _F_iles (3-way)                          _w_ordwise
-  _c_urrent file
-  "
-    ("b" ediff-buffers)
-    ("B" ediff-buffers3)
-    ("=" ediff-files)
-    ("f" ediff-files)
-    ("F" ediff-files3)
-    ("c" ediff-current-file)
-    ("r" ediff-revision)
-    ("l" ediff-regions-linewise)
-    ("w" ediff-regions-wordwise))))
-;; esc quits
-
-;;;; Quit All the Things!
-;; From a great vim migration guide by Juanjo Álvarez
-;; https://juanjoalvarez.net/en/detail/2014/sep/19/vim-emacsevil-chaotic-migration-guide/
-;; (original code from davvil) https://github.com/davvil/.emacs.d/blob/master/init.el
-
-(defun minibuffer-keyboard-quit ()
-  "Abort recursive edit.
-  In Delete Selection mode, if the mark is active, just deactivate it;
-  then it takes a second \\[keyboard-quit] to abort the minibuffer."
+;;;;; Move File
+(defun lem/move-file ()
+  "Write this file to a new location, and delete the old one."
   (interactive)
-  (if (and delete-selection-mode transient-mark-mode mark-active)
-      (setq deactivate-mark  t)
-    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
-    (abort-recursive-edit)))
-(with-eval-after-load 'evil
-(define-key evil-normal-state-map [escape] 'keyboard-quit)
-(define-key evil-visual-state-map [escape] 'keyboard-quit)
-(define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
-(global-set-key [escape] 'evil-exit-emacs-state))
+  (let ((old-location (buffer-file-name)))
+    (call-interactively #'write-file)
+    (when old-location
+      (delete-file old-location))))
 
-
-;;;; Fill
-(defun lem/fill-paragraph ()
-  "if in an org buffer use org-fill-paragraph; else use fill-paragraph"
-  (interactive)
-  (if (derived-mode-p 'org-mode)
-      (call-interactively #'lem-org-fill-paragraph)
-    (call-interactively #'fill-paragraph)))
-
-(global-set-key [remap fill-paragraph]
-                #'lem/fill-paragraph)
-
-;;;; Unfill
-;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
-(defun lem/unfill-paragraph (&optional region)
-  "Takes a multi-line paragraph and makes it into a single line of text."
-  (interactive (progn (barf-if-buffer-read-only) '(t)))
-  (let ((fill-column (point-max))
-        ;; This would override `fill-column' if it's an integer.
-        (emacs-lisp-docstring-fill-column t))
-    (fill-paragraph nil region)))
-(keymap-global-set "M-Q" #'lem/unfill-paragraph)
-
-;;;; Insert seconds
-(defun lem/insert-time-string ()
-  "Insert year, day, hour, month, and second as a single string
-with no seperation"
-  (interactive)
-  (insert (format-time-string "%Y%d%H%M%S")))
-
-(defun lem/insert-time-seconds-epoch ()
-  "Insert the integer number of seconds since the epoch."
-  (interactive)
-  (insert (format-time-string "%s")))
-;; (global-set-key (kbd "C-c e") 'lem/insert-time-seconds-epoch)
-
-;;;; Jump to sexp
-
-(defun lem/forward-or-backward-sexp (&optional arg)
-  "Go to the matching parenthesis character if one is adjacent to point."
-  (interactive "^p")
-  (cond ((looking-at "\\s(") (forward-sexp arg))
-        ((looking-back "\\s)" 1) (backward-sexp arg))
-        ;; Now, try to succeed from inside of a bracket
-        ((looking-at "\\s)") (forward-char) (backward-sexp arg))
-        ((looking-back "\\s(" 1) (backward-char) (forward-sexp arg))))
-
-;;;; Make Parent Directory
+;;;; Directory Functions
+;;;;; Make Parent Directory
 ;;  Create a directory – or a hierarchy of them – while finding a file in a
 ;;  nonexistent directory. From mbork
 ;;  http://mbork.pl/2016-07-25_Making_directories_on_the_fly
@@ -586,16 +442,94 @@ with no seperation"
 
 (add-hook 'find-file-not-found-functions #'make-parent-directory)
 
-;;;; Move File
-(defun lem/move-file ()
-  "Write this file to a new location, and delete the old one."
+;;;; Text Functions
+;;;;; Fill Paragraph
+(defun lem/fill-paragraph ()
+  "if in an org buffer use org-fill-paragraph; else use fill-paragraph"
   (interactive)
-  (let ((old-location (buffer-file-name)))
-    (call-interactively #'write-file)
-    (when old-location
-      (delete-file old-location))))
+  (if (derived-mode-p 'org-mode)
+      (call-interactively #'lem-org-fill-paragraph)
+    (call-interactively #'fill-paragraph)))
 
-;;;; Clipboard Transforms Using Pandoc
+(global-set-key [remap fill-paragraph]
+                #'lem/fill-paragraph)
+
+;;;;; Unfill Paragraph
+;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+(defun lem/unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max))
+        ;; This would override `fill-column' if it's an integer.
+        (emacs-lisp-docstring-fill-column t))
+    (fill-paragraph nil region)))
+(keymap-global-set "M-Q" #'lem/unfill-paragraph)
+
+;;;;; Insert seconds
+(defun lem/insert-time-string ()
+  "Insert year, day, hour, month, and second as a single string
+      with no seperation"
+  (interactive)
+  (insert (format-time-string "%Y%d%H%M%S")))
+
+(defun lem/insert-time-seconds-epoch ()
+  "Insert the integer number of seconds since the epoch."
+  (interactive)
+  (insert (format-time-string "%s")))
+;; (global-set-key (kbd "C-c e") 'lem/insert-time-seconds-epoch)
+
+;;;;; Formatted Copy
+(defun formatted-copy ()
+  "Export region to HTML, and copy it to the clipboard."
+  (interactive)
+  (save-window-excursion
+    (let* ((buf (org-export-to-buffer 'html "*Formatted Copy*" nil nil t t))
+           (html (with-current-buffer buf (buffer-string))))
+      (with-current-buffer buf
+        (shell-command-on-region
+         (point-min)
+         (point-max)
+         "textutil -stdin -format html -convert rtf -stdout | pbcopy"))
+      (kill-buffer buf))))
+
+(global-set-key (kbd "H-w") 'formatted-copy)
+
+;;;;; Insert Comment Seperator
+;; ======================================================
+;; Insert commented seperator like this line
+;; ======================================================
+;; https://github.com/kuanyui/writing-utils.el/blob/db29d30e11b6d6d96c0d351b642af97631f3365f/writing-utils.el#L85
+
+(defun lem/insert-commented-separator()
+  "Insert a commented separator in your code. Like this in
+      ELisp:
+      ;; ======================================================
+      ;; Title
+      ;; ======================================================
+      Which makes code easier to read.
+      "
+  (interactive)
+  (let* ((line (make-string 54 (string-to-char "=")))
+	    (comment-start (if (member major-mode '(emacs-lisp-mode lisp-mode))
+			                ";; " comment-start))
+         (seperator (concat comment-start line)))
+    (when (> (current-column) 0) (end-of-line) (newline))
+    (insert (format "%s\n%s\n%s"
+		            seperator comment-start seperator))
+    (previous-line)
+    ))
+
+;;;;; Insert Weather
+;; From [[https://www.baty.blog/2019/insert-weather-into-emacs-buffer][Jack Baty]] with some slight modifications for formatting. See also [[https://github.com/chubin/wttr.in][wttr.in]].
+(defun lem/insert-weather ()
+  (interactive)
+  (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT'")))
+    (insert (mapconcat (function (lambda (x) (format ": %s" x)))
+                       (split-string w "\n")
+                       "\n")))
+  (newline))
+
+;;;;; Clipboard Transforms Using Pandoc
 (defun lem/org-to-markdown ()
   "convert clipboard contents from org to markdown and paste"
   (interactive)
@@ -672,28 +606,21 @@ with no seperation"
   (kill-buffer)
   (delete-frame)
   (do-applescript "if application \"Mail\" is running then
-  tell application \"Mail\"
-  activate
-  delay 0.35
-  tell application \"System Events\"
-  keystroke \"v\" using {command down}
-  end tell
-  end tell
-  end if"))
+      tell application \"Mail\"
+      activate
+      delay 0.35
+      tell application \"System Events\"
+      keystroke \"v\" using {command down}
+      end tell
+      end tell
+      end if"))
 
-;;;; Mailmate save mail and kill client
-;; Save buffer and exit emacsclient for Mailmate
-(defun lem/email-save-and-kill ()
-  (interactive)
-  (save-buffer)
-  (server-edit))
-
-;;;; Smart Yanking
+;;;;; Smart Yanking
 ;;Courtesy of Marcin Borkowski http://mbork.pl/2018-07-02_Smart_yanking
 
 (defun has-space-at-boundary-p (string)
   "Check whether STRING has any whitespace on the boundary.
-  Return 'left, 'right, 'both or nil."
+      Return 'left, 'right, 'both or nil."
   (let ((result nil))
     (when (string-match-p "^[[:space:]]+" string)
       (setq result 'left))
@@ -705,7 +632,7 @@ with no seperation"
 
 (defun is-there-space-around-point-p ()
   "Check whether there is whitespace around point.
-  Return 'left, 'right, 'both or nil."
+      Return 'left, 'right, 'both or nil."
   (let ((result nil))
     (when (< (save-excursion
                (skip-chars-backward "[:space:]"))
@@ -715,20 +642,20 @@ with no seperation"
                (skip-chars-forward "[:space:]"))
              0)
       (if (eq result 'left)
-      (setq result 'both)
-    (setq result 'right)))
+          (setq result 'both)
+        (setq result 'right)))
     result))
 
 (defun set-point-before-yanking (string)
   "Put point in the appropriate place before yanking STRING."
   (let ((space-in-yanked-string (has-space-at-boundary-p string))
-    (space-at-point (is-there-space-around-point-p)))
+        (space-at-point (is-there-space-around-point-p)))
     (cond ((and (eq space-in-yanked-string 'left)
-        (eq space-at-point 'left))
-       (skip-chars-backward "[:space:]"))
-      ((and (eq space-in-yanked-string 'right)
-        (eq space-at-point 'right))
-       (skip-chars-forward "[:space:]")))))
+                (eq space-at-point 'left))
+           (skip-chars-backward "[:space:]"))
+          ((and (eq space-in-yanked-string 'right)
+                (eq space-at-point 'right))
+           (skip-chars-forward "[:space:]")))))
 
 (defun set-point-before-yanking-if-in-text-mode (string)
   "Invoke `set-point-before-yanking' in text modes."
@@ -741,19 +668,7 @@ with no seperation"
  #'set-point-before-yanking-if-in-text-mode)
 ;; http://lists.gnu.org/archive/html/help-gnu-emacs/2007-05/msg00975.html
 
-
-
-;;;; Toggle markup
-(defun lem/toggle-display-markup ()
-  "Toggle the display of markup in markdown and org modes"
-  (interactive)
-  (if (eq major-mode 'org-mode)
-      (org-toggle-link-display)
-    (if markdown-hide-markup
-        (markdown-toggle-markup-hiding 0)
-      (markdown-toggle-markup-hiding))))
-
-;;;; Wrap in Yaml block
+;;;;; Wrap in Yaml block
 (defun lem/yaml-wrap ()
   "wrap region in --- for a yaml block"
   (interactive)
@@ -764,10 +679,56 @@ with no seperation"
     (goto-char start)
     (insert "---" "\n")))
 
-;;;; Quit Function
+;;;;; Jump to sexp
+
+(defun lem/forward-or-backward-sexp (&optional arg)
+  "Go to the matching parenthesis character if one is adjacent to point."
+  (interactive "^p")
+  (cond ((looking-at "\\s(") (forward-sexp arg))
+        ((looking-back "\\s)" 1) (backward-sexp arg))
+        ;; Now, try to succeed from inside of a bracket
+        ((looking-at "\\s)") (forward-char) (backward-sexp arg))
+        ((looking-back "\\s(" 1) (backward-char) (forward-sexp arg))))
+
+;;;; UI Functions
+;;;;; Toggle markup
+(defun lem/toggle-display-markup ()
+  "Toggle the display of markup in markdown and org modes"
+  (interactive)
+  (if (eq major-mode 'org-mode)
+      (org-toggle-link-display)
+    (if markdown-hide-markup
+        (markdown-toggle-markup-hiding 0)
+      (markdown-toggle-markup-hiding))))
+
+;;;;; Quit All the Things!
+;; From a great vim migration guide by Juanjo Álvarez
+;; https://juanjoalvarez.net/en/detail/2014/sep/19/vim-emacsevil-chaotic-migration-guide/
+;; (original code from davvil) https://github.com/davvil/.emacs.d/blob/master/init.el
+
+(defun minibuffer-keyboard-quit ()
+  "Abort recursive edit.
+      In Delete Selection mode, if the mark is active, just deactivate it;
+      then it takes a second \\[keyboard-quit] to abort the minibuffer."
+  (interactive)
+  (if (and delete-selection-mode transient-mark-mode mark-active)
+      (setq deactivate-mark  t)
+    (when (get-buffer "*Completions*") (delete-windows-on "*Completions*"))
+    (abort-recursive-edit)))
+(with-eval-after-load 'evil
+  (define-key evil-normal-state-map [escape] 'keyboard-quit)
+  (define-key evil-visual-state-map [escape] 'keyboard-quit)
+  (define-key minibuffer-local-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-ns-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-completion-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-must-match-map [escape] 'minibuffer-keyboard-quit)
+  (define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
+  (global-set-key [escape] 'evil-exit-emacs-state))
+
+;;;;; Quit Message Function
 (defun lem--quit-p (&optional prompt)
   "Return t if this session should be killed. Prompts the user for
- confirmation."
+      confirmation."
   (or (yes-or-no-p (format "››› %s" (or prompt "Quit Emacs?")))
       (ignore (message "Aborted"))))
 (setq confirm-kill-emacs nil)
@@ -793,7 +754,7 @@ with no seperation"
     "Okay, look. We've both said a lot of things you're going to regret..."
     "You are *not* prepared!")
   "A list of quit messages, picked randomly by `lem-quit'. Taken from
- http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
+      http://doom.wikia.com/wiki/Quit_messages and elsewhere.")
 
 (defun lem--quit (&rest _)
   (lem--quit-p
@@ -804,8 +765,7 @@ with no seperation"
 (remove-hook 'kill-emacs-query-functions #'lem--quit-p)
 (add-hook 'kill-emacs-query-functions #'lem--quit)
 
-;;; End Funtions-Macros
+;;; Provide
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-functions)
-
 ;;; lem-setup-functions.el ends here

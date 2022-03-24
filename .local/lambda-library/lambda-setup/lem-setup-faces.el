@@ -1,10 +1,16 @@
-;;;; lem-setup-faces.el --- Setup for faces          -*- lexical-binding: t; -*-
+;;; lem-setup-faces.el --- Setup for faces          -*- lexical-binding: t; -*-
 ;; Copyright (C) 2022
 ;; SPDX-License-Identifier: MIT
 ;; Author: Colin McLear
 ;;; Commentary:
 ;;
 ;;; Code:
+;;;; Outline Faces
+;; Make outline faces look better
+(use-package outline-minor-faces
+  :after outline
+  :config (add-hook 'outline-minor-mode-hook
+                    'outline-minor-faces-add-font-lock-keywords))
 
 ;;;; Underline
 (setq x-underline-at-descent-line t)
@@ -84,9 +90,7 @@
   :config
   (toggle-hl-line-when-idle 1 t)
   ;; don't highlight when idle on splash page
-  (add-hook 'lem-splash-mode-hook (lambda () (when lem-splash-mode (toggle-hl-line-when-idle))))
-
-  )
+  (add-hook 'lem-splash-mode-hook (lambda () (when lem-splash-mode (toggle-hl-line-when-idle)))))
 
 ;;;;; Highlight Numbers & TODOS
 (use-package highlight-numbers
@@ -146,14 +150,13 @@
   ;; pulse on window change
   (push 'pulse-line window-selection-change-functions))
 
-;; Pulse changes in buffer region
 (use-package goggles
-  :straight (:type git :host github :repo "minad/goggles")
-  :defer 1
+  :hook ((prog-mode text-mode) . goggles-mode)
   :config
-  (goggles-mode 1))
+  (setq-default goggles-pulse t)) ;; set to nil to disable pulsing
 
 ;;;;; Crosshair Highlighting
+;; Highlight cursor vertically and horizontally
 (use-package crosshairs
   :straight t
   :commands (crosshairs-highlight

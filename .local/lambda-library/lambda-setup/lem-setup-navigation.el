@@ -25,6 +25,8 @@
 
 
 ;;;; Imenu list outline
+;; Make a useful outline buffer
+;; Binding set to toggle "o"
 (use-package imenu-list
   :commands (imenu-list-smart-toggle imenu-list-minor-mode)
   :config
@@ -33,6 +35,7 @@
         imenu-list-position 'left))
 
 ;;;; Save place
+;; Everyone remember where we parked.
 (use-package saveplace
   :hook (after-init . save-place-mode)
   :config
@@ -40,12 +43,13 @@
   (setq save-place-forget-unreadable-files nil))
 
 ;;;; Go To Change
+;; Easily go to last change
 (use-package goto-last-change
   :straight (:type git :host github :repo "camdez/goto-last-change.el")
-  :bind (("C-\"" . goto-last-change)))
-
+  :commands (goto-last-change))
 
 ;;;; Recent files
+;; List recent files
 (use-package recentf
   :hook (after-init . recentf-mode)
   :config
@@ -59,7 +63,7 @@
                           "cache"
                           "recentf"
                           "url"
-                          recentf-max-saved-items 300
+                          recentf-max-saved-items 500
                           recentf-max-menu-items 10)))
 
 ;;;; Goto Address
@@ -86,46 +90,40 @@
 (defun lem/goto-journal ()
   (interactive)
   (find-file (concat org-directory "journal.org")))
-(defun goto-early-init.el ()
+(defun lem/goto-early-init.el ()
   "Open early-init.el file"
   (interactive)
   (find-file "~/.emacs.d/early-init.el"))
-(defun goto-init.el ()
+(defun lem/goto-init.el ()
   "Open init.el file"
   (interactive)
   (find-file user-init-file))
-(defun goto-custom.el ()
+(defun lem/goto-custom.el ()
   "Open custom.el file"
   (interactive)
   (find-file custom-file))
-(defun goto-config.org ()
-  "Open config.org file"
+(defun lem/goto-config ()
+  "Open user config file"
   (interactive)
-  (find-file "~/.emacs.d/config.org"))
-(defun load-config ()
+  (find-file lem-config-file))
+(defun lem/load-config ()
   "Load config "
   (interactive)
-  ;; (lem/tangle-emacs-config)
-  (load-file user-init-file))
-(defun goto-dotfiles.org ()
-  "Open dotfiles.org file"
-  (interactive)
-  (find-file "~/dotfiles/dotfiles.org"))
-(defun goto-emacs-dir ()
-  "Open dotfiles.org file"
+  (load-file user-init-file)
+  (load-file lem-config-file))
+(defun lem/goto-emacs-dir ()
+  "Open 𝛌-Emacs directory"
   (interactive)
   (find-file user-emacs-directory))
-(defun goto-org-files ()
+(defun lem/goto-org-files ()
   "Open directory with org files"
   (interactive)
   (find-file org-directory))
-(defun goto-pandoc-config ()
-  "open pandoc metadata file"
-  (interactive)
-  (find-file "~/.pandoc/metadata.yml"))
+
 
 ;;;; Jump in Buffer
 (defun lem/jump-in-buffer ()
+  "Jump between headlines in buffer using consult"
   (interactive)
   (cond
    ((eq major-mode 'org-mode)

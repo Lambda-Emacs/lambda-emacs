@@ -19,7 +19,8 @@
 
 ;;; Commentary:
 
-;; Tab-bar -- use tab-bar for window & buffer management -*- lexical-binding: t; -*-
+;; Tabs -- in some ways tabs are not very Emacsy, but tab-bar is great for
+;; window & buffer management. The setup for tabs here is focused on tabs for window configurations related to a "workspace" -- i.e. a project or other set of windows.
 
 ;;; Code:
 
@@ -33,6 +34,7 @@
              tab-bar-switch-to-next-tab
              tab-bar-switch-to-prev-tab)
   :custom
+  ;; Unless another file/buffer is designated, start from scratch buffer
   (tab-bar-new-tab-choice "*scratch*")
   (tab-bar-select-tab-modifiers '(super))
   (tab-bar-close-tab-select 'recent)
@@ -70,24 +72,21 @@ questions.  Else use completion to select the tab to switch to."
   (setq tab-bar-echo-area-trigger-display-functions nil)
   (tab-bar-echo-area-mode 1))
 
-;; display all tabs when idle
-;; (run-with-idle-timer 5 t (lambda () (message nil) (tab-bar-echo-area-display-tab-names)))
-
 ;;;;; Echo-Bar
 ;; Display info in the echo area -- using just for tabs/workspaces right now
 (use-package echo-bar
   :straight (echo-bar :type git :host github :repo "qaiviq/echo-bar.el")
   :config
-  (setq echo-bar-function #'cpm--echo-bar
+  (setq echo-bar-function #'lem--echo-bar
         echo-bar-minibuffer t)
   (echo-bar-enable))
 
-(defun cpm--echo-bar ()
+(defun lem--echo-bar ()
   "Function for echo bar"
   ;; Show tabs
-  (cpm-echo-bar/tabs))
+  (lem-echo-bar/tabs))
 
-(defun cpm-echo-bar/tabs ()
+(defun lem-echo-bar/tabs ()
   "Display tab names in the echo area. Depends on `tab-bar-echo-area'"
   (interactive)
   (require 'tab-bar-echo-area)
@@ -119,7 +118,11 @@ questions.  Else use completion to select the tab to switch to."
 
 
 ;;;; Workspaces
-;; Workspaces leveraging tab-bar and project.el
+;; Workspaces leveraging tab-bar and project.el. A "workspace" is just a tab
+;; with an isolated set of buffers (see consult function). 𝛌-Emacs sets things
+;; up so that these workspaces are nicely displayed out of the way in the echo
+;; area rather than as visible tabs in the header tab-line at the top of the
+;; frame.
 (use-package emacs-workspaces
   :straight (:type git :host github :repo "mclear-tools/emacs-workspaces")
   ;; Add some functions to the project map
@@ -152,9 +155,6 @@ questions.  Else use completion to select the tab to switch to."
     "Set workspace buffer list for consult-buffer.")
   (push consult--source-workspace consult-buffer-sources))
 
-;;;; Set Workspace  Variables
-
-(setq lem-open-agenda-in-workspace #'lem/open-agenda-in-workspace)
 
 (provide 'lem-setup-tabs)
 ;;; lem-setup-tabs.el ends here
