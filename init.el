@@ -32,8 +32,12 @@ contains all libraries and packages, and lem-temp-dir, which
 contains non-essential files and emphemera.")
 
 (defconst lem-library-dir (concat lem-local-dir "lambda-library/")
-  "The directory for Lisp libraries. This will house any personal
-Lisp libraries as well as all setup libraries and external packages.")
+  "The directory for 𝛌-Emacs Lisp libraries. This will house all
+setup libraries and external libraries or packages.")
+
+;; Set user project directory
+(defconst lem-user-elisp-dir nil
+  "Directory for personal elisp projects.")
 
 (defconst lem-user-dir (concat lem-library-dir "lambda-user/")
   "Storage for personal elisp, scripts, and any other private files.")
@@ -61,6 +65,7 @@ problems.")
 ;; Find the user configuration file
 (defvar lem-config-file (expand-file-name "config.el" lem-user-dir)
   "The user's configuration file.")
+(defvar lem-project-dir nil "Set the directory for user projects.")
 
 ;;;;; Path Settings
 ;; Directory paths
@@ -78,6 +83,7 @@ problems.")
 ;; Set PATH properly for emacs. This should make a package like
 ;; `exec-path-from-shell' unnecessary
 
+;;;;; Exec Path
 ;; Set local (i.e. current user) bin path
 (when (file-directory-p (concat (getenv "HOME") "/bin"))
   (defconst lem-local-bin (concat (getenv "HOME") "/bin") "Local execs."))
@@ -96,33 +102,33 @@ problems.")
 (setq exec-path (append exec-path (list homebrew lem-local-bin usr-local-bin usr-local-sbin)))
 
 ;;;; Package Settings
-;; Use straight and use-package to manage settings. Defer package loading as
-;; much as possible to either the after-init-hook or after some number of
-;; seconds of idle. This helps especially when doing, e.g., a quick
-;; restart-and-check of something in emacs.
+;; Use straight to manage package installation and use-package to manage
+;; settings. Defer package loading as much as possible to either the
+;; after-init-hook or after some number of seconds of idle. This helps
+;; especially when doing, e.g., a quick restart-and-check of something in emacs.
 
 ;;;;; Straight
 ;;;;;; Straight settings
 ;; Use straight.el to install all packages
 ;; https://github.com/raxod502/straight.el
 ;; Don't check packages on startup
-(setq straight-check-for-modifications '(check-on-save find-when-checking))
+(customize-set-variable 'straight-check-for-modifications '(check-on-save find-when-checking))
 ;; Set branch
-(setq straight-repository-branch "develop")
+(customize-set-variable 'straight-repository-branch "develop")
 ;; Set dir
-(setq straight-base-dir lem-library-dir)
+(customize-set-variable 'straight-base-dir lem-library-dir)
 ;; Use use-package
-(setq straight-use-package-by-default t)
+(customize-set-variable 'straight-use-package-by-default t)
 ;; Check updates manually
-(setq straight-vc-git-auto-fast-forward nil)
+(customize-set-variable 'straight-vc-git-auto-fast-forward nil)
 ;; Avoid problems with straight building with native-comp
 ;; See https://github.com/raxod502/straight.el/issues/757
-(setq native-comp-deferred-compilation-deny-list nil)
+(customize-set-variable 'native-comp-deferred-compilation-deny-list nil)
 ;; Tell straight.el about the profiles we are going to be using.
-(setq straight-profiles
-      '((nil . "default.el")
-        ;; Packages which are pinned to a specific commit.
-        (pinned . "pinned.el")))
+(customize-set-variable 'straight-profiles
+                        '((nil . "default.el")
+                          ;; Packages which are pinned to a specific commit.
+                          (pinned . "pinned.el")))
 
 ;;;;;; Bootstrap straight
 (defvar bootstrap-version)
@@ -158,20 +164,23 @@ problems.")
 ;; install use package
 (straight-use-package 'use-package)
 ;; settings
-(setq use-package-always-defer nil
-      use-package-verbose t
-      use-package-minimum-reported-time 0
-      use-package-enable-imenu-support t
-      use-package-expand-minimally nil
-      use-package-always-ensure nil)
+(use-package use-package
+  :custom
+  (use-package-always-defer nil)
+  (use-package-verbose t)
+  ;; this is really helpful for profiling
+  (use-package-minimum-reported-time 0)
+  (use-package-enable-imenu-support t)
+  (use-package-expand-minimally nil)
+  (use-package-always-ensure nil))
 
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
 
 (use-package el-patch
   :straight t
-  :config
-  (setq el-patch-enable-use-package-integration t))
+  :custom
+  (el-patch-enable-use-package-integration t))
 
 ;;;; Security
 ;; Properly verify outgoing ssl connections.
@@ -180,9 +189,9 @@ problems.")
 (use-package gnutls
   :straight nil
   :defer 1
-  :init
-  (setq gnutls-verify-error t
-        gnutls-min-prime-bits 3072))
+  :custom
+  (gnutls-verify-error t)
+  (gnutls-min-prime-bits 3072))
 
 ;;;; Benchmark Init
 (use-package benchmark-init
@@ -215,8 +224,11 @@ problems.")
 ;; See https://emacs.stackexchange.com/a/34909/11934
 ;; For function switch see https://stackoverflow.com/a/4065412/6277148
 
+;; NOTE: The variable here doesn't really do anything. It is just useful to keep
+;; for a record of switches.
 (defvar lem-config-switches
-  '("clean"
+  '("basic"
+    "clean"
     "core"
     "test")
   "Custom switches for conditional loading from command line.
@@ -231,23 +243,23 @@ only a lem-setup-test.el' file for easy testing.")
     found-switch))
 
 ;;;; Emacs Build Version
-;; When built emacs has git-version patch
-;; to include git sha1 in emacs-version string
+;; When built with https://github.com/mclear-tools/build-emacs-macos, Emacs has
+;; git-version patch to include git sha1 in emacs-version string.
 (setq site-lisp "/Applications/Emacs.app/Contents/Resources/site-lisp/")
 (when (file-exists-p (concat site-lisp "emacs-git-version.el"))
   (require 'emacs-git-version))
 
 (defun lem/emacs-version ()
-  "Print emacs-version and put emacs-version string on the kill ring"
+  "A convenience function to print emacs-version and put
+emacs-version string on the kill ring"
   (interactive)
   (let ((emacs (emacs-version)))
     (message (emacs-version))
     (kill-new emacs)))
 
 ;;;; Outline Navigation
-;; Packages to help with navigating
-;; I used to use outshine.el but it was overkill -- these packages are much smaller/simpler
-
+;; Navigate elisp files easily. Outline is a built-in library and we can easily
+;; configure it to treat elisp comments as headings.
 (use-package outline
   :straight (:type built-in)
   :hook (prog-mode . outline-minor-mode)
@@ -273,14 +285,12 @@ only a lem-setup-test.el' file for easy testing.")
                             (";;;;;; " . 4)
                             (";;;;;;; " . 5))))))
 
-;; Make outline faces look better
-(use-package outline-minor-faces
-  :after outline
-  :config (add-hook 'outline-minor-mode-hook
-                    'outline-minor-faces-add-font-lock-keywords))
+;;;; Load Configuration Modules
+;; Set module groups and load modules. NOTE: These are just convenience
+;; functions. You can also load all setup libraries individually, or even just
+;; load everything in the lem-setup-library directory like so:
+;; (mapc 'load (file-expand-wildcards (concat lem-setup-dir "lem-setup-*.el")))
 
-;;;; Load Configuration
-;; What counts as a `core' module is open to debate, but the below are recommended
 (defun lem--core-modules ()
   "Load 𝛌-Emacs's core files for an interactive session."
   (require 'lem-setup-libraries)
@@ -303,39 +313,37 @@ only a lem-setup-test.el' file for easy testing.")
   (require 'lem-setup-dired)
   (require 'lem-setup-help)
   (require 'lem-setup-tabs)
-  (require 'lem-setup-theme)
   (require 'lem-setup-modeline)
+  (require 'lem-setup-theme)
   (require 'lem-setup-search)
   (when sys-mac
-    (require 'lem-setup-macos))
-  )
+    (require 'lem-setup-macos)))
 
 (defun lem--project-modules ()
   (require 'lem-setup-projects)
   (require 'lem-setup-vc)
-  )
+  (require 'lem-setup-workspaces))
 
 (defun lem--editing-modules ()
   (require 'lem-setup-citation)
   (require 'lem-setup-writing)
   (require 'lem-setup-programming) ;; some of this should go in language module
   (require 'lem-setup-debug)
-  (require 'lem-setup-notes)
-  )
-(defun lem--language-modules ()
-  )
+  (require 'lem-setup-notes))
+
+(defun lem--language-modules ())
+
 (defun lem--shell-modules ()
-  (require 'lem-setup-shell)
-  )
+  (require 'lem-setup-shell))
+
 (defun lem--org-modules ()
   (require 'lem-setup-org)
-  (require 'lem-setup-org-extensions)
-  )
+  (require 'lem-setup-org-extensions))
+
 (defun lem--misc-modules ()
   (require 'lem-setup-pdf)
   (require 'lem-setup-email)
-  (require 'lem-setup-scratch)
-  )
+  (require 'lem-setup-scratch))
 
 ;; Conditionally load configuration files based on switches.
 (cond
@@ -347,7 +355,8 @@ only a lem-setup-test.el' file for easy testing.")
     (set-window-fringes (selected-window) 0 0 nil)
     ;; FIXME: Would be good to have a real splash page here but the screen flashes when frame changes size.
     (setq initial-scratch-message "Welcome to 𝛌-Emacs")
-    (lem--core-modules)))
+    (lem--core-modules)
+    (require 'lem-setup-icomplete)))
  ;; Load the just essential modules
  ((lem--emacs-switches "-basic")
   (progn
@@ -359,7 +368,7 @@ only a lem-setup-test.el' file for easy testing.")
   (progn
     (message "*Loading test file*")
     (require 'lem-setup-test)))
- ;; Load no modules other than the internal icomplete, for better completion.
+ ;; Load no modules other than the built-in icomplete, for better completion.
  ((lem--emacs-switches "-clean")
   (message "*Do not load 𝛌-Emacs setup files. Loading a clean setup plus icomplete*")
   (require 'lem-setup-icomplete))

@@ -64,6 +64,27 @@
   :type '(function string)
   :group 'lem-splash)
 
+;;;; Splash Faces
+(defface lem-splash-title-face nil
+  "Face for splash title."
+  :group 'faces)
+
+(defface lem-splash-header-face nil
+  "Face for splash header."
+  :group 'faces)
+
+(defface lem-splash-footer-face nil
+  "Face for splash footer."
+  :group 'faces)
+
+(defface lem-splash-menu-face nil
+  "Face for splash menus."
+  :group 'faces)
+
+(defface lem-splash-image-face nil
+  "Face for splash image."
+  :group 'faces)
+
 ;;; Define Splash
 (defun lem-splash-screen ()
   "A custom splash screen for Emacs"
@@ -112,51 +133,51 @@
         ;; Insert image
         (goto-char width)
         (save-excursion
-          (insert (propertize image 'face 'shadow)))
+          (insert (propertize image 'face 'lem-splash-image-face)))
 
         ;; Insert text
         (goto-char width)
         (save-excursion
-          (insert (propertize "Welcome to 𝛌-Emacs"  'face 'bold)))
+          (insert (propertize "Welcome to 𝛌-Emacs"  'face 'lem-splash-title-face)))
 
         (goto-char (+ width 140))
-        (save-excursion (insert (concat (propertize "GNU Emacs version" 'face 'shadow)
+        (save-excursion (insert (concat (propertize "GNU Emacs version" 'face 'lem-splash-header-face)
                                         " "
-                                        (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'shadow))))
+                                        (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face))))
 
         (goto-char (+ width 278))
         (save-excursion (let ((init-info (funcall splash-init-info)))
-                          (insert (propertize init-info 'face 'shadow))))
+                          (insert (propertize init-info 'face 'lem-splash-header-face))))
 
         (goto-char (+ width 578))
         (save-excursion (insert-text-button " [a] Agenda "
                                             'action (lambda (_) (lem/open-agenda-in-workspace))
                                             'help-echo "Visit setup directory"
-                                            'face 'warning
+                                            'face 'lem-splash-menu-face
                                             'follow-link t))
         (goto-char (+ width 714))
         (save-excursion (insert-text-button " [c] Config "
                                             'action (lambda (_) (lem/open-emacsd-in-workspace))
                                             'help-echo "Visit setup directory"
-                                            'face 'warning
+                                            'face 'lem-splash-menu-face
                                             'follow-link t))
         (goto-char (+ width 850))
         (save-excursion (insert-text-button " [m] Mail "
                                             'action (lambda (_)  (lem/open-notes-in-workspace))
                                             'help-echo "Open Email in Mu4e"
-                                            'face 'warning
+                                            'face 'lem-splash-menu-face
                                             'follow-link t))
         (goto-char (+ width 984))
         (save-excursion (insert-text-button " [n] Notes "
                                             'action (lambda (_)  (lem/open-notes-in-workspace))
                                             'help-echo "Visit setup directory"
-                                            'face 'warning
+                                            'face 'lem-splash-menu-face
                                             'follow-link t))
         (goto-char (+ width 1119))
         (save-excursion (insert-text-button " [p] Projects "
-                                            'action (lambda (_)  (emacs-workspaces/open-existing-project-and-workspace))
+                                            'action (lambda (_)  (tabspaces-open-existing-project-and-workspace))
                                             'help-echo "Open project & workspace"
-                                            'face 'warning
+                                            'face 'lem-splash-menu-face
                                             'follow-link t))
 
         ;; Vertical padding to bottom
@@ -166,7 +187,7 @@
         (defvar lem-splash-footer "   " "Footer text.")
         (save-excursion (insert-char ?\n 4)
                         (insert
-                         (propertize lem-splash-footer 'face 'shadow)))
+                         (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
 
 
 

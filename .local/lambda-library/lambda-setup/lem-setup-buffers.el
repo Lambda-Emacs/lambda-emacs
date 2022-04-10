@@ -36,7 +36,7 @@
   (setq scroll-preserve-screen-position t
         scroll-conservatively 101
         maximum-scroll-margin 0.5
-        scroll-margin 25))
+        scroll-margin 20))
 
 (use-package pixel-scroll
   :straight (:type built-in)
@@ -93,14 +93,14 @@
 (use-package autorevert
   :straight (:type built-in)
   :hook (after-init . global-auto-revert-mode)
-  :init
-  (setq auto-revert-interval .5)
+  :custom
+  (auto-revert-verbose nil)
+  (auto-revert-interval .5)
+  (revert-without-query '(".*")) ;; disable revert query
+  (global-auto-revert-non-file-buffers t)
   :config
-  (setq auto-revert-verbose nil ; Shut up, please!
-        revert-without-query '(".*") ;; disable revert query
-        ;; Revert Dired buffers, too
-        global-auto-revert-non-file-buffers t)
   (global-auto-revert-mode))
+
 
 ;;;; Revert All Buffers
 (use-package revert-buffer-all
@@ -153,8 +153,7 @@
 	       (ibuffer-insert-buffer-line (car entry) (cdr entry) format))
          (point))
        'ibuffer-filter-group
-       name)))
-  )
+       name))))
 
 (use-package ibuffer-vc
   :straight (:host github :repo "purcell/ibuffer-vc")
@@ -193,23 +192,43 @@
 ;;;; Popper (Pop-up Buffers)
 (use-package popper
   :straight (:type git :host github :repo "karthink/popper")
+  :hook (after-init . popper-mode)
   :bind (("C-`"   . popper-toggle-latest)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
-  :init
+  :custom
+  (popper-window-height 15)
+  (popper-display-control t)
+  ;; set display to top -- if user prefers they can set this to `bottom'
+  (popper-display-function #'popper-select-popup-at-top)
   ;; Set popper buffers
-  (setq popper-reference-buffers
-        '("\\*Messages\\*"
-          "Output\\*$"
-          "\\*Async Shell Command\\*"
-          help-mode
-          compilation-mode))
+  (popper-reference-buffers
+   '("\\*Messages\\*"
+     "Output\\*$"
+     "\\*Async Shell Command\\*"
+     help-mode
+     compilation-mode))
+  :init
   ;; Turn on popper
-  (popper-mode +1)
+  ;; (popper-mode +1)
   ;; For echo area hints
-  (popper-echo-mode +1))
+  (popper-echo-mode +1)
+  :config
+  ;; Display functions for popup buffers at top, where they are easy to read.
+  ;; This is just a slight modification of the existing functions.
+  (defun popper-select-popup-at-top (buffer &optional _alist)
+    "Display and switch to popup-buffer BUFFER at the top of the screen."
+    (let ((window (popper-display-popup-at-top buffer _alist)))
+      (select-window window)))
 
-(provide 'lem-setup-buffers)
+  (defun popper-display-popup-at-top (buffer &optional _alist)
+    "Display popup-buffer BUFFER at the top of the screen."
+    (display-buffer-in-side-window
+     buffer
+     `((window-height . ,popper-window-height)
+       (side . top)
+       (slot . 1)))))
+
 ;;;; Xwidget Browser
 (use-package xwidget
   :straight (:type built-in)
@@ -217,7 +236,7 @@
   :config
   ;; No query on kill
   (remove-hook 'kill-buffer-query-functions #'xwidget-kill-buffer-query-function)
-  ;; NOTE Fix load progress error
+  ;; NOTE: Fix load progress error
   (defun xwidget-webkit-estimated-load-progress (session)
     1.0))
 
@@ -228,4 +247,18 @@
   :bind (:map xwidget-webkit-mode-map
          ("v" . xwwp-follow-link)))
 
+;;;; Mouse
+;; Don't be afraid of the mouse!
+;; For ideas see https://ruzkuku.com/texts/emacs-mouse.html
+(use-package mouse
+  :straight (:type built-in)
+  :config
+  (setq context-menu-functions
+        '(context-menu-ffap
+          occur-context-menu
+          context-menu-region
+          context-menu-undo
+          context-menu-dictionary)))
+;;; Provide
+(provide 'lem-setup-buffers)
 ;;; lem-setup-buffers.el ends here

@@ -134,7 +134,7 @@
     ;; continuous scroll mode
     (setq doc-view-continuous t)))
 
-;;;; PDF-Tools
+;;;;; PDF-Tools
 ;; good but often problematic pdf reader and annotator
 (use-package pdf-tools
   ;; use maintained fork
@@ -164,60 +164,54 @@
          ("r"  . pdf-view-revert-buffer)
          ("o"  . pdf-links-action-perform)
          ("O"  . pdf-outline)
-         ("!"  . bms/pdf-no-filter)
-         ("#"  . bms/pdf-midnight-original)
-         )
+         ("!"  . lem/pdf-no-filter)
+         ("#"  . lem/pdf-midnight-dark)
+         ("@"  . lem/pdf-midnight-amber)
+         ("$"  . lem/pdf-midnight-green))
   :config
   ;; HiDPI
   (setq pdf-view-use-scaling t)
-  ;; midnite mode
-  (setq pdf-view-midnight-colors '("#ECEFF4" . "#434C5E" ))
 
-  (defun bms/pdf-no-filter ()
+  (defun lem/pdf-no-filter ()
     "View pdf without colour filter."
     (interactive)
     (pdf-view-midnight-minor-mode -1))
 
-  ;; change midnight mode colours functions
-  (defun bms/pdf-midnight-original ()
-    "Set pdf-view-midnight-colors to original colours."
+  (defun lem/pdf-midnight-mode ()
+    "View pdf with colour filter."
+    (interactive)
+    (pdf-view-midnight-minor-mode))
+
+  (defun lem/pdf-color-theme ()
+    (if (eq active-theme 'light-theme)
+        (lem/pdf-no-filter)
+      (lem/pdf-midnight-mode)))
+
+  ;; Set midnight mode colour functions
+  (defun lem/pdf-midnight-dark ()
+    "Set pdf-view-midnight-colors to dark & low contrast colours."
     (interactive)
     (setq pdf-view-midnight-colors '("#ECEFF4" . "#434C5E" ))
     (pdf-view-midnight-minor-mode))
 
-  (defun bms/pdf-midnight-amber ()
+  (defun lem/pdf-midnight-amber ()
     "Set pdf-view-midnight-colors to amber on dark slate blue."
     (interactive)
-    (setq pdf-view-midnight-colors '("#ff9900" . "#0a0a12" )) ; amber
+    (setq pdf-view-midnight-colors '("#ff9900" . "dark slate blue")) ; amber
     (pdf-view-midnight-minor-mode))
 
-  (defun bms/pdf-midnight-green ()
+  (defun lem/pdf-midnight-green ()
     "Set pdf-view-midnight-colors to green on black."
     (interactive)
     (setq pdf-view-midnight-colors '("#00B800" . "#000000" )) ; green
     (pdf-view-midnight-minor-mode))
-
-  ;; (defun bms/pdf-midnight-colour-schemes ()
-  ;;   "Midnight mode colour schemes bound to keys"
-  ;;   (local-set-key (kbd "!") (quote bms/pdf-no-filter))
-  ;;   (local-set-key (kbd "@") (quote bms/pdf-midnight-amber))
-  ;;   (local-set-key (kbd "#") (quote bms/pdf-midnight-green))
-  ;;   (local-set-key (kbd "$") (quote bms/pdf-midnight-original)))
-
-  (defun cpm/pdf-color-theme ()
-    (if (eq active-theme 'light-theme)
-        (bms/pdf-no-filter)
-      (bms/pdf-midnight-original)))
 
   ;; tex hook
   ;; see https://github.com/politza/pdf-tools#auto-revert
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
   ;; other hooks
   (add-hook 'pdf-view-mode-hook (lambda ()
-                                  ;; automatically turns on midnight-mode for pdfs
-                                  (pdf-view-midnight-minor-mode)
-                                  (cpm/pdf-color-theme)
-                                  ;; (bms/pdf-midnight-colour-schemes)
+                                  (lem/pdf-color-theme)
                                   (blink-cursor-mode -1)
                                   (linum-mode -1)
                                   (line-number-mode -1)

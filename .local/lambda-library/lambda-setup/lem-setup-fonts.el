@@ -22,8 +22,19 @@
   ;; Use Apple emoji
   ;; NOTE that emoji here must be set to unicode to get color emoji
   (when (member "Apple Color Emoji" (font-family-list))
-    (set-fontset-font
-     t 'unicode (font-spec :family "Apple Color Emoji") nil 'append)))
+    (set-fontset-font t 'emoji
+                      '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
+  ;; (when (member "Apple Color Emoji" (font-family-list))
+  ;;   (set-fontset-font
+  ;;    t 'unicode (font-spec :family "Apple Color Emoji") nil 'append))
+
+  ;; Fall back font for glyph missing in Roboto
+  (defface fallback '((t :family "Fira Code"
+                         :inherit fringe)) "Fallback")
+  (set-display-table-slot standard-display-table 'truncation
+                          (make-glyph-code ?… 'fallback))
+  (set-display-table-slot standard-display-table 'wrap
+                          (make-glyph-code ?↩ 'fallback)))
 
 (use-package faces
   :straight (:type built-in)
@@ -34,12 +45,15 @@
                       :weight 'normal)
   (set-face-attribute 'variable-pitch nil
                       :font "Avenir Next"
-                      :height 200
+                      :height 1.5
+                      :weight 'normal)
+  (set-face-attribute 'fixed-pitch nil
+                      :font "SF Pro"
+                      :height 1.4
                       :weight 'normal))
 
 ;; Set default line spacing (in pixels)
 (setq-default line-spacing 0.05)
-
 
 ;;;;; Font Lock
 (use-package font-lock
@@ -49,7 +63,6 @@
   (font-lock-maximum-decoration t)
   ;; No limit on font lock
   (font-lock-maximum-size nil))
-
 
 ;;;;; Scale Text
 ;; When using `text-scale-increase', this sets each 'step' to about one point size.
@@ -79,13 +92,6 @@
 
 ;; No ugly button for checkboxes
 (setq widget-image-enable nil)
-
-;;;;; Emoji
-(use-package emojify
-  :commands (emojify-mode emojify-apropos-emoji)
-  :hook ((prog-mode markdown-mode org-mode) . emojify-mode)
-  :config
-  (setq emojify-emojis-dir (concat lem-etc-dir "emojis")))
 
 (provide 'lem-setup-fonts)
 ;;; lem-setup-fonts.el ends here

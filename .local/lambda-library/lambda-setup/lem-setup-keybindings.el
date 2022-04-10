@@ -31,7 +31,7 @@
 ;;;; Bind Key
 ;; Note that bind-key comes with use-package
 (use-package bind-key
-  :straight nil
+  :straight t
   :config
   (setq bind-key-describe-special-forms t))
 
@@ -285,13 +285,13 @@
 ;;;;; Workspace Keybindings
 (bind-keys :prefix-map lem+workspace-keys
            :prefix (concat lem-prefix " W")
-           ("c"  .  emacs-workspaces/create-workspace                   )
-           ("d"  .  emacs-workspaces/close-workspace                    )
-           ("k"  .  emacs-workspaces/kill-buffers-close-workspace       )
-           ("n"  .  emacs-workspaces/create-new-project-and-workspace   )
-           ("p"  .  emacs-workspaces/project-switch-project-open-file   )
-           ("s"  .  emacs-workspaces/switch-to-or-create-workspace      )
-           ("w"  .  emacs-workspaces/open-existing-project-and-workspace))
+           ("c"  .  workspaces-create-workspace)
+           ("d"  .  workspaces-close-workspace)
+           ("k"  .  workspaces-kill-buffers-close-workspace)
+           ("n"  .  workspaces-create-new-project-and-workspace)
+           ("p"  .  workspaces-project-switch-project-open-file)
+           ("s"  .  workspaces-switch-to-or-create-workspace)
+           ("w"  .  workspaces-open-existing-project-and-workspace))
 
 ;;;;; Zettelkasten/Notes/Wiki
 (bind-keys :prefix-map lem+notes-keys

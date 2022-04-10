@@ -46,7 +46,7 @@
 ;; Easily go to last change
 (use-package goto-last-change
   :straight (:type git :host github :repo "camdez/goto-last-change.el")
-  :commands (goto-last-change))
+  :bind (("C-\"" . #'goto-last-change)))
 
 ;;;; Recent files
 ;; List recent files
@@ -83,7 +83,7 @@
   :commands (goto-address-prog-mode
              goto-address-mode))
 
-;;;; Goto Files
+;;;; Goto Functions
 (defun lem/goto-private ()
   (interactive)
   (find-file (concat lem-user-dir "private.el")))
@@ -119,7 +119,10 @@
   "Open directory with org files"
   (interactive)
   (find-file org-directory))
-
+(defun lem/goto-projects ()
+  "Open projects dir"
+  (interactive)
+  (find-file lem-project-dir))
 
 ;;;; Jump in Buffer
 (defun lem/jump-in-buffer ()

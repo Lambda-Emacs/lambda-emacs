@@ -83,11 +83,11 @@
     (startup-redirect-eln-cache (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))))
 
 ;; Silence nativecomp warnings popping up
-(setq native-comp-async-report-warnings-errors nil)
+(customize-set-variable 'native-comp-async-report-warnings-errors nil)
 
 ;; Native-comp settings
-(setq native-comp-speed 2
-      native-comp-deferred-compilation t)
+(customize-set-variable 'native-comp-speed 2)
+(customize-set-variable 'native-comp-deferred-compilation t)
 
 ;;;; Set C Directory
 ;; NOTE this assumes that the C source files are included with emacs.
@@ -103,11 +103,11 @@
 ;; Disable certain byte compiler warnings to cut down on the noise. This is a
 ;; personal choice and can be removed if you would like to see any and all byte
 ;; compiler warnings.
-(setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local obsolete))
+(customize-set-variable 'byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local obsolete))
 ;;;; Check Errors
 ;; Don't produce backtraces when errors occur.
 ;; This can be set to `t' interactively when debugging.
-(setq debug-on-error nil)
+(customize-set-variable 'debug-on-error nil)
 
 ;;;; When-let errors
 ;; https://github.com/alphapapa/frame-purpose.el/issues/3
@@ -123,16 +123,16 @@
 ;; This variable controls the number of lisp bindings that can exists at a time.
 ;; We should make it fairly large for modern machines.
 ;; https://www.reddit.com/r/emacs/comments/9jp9zt/anyone_know_what_variable_binding_depth_exceeds/
-(setq max-specpdl-size 13000)
+(customize-set-variable 'max-specpdl-size 13000)
 
 ;;;; Package settings
 ;; We use straight not package.el for all package loading.
 ;; So we don't need package.el loaded at startup (or at all).
-(setq package-enable-at-startup nil)
+(customize-set-variable 'package-enable-at-startup nil)
 (advice-add #'package--ensure-init-file :override #'ignore)
 
 ;; Do not allow loading from the package cache (same reason).
-(setq package-quickstart nil)
+(customize-set-variable 'package-quickstart nil)
 
 ;;;; Clean View
 ;; UI - Disable visual cruft
@@ -151,19 +151,15 @@
 (setq-default initial-scratch-message nil)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-;; Disable tool, menu, and scrollbars. these are just clutter (the scrollbar
-;; also impacts performance). I am intentionally not calling `menu-bar-mode',
-;; `tool-bar-mode', and `scroll-bar-mode' (see doom for inspiration) because
-;; they do extra and unnecessary work that can be more concisely and efficiently
-;; expressed with these six lines:
-(push '(menu-bar-lines . 0)   default-frame-alist)
+;; Disable tool and scrollbars. These are just clutter (the scrollbar
+;; also impacts performance).
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
 ;; And set these to nil so users don't have to toggle the modes twice to
 ;; reactivate them.
-(setq menu-bar-mode nil
-      tool-bar-mode nil
-      scroll-bar-mode nil)
+(customize-set-variable 'menu-bar-mode t)
+(customize-set-variable 'tool-bar-mode nil)
+(customize-set-variable 'scroll-bar-mode nil)
 
 ;; Fundamental mode at startup.
 ;; This helps with load-time since no extra libraries are loaded.

@@ -88,7 +88,8 @@ Instead it's simpler to use bash."
 (use-package org-modern
   :straight (:type git :host github :repo "minad/org-modern")
   :hook ((org-mode . org-modern-mode)
-         (org-agenda-finalize . org-modern-agenda))
+         ;; (org-agenda-finalize . org-modern-agenda)
+         )
   :custom
   (org-modern-star ["⦶" "⦷" "⦹" "⊕" "⍟" "⊛" "⏣" "❂"]) ; "①" "②" "③" "④" "⑤" "⑥" "⑦"
   (org-agenda-block-separator ?─))
@@ -417,7 +418,7 @@ Instead it's simpler to use bash."
 ;; Devonthink integration
 (use-package org-devonthink
   :straight nil
-  :load-path "~/.emacs.d/.local/elisp/org-devonthink"
+  :load-path "~/bin/lisp-projects/org-devonthink"
   :commands (org-insert-dtp-link org-dtp-store-link))
 
 ;;; Org Autolist (Smart Lists)

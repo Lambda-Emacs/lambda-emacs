@@ -20,7 +20,7 @@
 ;;; Commentary:
 
 ;; Tabs -- in some ways tabs are not very Emacsy, but tab-bar is great for
-;; window & buffer management. The setup for tabs here is focused on tabs for window configurations related to a "workspace" -- i.e. a project or other set of windows.
+;; window & buffer management. The setup for tabs here is focused on tabs for window configurations related to a "workspace" -- i.e. a project or other set of windows. See `lem-setup-workspaces'.
 
 ;;; Code:
 
@@ -115,46 +115,6 @@ questions.  Else use completion to select the tab to switch to."
   :commands (tab-bookmark tab-bookmark-open)
   :bind (:map project-prefix-map
          ("m" . tab-bookmark)))
-
-
-;;;; Workspaces
-;; Workspaces leveraging tab-bar and project.el. A "workspace" is just a tab
-;; with an isolated set of buffers (see consult function). 𝛌-Emacs sets things
-;; up so that these workspaces are nicely displayed out of the way in the echo
-;; area rather than as visible tabs in the header tab-line at the top of the
-;; frame.
-(use-package emacs-workspaces
-  :straight (:type git :host github :repo "mclear-tools/emacs-workspaces")
-  ;; Add some functions to the project map
-  :bind (:map project-prefix-map
-         ("p" . emacs-workspaces/open-existing-project-and-workspace)
-         ("n" . emacs-workspaces/create-new-project-and-workspace))
-  :commands (emacs-workspaces/create-workspace
-             emacs-workspaces/create-new-project-and-workspace
-             emacs-workspaces/open-existing-project-and-workspace)
-  :config
-  (setq emacs-workspaces-use-consult-project t))
-
-;;;;; Per Workspace Buffers with Consult
-;; Filter Buffers for Consult-Buffer
-
-(with-eval-after-load 'consult
-  ;; hide full buffer list (still available with "b")
-  (consult-customize consult--source-buffer :hidden t :default nil)
-  ;; set consult-workspace buffer list
-  (defvar consult--source-workspace
-    (list :name     "Workspace Buffers"
-          :narrow   ?w
-          :category 'buffer
-          :state    #'consult--buffer-state
-          :default  t
-          :items    (lambda ()
-                      (emacs-workspaces--tab-bar-buffer-name-filter ((lambda () (consult--buffer-query :sort 'visibility
-                                                                                                  :as #'buffer-name))))))
-
-    "Set workspace buffer list for consult-buffer.")
-  (push consult--source-workspace consult-buffer-sources))
-
 
 (provide 'lem-setup-tabs)
 ;;; lem-setup-tabs.el ends here

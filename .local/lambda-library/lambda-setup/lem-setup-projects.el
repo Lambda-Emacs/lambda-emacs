@@ -14,6 +14,7 @@
          ("t" .  lem/goto-projects)
          ("R" .  project-remember-projects-under))
   :config
+  (setq lem-project-dir "~/Dropbox/Work/projects")
   (setq project-list-file (concat lem-cache-dir "projects"))
   (setq project-switch-commands '((project-find-file "Find file")
                                   (project-find-regexp "Find regexp")
@@ -156,13 +157,6 @@ to directory DIR."
                                          (dired project-dir))
                                      (user-error (format "%s\n%s" command output))))))
     (set-process-filter proc #'comint-output-filter)))
-
-
-;;; Goto Projects
-(defun lem/goto-projects ()
-  "Open projects dir"
-  (interactive)
-  (find-file "~/Dropbox/Work/projects"))
 
 ;;; End Projects.el
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

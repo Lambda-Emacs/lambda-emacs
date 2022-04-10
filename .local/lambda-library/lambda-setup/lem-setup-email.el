@@ -24,7 +24,6 @@
 
 ;;; Code:
 
-
 ;;;; Mu4e
 (use-package mu4e
   ;; Tell straight to use homebrew mu4e
@@ -60,6 +59,7 @@
 ;;;;; Viewing
 
 ;;;;;; Header View Functions
+  ;; TODO: fix faces so they inherit and don't rely on lambda-themes
   (defun mu4e-get-account (msg)
     (let* ((maildir (mu4e-message-field msg :maildir))
            (maildir (substring maildir 1)))
@@ -84,7 +84,7 @@
        (propertize text
                    'display tag
                    'face face
-                   'mouse-face `(:foreground ,bespoke-salient)
+                   'mouse-face '(:foreground homoglyph)
                    'local-map map
                    'help-echo `(lambda (window _object _point)
                                  (let (message-log-max) (message ,help))))
@@ -100,8 +100,8 @@
                                    (interactive) (mu4e-headers-search ,query)))
       (propertize text
                   'face face
-                  'mouse-face `(:foreground ,bespoke-background
-                                :background ,bespoke-faded)
+                  'mouse-face `(:foreground lambda-bg
+                                :background lambda-mild)
                   'local-map map
                   'help-echo `(lambda (window _object _point)
                                 (let (message-log-max) (message ,help))))))
@@ -137,8 +137,8 @@
            (unread  (memq 'unread  (mu4e-message-field msg :flags)))
            (date (mu4e-msg-field msg :date))
            (diff (- (time-to-days (current-time)) (time-to-days date)))
-           (face 'bespoke-salient))
-      (setq face 'bespoke-faded)
+           (face 'lambda-focus))
+      (setq face 'lambda-meek)
       (cond ((mu4e-headers-is-today date)
              (mu4e-headers-button (format-time-string "     %H:%M" date)
                                   face
@@ -154,9 +154,9 @@
   ;; Style & determine what flags to show
   (defun mu4e-headers-attach (msg)
     (cond ((memq 'flagged  (mu4e-message-field msg :flags))
-           (propertize "!" 'face 'bespoke-strong))
+           (propertize "!" 'face 'lambda-strong))
           ((memq 'attach  (mu4e-message-field msg :flags))
-           (propertize "" 'face 'bespoke-faded))
+           (propertize "" 'face 'lambda-mild))
           (t " ")))
 
 ;;;;;; Headers
@@ -654,10 +654,10 @@ the pos of the keyword which is a cons cell, nil if not found."
             mu4e-headers-attach-mark     `("a" . ,(propertize
                                                    (all-the-icons-material "attachment")
                                                    'face 'mu4e-attach-number-face))
-            mu4e-headers-passed-mark     `("P" . ,(propertize ; ❯ (I'm participated in thread)
+            mu4e-headers-passed-mark     `("P" . ,(propertize ; ❯ (I'm participating in thread)
                                                    (all-the-icons-material "center_focus_weak")
                                                    'face `(:family ,(all-the-icons-material-family)
-                                                           :foreground ,bespoke-yellow)))
+                                                           :foreground lambda-focus)))
             mu4e-headers-flagged-mark    `("F" . ,(propertize
                                                    (all-the-icons-material "flag")
                                                    'face 'mu4e-flagged-face))
@@ -670,11 +670,11 @@ the pos of the keyword which is a cons cell, nil if not found."
             mu4e-headers-encrypted-mark `("x" . ,(propertize
                                                   (all-the-icons-material "enhanced_encryption")
                                                   'face `(:family ,(all-the-icons-material-family)
-                                                          :foreground ,bespoke-blue)))
+                                                          :foreground lambda-blue)))
             mu4e-headers-signed-mark     `("s" . ,(propertize
                                                    (all-the-icons-material "check")
                                                    'face `(:family ,(all-the-icons-material-family)
-                                                           :foreground ,bespoke-green)))))
+                                                           :foreground lambda-green)))))
 
     (defun mu4e-marker-icons-disable ()
       "Disable mu4e-marker-icons."
@@ -768,12 +768,12 @@ the pos of the keyword which is a cons cell, nil if not found."
     "flag:unread")
   (defun lem/go-to-mail-unread ()
     (interactive)
-    (if (member "Email" (emacs-workspaces--list-workspaces))
+    (if (member "Email" (workspaces--list-workspaces))
         (progn
           (tab-bar-switch-to-tab "Email")
           (mu4e-headers-search lem-mu4e-unread-query))
       (progn
-        (emacs-workspaces/create-workspace)
+        (workspaces-create-workspace)
         (tab-bar-rename-tab "Email")
         (find-file (concat org-directory "mail.org"))
         (mu4e)
@@ -784,12 +784,12 @@ the pos of the keyword which is a cons cell, nil if not found."
     "(maildir:/UNL/INBOX OR maildir:/Fastmail/INBOX)")
   (defun lem/go-to-mail-inbox ()
     (interactive)
-    (if (member "Email" (emacs-workspaces--list-workspaces))
+    (if (member "Email" (workspaces--list-workspaces))
         (progn
           (tab-bar-switch-to-tab "Email")
           (mu4e-headers-search lem-mu4e-inbox-query))
       (progn
-        (emacs-workspaces/create-workspace)
+        (workspaces-create-workspace)
         (tab-bar-rename-tab "Email")
         (find-file (concat org-directory "mail.org"))
         (mu4e)
@@ -864,13 +864,13 @@ https://github.com/djcb/mu/issues/2198"
   :straight (:type git :host github :repo "jeremy-compostella/org-msg")
   :after mu4e
   :config
-  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
-	    org-msg-startup "hidestars indent inlineimages"
+  (setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} ':t toc:nil author:nil email:nil \\n:t"
+	    org-msg-startup "hidestars inlineimages"
 	    org-msg-greeting-fmt nil
 	    org-msg-recipient-names nil
 	    org-msg-greeting-name-limit 3
 	    org-msg-default-alternatives '((new		        . (text html))
-				                       (reply-to-html	. (text html))
+				                       (reply-to-html	. (html))
 				                       (reply-to-text	. (text)))
 	    org-msg-convert-citation t)
 

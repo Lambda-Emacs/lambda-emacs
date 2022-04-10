@@ -69,53 +69,54 @@
 ;; Use vertico in buffer
 (use-package vertico-buffer
   :after vertico
+  :custom
+  (vertico-buffer-hide-prompt t)
   :config/el-patch
   ;; Use el-patch
   ;; Set no headerline in vertico-buffer
   (defun vertico-buffer--setup ()
-    "Setup minibuffer overlay, which pushes the minibuffer content down."
+    "Setup buffer display."
     (add-hook 'pre-redisplay-functions 'vertico-buffer--redisplay nil 'local)
-    (let ((temp (generate-new-buffer "*vertico*")))
-      (setq vertico-buffer--window (display-buffer temp vertico-buffer-display-action))
-      (set-window-buffer vertico-buffer--window (current-buffer))
-      (kill-buffer temp))
-    (let ((sym (make-symbol "vertico-buffer--destroy"))
-          (depth (recursion-depth))
-          (now (window-parameter vertico-buffer--window 'no-other-window))
-          (ndow (window-parameter vertico-buffer--window 'no-delete-other-windows)))
+    (let* ((action vertico-buffer-display-action) tmp win
+           (_ (unwind-protect
+                  (progn
+                    (setq tmp (generate-new-buffer "*vertico*")
+                          ;; Temporarily select the original window such
+                          ;; that `display-buffer-same-window' works.
+                          win (with-minibuffer-selected-window (display-buffer tmp action)))
+                    (set-window-buffer win (current-buffer)))
+                (kill-buffer tmp)))
+           (sym (make-symbol "vertico-buffer--destroy"))
+           (depth (recursion-depth))
+           (now (window-parameter win 'no-other-window))
+           (ndow (window-parameter win 'no-delete-other-windows)))
       (fset sym (lambda ()
                   (when (= depth (recursion-depth))
                     (with-selected-window (active-minibuffer-window)
-                      (when (window-live-p vertico-buffer--window)
-                        (set-window-parameter vertico-buffer--window 'no-other-window now)
-                        (set-window-parameter vertico-buffer--window 'no-delete-other-windows ndow))
+                      (when (window-live-p win)
+                        (set-window-parameter win 'no-other-window now)
+                        (set-window-parameter win 'no-delete-other-windows ndow))
                       (when vertico-buffer-hide-prompt
                         (set-window-vscroll nil 0))
                       (remove-hook 'minibuffer-exit-hook sym)))))
       ;; NOTE: We cannot use a buffer-local minibuffer-exit-hook here.
       ;; The hook will not be called when abnormally exiting the minibuffer
       ;; from another buffer via `keyboard-escape-quit'.
-      ;; (add-hook 'minibuffer-exit-hook sym)
-      (set-window-parameter vertico-buffer--window 'no-other-window t)
-      (set-window-parameter vertico-buffer--window 'no-delete-other-windows t)
-      (overlay-put vertico--candidates-ov 'window vertico-buffer--window)
+      (add-hook 'minibuffer-exit-hook sym)
+      (set-window-parameter win 'no-other-window t)
+      (set-window-parameter win 'no-delete-other-windows t)
+      (overlay-put vertico--candidates-ov 'window win)
       (when (and vertico-buffer-hide-prompt vertico--count-ov)
-        (overlay-put vertico--count-ov 'window vertico-buffer--window))
+        (overlay-put vertico--count-ov 'window win))
       (setq-local show-trailing-whitespace nil
                   truncate-lines t
+                  face-remapping-alist
+                  (copy-tree `((mode-line-inactive mode-line)
+                               ,@face-remapping-alist))
                   header-line-format nil
-                  mode-line-format
-                  (list (format " %s "
-                                (propertize
-                                 (format (if (< depth 2) "*%s*" "*%s [%s]*")
-                                         (replace-regexp-in-string
-                                          ":? *\\'" ""
-                                          (minibuffer-prompt))
-                                         depth)
-                                 'face 'mode-line-buffer-id))
-                        '(:eval (vertico--format-count)))
+                  mode-line-format nil
                   cursor-in-non-selected-windows 'box
-                  vertico-count (- (/ (window-pixel-height vertico-buffer--window)
+                  vertico-count (- (/ (window-pixel-height win)
                                       (default-line-height)) 2))))
   :config
   (setq vertico-buffer-display-action
@@ -128,7 +129,7 @@
 ;; Vertico repeat last command
 (use-package vertico-repeat
   :hook (minibuffer-setup . vertico-repeat-save)
-  :commands (vertico-repeat))
+  :commands (vertico-repeat-last))
 
 ;; Configure directory extension
 (use-package vertico-directory
@@ -314,9 +315,9 @@ targets."
   ;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
   :hook (completion-list-mode . consult-preview-at-point-mode)
 
-  :custom-face
-  (consult-file ((t (:inherit bespoke-popout))))
-  (consult-line-number ((t (:inherit bespoke-faded))))
+  ;; :custom-face
+  ;; (consult-file ((t (:inherit bespoke-popout))))
+  ;; (consult-line-number ((t (:inherit bespoke-faded))))
 
   :init
   ;; Optionally configure the register formatting. This improves the register
@@ -336,13 +337,6 @@ targets."
   (fset 'multi-occur #'consult-multi-occur)
 
   :config
-  ;; configure a function which returns the project root directory.
-  ;; project.el (project-roots)
-  (setq consult-project-root-function
-        (lambda ()
-          (when-let (project (project-current))
-            (car (project-roots project)))))
-
   ;; Preview is manual and immediate
   ;; https://github.com/minad/consult#live-previews
   (setq consult-preview-key (kbd "C-f"))
@@ -487,7 +481,6 @@ targets."
 ;; Add extensions
 (use-package cape
   :straight (:type git :host github :repo "minad/cape")
-  :after corfu
   ;; Bind dedicated completion commands
   :bind (("C-c p p" . completion-at-point) ;; capf
          ("C-c p t" . complete-tag)        ;; etags
@@ -506,15 +499,16 @@ targets."
          ("C-c p r" . cape-rfc1345))
   :init
   ;; Add `completion-at-point-functions', used by `completion-at-point'.
-  ;; (add-to-list 'completion-at-point-functions #'cape-ispell)
-  ;; (add-to-list 'completion-at-point-functions #'cape-dict)
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-tex)
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
+  ;; (add-to-list 'completion-at-point-functions #'cape-ispell)
+  ;; (add-to-list 'completion-at-point-functions #'cape-dict)
   ;; (add-to-list 'completion-at-point-functions #'cape-line)
-  (add-to-list 'completion-at-point-functions #'cape-abbrev))
+  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  )
 
 
 ;;;;; Company Org Block
@@ -559,7 +553,7 @@ targets."
   :straight (:type git :host github :repo "AndreaCrotti/yasnippet-snippets")
   :after (yasnippet)
   :config
-  (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "all-snippets/yasnippet-snippets")))
+  (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
 
 
 ;;;; Completion Icons

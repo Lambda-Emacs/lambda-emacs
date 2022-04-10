@@ -33,7 +33,7 @@
   (setq-default initial-frame-alist
                 (append (list
                          '(fullscreen . maximized)
-                         '(internal-border-width . 13)
+                         '(internal-border-width . 18)
                          '(tool-bar-lines . 0)
                          '(menu-bar-lines . 0)
                          '(vertical-scroll-bars . nil)
@@ -44,7 +44,7 @@
   (setq-default default-frame-alist
                 (append (list
                          '(frame-title-format . nil)
-                         '(internal-border-width . 13)
+                         '(internal-border-width . 18)
                          '(tool-bar-lines . 0)
                          '(menu-bar-lines . 0)
                          '(vertical-scroll-bars . nil)
@@ -89,7 +89,7 @@ If FRAME is omitted or nil, use currently selected frame."
   :straight (:type built-in)
   :custom
   ;; allow fringe indicators
-  (fringe-mode '(0 . 8)))
+  (fringe-mode '(1 . 0)))
 
 
 (provide 'lem-setup-frames)

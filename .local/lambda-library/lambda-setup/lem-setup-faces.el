@@ -13,19 +13,19 @@
                     'outline-minor-faces-add-font-lock-keywords))
 
 ;;;; Underline
-(setq x-underline-at-descent-line t)
+(customize-set-variable 'x-underline-at-descent-line t)
 
 ;;;; Dim inactive windows
 (use-package dimmer
   :straight (:host github :repo "gonewest818/dimmer.el")
   :hook (after-init . dimmer-mode)
+  :custom
+  (dimmer-prevent-dimming-predicates '(window-minibuffer-p))
+  (dimmer-fraction 0.5)
+  (dimmer-adjustment-mode :foreground)
+  (dimmer-use-colorspace :rgb)
+  (dimmer-watch-frame-focus-events nil)
   :config
-  ;; (setq mini-frame-create-lazy nil)
-  (setq dimmer-prevent-dimming-predicates '(window-minibuffer-p))
-  (setq dimmer-fraction 0.5)
-  (setq dimmer-adjustment-mode :foreground)
-  (setq dimmer-use-colorspace :rgb)
-  (setq dimmer-watch-frame-focus-events nil)
   (dimmer-configure-which-key)
   (dimmer-configure-hydra)
   (dimmer-configure-magit)
@@ -37,8 +37,10 @@
   (with-no-warnings
     (add-to-list
      'dimmer-buffer-exclusion-regexps "^ \\*Vertico\\*$")))
+
 ;; (add-to-list
 ;; 'dimmer-prevent-dimming-predicates #'vertico-buffer-mode)))
+
 
 ;;;; Cursor
 (use-package emacs
@@ -69,8 +71,8 @@
           ;; other tags
           ("DONE:"  . ((lambda (tag) (svg-tag-make "DONE:"  :face 'shadow  :inverse t ))))
           ("FIXME:" . ((lambda (tag) (svg-tag-make "FIXME:" :face 'error :inverse t))))
-          ("HACK:"  . ((lambda (tag) (svg-tag-make "HACK:"  :face 'bespoke-red :inverse t))))
-          ("NOTE:"  . ((lambda (tag) (svg-tag-make "NOTE:"  :face 'bespoke-yellow :inverse t))))
+          ("HACK:"  . ((lambda (tag) (svg-tag-make "HACK:"  :face 'whitespace-line :inverse t))))
+          ("NOTE:"  . ((lambda (tag) (svg-tag-make "NOTE:"  :face 'warning :inverse t))))
           ("TODO:"  . ((lambda (tag) (svg-tag-make "TODO:"  :face 'warning :inverse t)))))))
 
 
@@ -150,6 +152,7 @@
   ;; pulse on window change
   (push 'pulse-line window-selection-change-functions))
 
+;;;; Goggles (Highlight Changes)
 (use-package goggles
   :hook ((prog-mode text-mode) . goggles-mode)
   :config

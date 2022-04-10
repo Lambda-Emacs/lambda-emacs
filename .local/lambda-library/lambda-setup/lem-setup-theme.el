@@ -46,9 +46,15 @@
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
+;;;; Autothemer
+;; Make creating themes (and running them) easier
+(use-package autothemer
+  :straight t)
+
 ;;;; Bespoke Theme
 (use-package bespoke-themes
   ;; :straight (:type git :host github :repo "mclear-tools/bespoke-themes")
+  :disabled
   :straight nil
   :load-path "~/.emacs.d/.local/lambda-library/lambda-user/custom-themes/bespoke-themes"
   :config

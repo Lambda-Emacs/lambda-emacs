@@ -1,7 +1,7 @@
-;; Version Control
-;;  I use git for version control. Magit is a great interface for git projects. It's
-;;  much more pleasant to use than the standard git interface on the command line.
-;;  I've set up some easy keybindings to access magit and related packages.
+;; Version Control I use git for version control. Magit is a great interface for
+;;  git projects. It's much more pleasant to use than the standard git interface
+;;  on the command line. I've set up some easy keybindings to access magit and
+;;  related packages.
 
 ;;; VC
 ;;disable emacs vc for git; just use magit!
@@ -84,12 +84,12 @@
               (lambda ()
                 (meow-insert-mode)))))
 
-;; add todos in magit
+;; add todos in magit, but don't automatically display them as it can be slow to load
 (use-package magit-todos
   :commands (magit-todos-list magit-todos-mode)
   :config
   (setq magit-todos-depth 2))
-;; (magit-todos-mode))
+
 
 
 ;;; Git Navigation
@@ -100,6 +100,7 @@
 (use-package gited :commands (gited-list gited-list-branches))
 
 ;;; Git Gutter HL (Diff-HL)
+;; Nice vc highlighting in margin/fringe
 ;; See https://www.reddit.com/r/emacs/comments/suxc9b/modern_gitgutter_in_emacs/
 ;; And https://github.com/jimeh/.emacs.d/blob/master/modules/version-control/siren-diff-hl.el
 
@@ -111,7 +112,7 @@
    (magit-pre-refresh . diff-hl-magit-pre-refresh)
    (magit-post-refresh . diff-hl-magit-post-refresh))
   :custom
-  (diff-hl-side 'right)
+  (diff-hl-side 'left)
   (diff-hl-fringe-bmp-function 'cpm--diff-hl-fringe-bmp-from-type)
   (diff-hl-fringe-face-function 'cpm--diff-hl-fringe-face-from-type)
   (diff-hl-margin-symbols-alist
@@ -120,10 +121,10 @@
      (change . "┃")
      (unknown . "?")
      (ignored . "i")))
-  :custom-face
-  (diff-hl-insert ((t (:slant normal :weight normal :inherit bespoke-salient))))
-  (diff-hl-change ((t (:slant normal :weight normal :inherit bespoke-popout))))
-  (diff-hl-delete ((t (:slant normal :weight normal :inherit bespoke-critical))))
+  ;; :custom-face
+  ;; (diff-hl-insert ((t (:slant normal :weight normal :inherit bespoke-salient))))
+  ;; (diff-hl-change ((t (:slant normal :weight normal :inherit bespoke-popout))))
+  ;; (diff-hl-delete ((t (:slant normal :weight normal :inherit bespoke-critical))))
   :init
   (defun cpm--diff-hl-fringe-face-from-type (type _pos)
     (intern (format "cpm--diff-hl-%s" type)))
@@ -142,32 +143,7 @@
   (define-fringe-bitmap 'diff-hl-delete
     [#b00000011] nil nil '(center repeated)))
 
-;;; Quick commits
-;; Make a quick commit without opening magit. This is a version of a
-;; workflow I used to use in Sublime Text. Perfect for short commit messages.
-;; FIXME: is there a way to make this work without evil?
-(defun quick-commit ()
-  "make a quick commit from the mini-buffer"
-  (interactive)
-  (shell-command "Git add % && Git commit -m 'Revise file'"))
-
-;;; Show Git Status in Dired
-(use-package diff-hl
-  :disabled t
-  :defer 1
-  :config
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
-
 ;;; Diff Files with Vdiff
-;; (use-package vdiff
-;;   :general
-;;   (:states 'normal
-;;    :keymaps 'vdiff-mode-map
-;;    ",d" 'vdiff-mode-prefix-map)
-;;   :config
-;;   (evil-collection-init 'vdiff))
-
 (use-package vdiff-magit
   :defer t
   :init
@@ -178,6 +154,7 @@
     (transient-suffix-put 'magit-dispatch "e" :command 'vdiff-magit-dwim)
     (transient-suffix-put 'magit-dispatch "E" :description "vdiff")
     (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit)))
+
 ;;; Ediff
 ;; Don't open ediff in new frame
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)

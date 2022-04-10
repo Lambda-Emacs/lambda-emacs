@@ -103,7 +103,6 @@
   (setq peep-dired-enable-on-directories t)
   (setq peep-dired-cleanup-on-disable t))
 
-
 ;;;; Dired Ranger
 ;; https://github.com/Fuco1/dired-hacks#dired-ranger
 ;; Very helpful way of copying/moving files
@@ -132,7 +131,6 @@
                             (goto-line (count-lines
                                         (point-min)
                                         (point-max))))))))
-
 
 (provide 'lem-setup-dired)
 ;;; lem-setup-dired.el ends here

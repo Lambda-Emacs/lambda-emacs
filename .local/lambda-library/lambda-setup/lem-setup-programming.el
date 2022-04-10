@@ -278,12 +278,12 @@ Lisp function does not specify a special indentation."
 ;;;; Plist
 (use-package plist-mode
   :straight nil
-  :load-path "~/.emacs.d/.local/elisp/plist-mode"
+  :load-path "~/bin/lisp-projects/plist-mode"
   :commands (plist-mode))
 
 ;;;; Vim
-(use-package vimrc-mode
-  :commands vimrc-mode)
+  (use-package vimrc-mode
+    :commands vimrc-mode)
 
 ;;; Macrostep
 ;; https://github.com/joddie/macrostep Interactive macro expander for emacs

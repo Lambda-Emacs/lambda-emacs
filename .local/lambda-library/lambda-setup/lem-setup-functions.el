@@ -35,7 +35,7 @@
 (defun lem/setup-kill-and-archive-region ()
   "Delete & append region to end of setup-archive.el"
   (interactive)
-  (append-to-file (region-beginning) (region-end) (concat lem-setup-dir "setup-files-archive/setup-archive.el"))
+  (append-to-file (region-beginning) (region-end) (concat lem-setup-dir "lem-setup-archive.el"))
   (delete-region (region-beginning) (region-end)))
 
 ;;;;; Config Helper Functions
@@ -463,7 +463,7 @@ will be killed."
         ;; This would override `fill-column' if it's an integer.
         (emacs-lisp-docstring-fill-column t))
     (fill-paragraph nil region)))
-(keymap-global-set "M-Q" #'lem/unfill-paragraph)
+(global-set-key (kbd "M-Q") #'lem/unfill-paragraph)
 
 ;;;;; Insert seconds
 (defun lem/insert-time-string ()

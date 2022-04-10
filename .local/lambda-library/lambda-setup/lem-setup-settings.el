@@ -89,18 +89,18 @@
 ;;;;; UTF 8
 ;; UTF-8 for all the things!
 (prefer-coding-system 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(set-language-environment "UTF-8")
+;; (set-default-coding-systems 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-selection-coding-system 'utf-8)
+;; (set-language-environment "UTF-8")
 
-(setq-default buffer-file-coding-system 'utf-8)
-(setq coding-system-for-read 'utf-8)
-(setq coding-system-for-write 'utf-8)
-(setq locale-coding-system 'utf-8)
-(setq default-buffer-file-coding-system 'utf-8)
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;; (setq-default buffer-file-coding-system 'utf-8)
+;; (setq coding-system-for-read 'utf-8)
+;; (setq coding-system-for-write 'utf-8)
+;; (setq locale-coding-system 'utf-8)
+;; (setq default-buffer-file-coding-system 'utf-8)
+;; (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;;;;; Interface settings
 ;; No audible bell/alert
@@ -127,11 +127,6 @@
 
 ;; (Don't) Blink the cursor
 (blink-cursor-mode 0)
-
-;; The menu bar in MacOS GUI takes no additional window space, so enable it.
-(if (and sys-mac (display-graphic-p))
-    (menu-bar-mode 1)
-  (menu-bar-mode -1))
 
 ;;;;; Search and Replace
 (use-package visual-regexp
