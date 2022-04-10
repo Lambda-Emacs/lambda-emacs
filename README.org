@@ -7,6 +7,20 @@ to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is 
 provide enough commentary on the configuration such that it might be useful to
 those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally.
 
+* Why use 𝛌-Emacs?
+
+Why choose this configuration over all of the other amazing Emacs "distros" out
+there, such as (if you use vim-bindings) [[http://spacemacs.org][spacemacs]], or [[https://github.com/hlissner/doom-emacs][doom-emacs]], or the more
+traditional configurations of [[Https://github.com/purcell/emacs.d][Purcell]], [[https://github.com/bbatsov/prelude][Batsov (prelude)]], [[https://github.com/seagle0128/.emacs.d][Zhang (Centaur Emacs)]],
+the [[https://github.com/gilbertw1/bmacs][bmacs]] configuration of Bryan Gilbert (see also his [[https://github.com/gilbertw1/emacs-literate-starter][literate starter kit]]) and
+[[https://github.com/novoid/dot-emacs][Karl Voit's]] config, John Kitchen's [[https://github.com/jkitchin/scimax][scimax]], Kieran Healy's [[https://github.com/kjhealy/emacs-starter-kit][social sciences
+starter kit]], and [[https://github.com/caisah/emacs.dz][many others]]. Further helpful starts include [[https://github.com/hrs/sensible-defaults.el][sensible defaults]]
+or especially [[https://github.com/SystemCrafters/rational-emacs][Rational Emacs]]. There are also the recent stylings of [[https://github.com/rougier][Nicolas
+Rougier's]] [[https://github.com/rougier/elegant-emacs][elegant-emacs]] and [[https://github.com/rougier/nano-emacs][nano-emacs]]. Truly a surfeit of riches. So why
+another one? Here are three reasons. 𝛌-Emacs is largely an abstraction from my
+own config, which I wanted to make more easily available to others. I also want
+a clean but useful config to point my students to. Finally, setting this up is a
+useful way for me to think about how "best" to configure Emacs. 
 
 * 𝛌-Emacs Structure
 
