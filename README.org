@@ -1,10 +1,15 @@
+Lambda-Emacs (𝛌-Emacs) is a configuration that is intended to serve as a useful
+starting point for your own custom configuration. The design of this
+configuration is aimed at writing and academic work in the humanities (for
+discussion of my view of the use of text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]),
+rather than opposed to, e.g., a programming language emphasis, though I've tried
+to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is to
+provide enough commentary on the configuration such that it might be useful to
+those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally.
+
+
 * 𝛌-Emacs Structure
 
-- File structure
-   + early-init.el
-   + early-config.el (user, if any)
-   + init.el
-   + config.el (user, if any) 
 - Directory Structure
    + User Emacs directory (.emacs.d)
       - Local directory (.local)
@@ -15,33 +20,38 @@
          + Temp directory (temp)
             - Volatile storage (cache)
             - Non-volatile storage (etc)
+- File structure
+   + early-init.el
+   + early-config.el (supplied by user, if any)
+   + init.el
+   + config.el (supplied by user, if any) 
 
-* 𝛌-Emacs Features
+* Conventions
+- Use =custom-set-variable= when dealing with =defcustom= variables. For some
+  discussion see [[https://emacs.stackexchange.com/questions/102/advantages-of-setting-variables-with-setq-instead-of-custom-el][this stack exchange discussion]].
+- Please consult the elisp [[https://github.com/bbatsov/emacs-lisp-style-guide][style guide]] for all style conventions with regard to
+  naming, etc.
+   + Note that all functions and variables are prefixed with the "lem" namespace.
+   + Internal functions have their namespace delineated by "-\-" while
+     user-facing functions have only a single "-"
+ 
+* 𝛌-Emacs Modules
 
 𝛌-Emacs is a "modular" distribution of Emacs. It consists of a set of "setup"
 elisp files grouped according to the following areas:
 
 - *Core*: These files load essential libraries, useful functions, macros, and sane
-  settings. This group of files consists of the following:
-   + lem-setup-libraries
-   + lem-setup-settings
-   + lem-setup-functions
-   + lem-setup-macros
+  settings. 
 - *UI*: Primary settings concerning frame, window, and buffer interaction, along
-  with fonts, faces, themeing, completion, and navigation all belong to this group.
+  with fonts, faces, themeing, completion, tabs/workspaces, and navigation all
+  belong to this group.
 - *Writing & Editing*: Settings for spelling, citation, dictionary, notes,
   typesetting (LaTeX) and writing-specific modes (markdown).
 - *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
   org do? Since many people use Emacs almost exclusively for org-mode, it
   warrants its own group. 
 - *Languages*: Programming languages. 
-- *Shell*: Configuration for shell and terminal commands and applications
+- *Shell*: Configuration for shell and command-line related settings. 
 - *Project*: Version control settings and configuration for the built-in project.el
 
 
-* Contributing
-- Please consult the elisp [[https://github.com/bbatsov/emacs-lisp-style-guide][style guide]] for all style conventions with regard to
-  naming, etc.
-   + Note that all functions and variables with use the "lem" namespace.
-   + Internal functions have their namespace delineated by "-\-"
-   + Interactive functions have their namespace delineated by "/"
