@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 
-;; Setup for modeline. Currently I just have bespoke-modeline configured.
+;; Setup for modeline.
 
 ;;; Code:
 
@@ -31,6 +31,7 @@
   (lambda-line-position 'top)
   (lambda-line-hspace " ")
   (lambda-line-prefix t)
+  (lambda-line-status-invert nil)
   (lambda-line-gui-ro-symbol  " ⨂")  ;; ⬤◯⨂
   (lambda-line-gui-mod-symbol " ⬤") ;; ⨀⬤
   (lambda-line-gui-rw-symbol  " ◯")  ;; ◉ ◎ ⬤◯
@@ -43,39 +44,6 @@
   (when (eq lambda-line-position 'top)
     (setq-default mode-line-format (list "%_"))
     (setq mode-line-format (list "%_"))))
-
-;;;; Bespoke Modeline
-(use-package bespoke-modeline
-  ;; :straight (:type git :host github :repo "mclear-tools/bespoke-modeline")
-  :straight (:local-repo "~/.emacs.d/.local/lambda-library/lambda-user/custom-themes/bespoke-modeline")
-  :commands bespoke-modeline-mode
-  :init
-  ;; Set header-line
-  (setq bespoke-modeline-position 'top)
-  ;; (setq bespoke-modeline-space-top +0.20
-  ;;       bespoke-modeline-space-bottom -0.20)
-  (setq bespoke-modeline-spacer " ")
-  ;; Set mode-line height
-  (setq bespoke-modeline-size 2)
-  ;; Show diff lines in mode-line
-  (setq bespoke-modeline-git-diff-mode-line t)
-  ;; Set mode-line cleaner
-  (setq bespoke-modeline-cleaner t)
-  ;; Use mode-line visual bell
-  (setq bespoke-modeline-visual-bell t)
-  ;; Set vc symbol
-  (setq bespoke-modeline-vc-symbol "") ;; 
-  )
-
-;;;; Nano Modeline
-(use-package nano-modeline
-  :straight (:local-repo "~/bin/lisp-projects/nano-modeline")
-  :commands nano-modeline-mode)
-
-;;;; Mood-Line
-(use-package mood-line
-  :straight (:local-repo "~/bin/lisp-projects/mood-line")
-  :commands mood-line-mode)
 
 ;;;; Hide Modeline
 (use-package emacs-hide-mode-line
