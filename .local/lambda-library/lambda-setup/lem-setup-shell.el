@@ -3,6 +3,9 @@
 (use-package compile
   :straight (:type built-in)
   :defer 2
+  ;; Add recompile to project map
+  :bind (:map project-prefix-map
+         ("C" . recompile))
   :config
   (setq compilation-always-kill t  ;; kill compilation process before starting another
         compilation-ask-about-save nil ;; save all buffers on `compile'
@@ -10,26 +13,7 @@
   ;; Automatically truncate compilation buffers so they don't accumulate too
   ;; much data and bog down the rest of Emacs.
   (autoload 'comint-truncate-buffer "comint" nil t)
-  (add-hook 'compilation-filter-hook #'comint-truncate-buffer)
-  ;; ;;  Whenever I run ~compile~, the buffer stays even after a successful compilation.
-  ;; ;;  Let's make it close automatically if the compilation is successful.
-  ;; (setq compilation-finish-functions
-  ;;       (lambda (buf str)
-  ;;         (if (null (string-match ".*exited abnormally.*" str))
-  ;;             ;;no errors, make the compilation window go away in a few seconds
-  ;;             (progn
-  ;;               (run-at-time "0.4 sec" nil
-  ;;                            (lambda ()
-  ;;                              (display-buffer (get-buffer-create "*compilation*") '(display-buffer-at-bottom (window-height . 0.15)))
-  ;;                              (delete-window)
-  ;;                               ;; (select-window (get-buffer-window (get-buffer-create "*compilation*")))
-  ;;                               ;; (delete-window)
-  ;;                               ;; (let ((count (count-windows)))
-  ;;                               ;;   (unless (= count 1)
-  ;;                               ;;     (winner-undo))))
-  ;;                               )
-  ;;                            (message "No Compilation Errors!")))))
-  )
+  (add-hook 'compilation-filter-hook #'comint-truncate-buffer))
 
 ;;; Completion Buffer
 ;; Remove completion buffer when done
