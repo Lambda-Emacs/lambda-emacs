@@ -37,6 +37,7 @@
   (defun lem/dired-updirectory ()
     (interactive)
     (find-alternate-file ".."))
+
   (when sys-mac
     ;; Suppress the warning: `ls does not support --dired'.
     (setq dired-use-ls-dired nil)
@@ -83,13 +84,13 @@
 ;;;; Peep Dired
 (use-package peep-dired
   :commands (peep-dired)
-  :bind (:map dired-mode-map
-         ("P" . peep-dired)
-         :map peep-dired-mode-map
-         ("j"    . peep-dired-next-file)
-         ("k"    . peep-dired-prev-file)
-         ("RET"  . lem/peep-dired-open)
-         ("TAB"  . lem/other-window))
+  :bind* (:map dired-mode-map
+          ("P" . peep-dired)
+          :map peep-dired-mode-map
+          ("j"    . peep-dired-next-file)
+          ("k"    . peep-dired-prev-file)
+          ("RET"  . lem/peep-dired-open)
+          ("TAB"  . lem/other-window))
   :config
   ;; helper function for opening files in full window
   (defun lem/peep-dired-open ()
@@ -116,6 +117,7 @@
 
 ;;;; Cycle Dired Buffer
 ;;https://www.reddit.com/r/emacs/comments/qnthhw/comment/hjiv2uc/?utm_source=share&utm_medium=web2x&context=3
+;; Allow for cycling from bottom to top of dired buffer and vice versa
 (add-hook 'dired-mode-hook
           (defun lem-dired-wrap ()
             "Cycle from bottom to top of buffer"
