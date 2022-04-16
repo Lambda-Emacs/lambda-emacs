@@ -134,6 +134,25 @@
           (error (save-buffers-kill-emacs))))
   (select-frame-set-input-focus (selected-frame)))
 
+;;;;; Create Capture Frame
+;; have these functions available for server
+(defun lem/activate-capture-frame ()
+  "run org-capture in capture frame"
+  (require 'org)
+  (select-frame-by-name "capture")
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (org-capture))
+
+;;;;; Weather Capture Frame
+(defun lem/weather-journal-capture ()
+  (interactive)
+  (require 'org)
+  (select-frame-by-name "capture")
+  (switch-to-buffer (get-buffer-create "*scratch*"))
+  (lem/org-journal)
+  (lem/insert-weather)
+  (goto-char (point-max)))
+
 ;;;; Window Functions
 ;;;;; Toggle Dedicated Window
 (defun lem/toggle-window-dedicated ()
