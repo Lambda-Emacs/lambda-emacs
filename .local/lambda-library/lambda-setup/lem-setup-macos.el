@@ -65,7 +65,8 @@ Get it from:  <http://hasseg.org/trash/>"
   ;; (Do not) make new frames when opening a new file with Emacs unless on scratch buffer
   (setq ns-pop-up-frames nil)
 
-  ;; fullscreen (disable for non-space full screen)
+  ;; Fullscreen (disable for non-space full screen)
+  ;; Using fullscreen with "notched" M1 macs requires non-native.
   (setq ns-use-native-fullscreen nil)
 
 ;;;; Keybindings
@@ -137,5 +138,6 @@ This will use the command `open' with the message URL."
   :defer t)
 
 
+;;; Provide
 (provide 'lem-setup-macos)
 ;;; setup-macos.el ends here
