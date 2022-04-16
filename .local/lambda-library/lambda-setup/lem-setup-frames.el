@@ -20,12 +20,11 @@
 ;;; Commentary:
 
 ;; Setup for frames
+;; Note that some basic settings are placed in early-init for better startup.
 
 ;;; Code:
 
-;;;; Frames
-
-;;;;; Frame defaults
+;;;; Frame defaults
 (use-package frame
   :straight (:type built-in)
   :config
@@ -33,64 +32,34 @@
   (setq-default initial-frame-alist
                 (append (list
                          '(fullscreen . maximized)
+                         ;; '(width . 175)
+                         ;; '(height . 60)
                          '(internal-border-width . 18)
                          '(tool-bar-lines . 0)
-                         '(menu-bar-lines . 0)
                          '(vertical-scroll-bars . nil)
                          '(horizontal-scroll-bars . nil)
-                         '(height . 45)
-                         '(width . 85)
                          )))
   (setq-default default-frame-alist
                 (append (list
                          '(frame-title-format . nil)
                          '(internal-border-width . 18)
                          '(tool-bar-lines . 0)
-                         '(menu-bar-lines . 0)
                          '(vertical-scroll-bars . nil)
                          '(horizontal-scroll-bars . nil)
                          )))
   ;; Resize pixel-wise to avoid gaps
   (setq-default window-resize-pixelwise t)
   (setq-default frame-resize-pixelwise t)
+
   ;; Don't show icon in frame
   (setq-default ns-use-proxy-icon nil))
 
-;;;;; Fix titlebar titling colors
+;;;; Fix titlebar titling colors
 ;; see also https://github.com/d12frosted/homebrew-emacs-plus/issues/55
 (use-package ns-auto-titlebar
   :commands ns-auto-titlebar-mode
   :if (eq system-type 'darwin)
   :init (ns-auto-titlebar-mode))
-
-;;;;; Center Frames
-;; https://christiantietze.de/posts/2021/06/emacs-center-window-single-function/
-(defun lem/frame-recenter (&optional frame)
-  "Center FRAME on the screen.
-FRAME can be a frame name, a terminal name, or a frame.
-If FRAME is omitted or nil, use currently selected frame."
-  (interactive)
-  (unless (eq 'maximised (frame-parameter nil 'fullscreen))
-    (let* ((frame (or (and (boundp 'frame) frame) (selected-frame)))
-           (frame-w (frame-pixel-width frame))
-           (frame-h (frame-pixel-height frame))
-           ;; frame-monitor-workarea returns (x y width height) for the monitor
-           (monitor-w (nth 2 (frame-monitor-workarea frame)))
-           (monitor-h (nth 3 (frame-monitor-workarea frame)))
-           (center (list (/ (- monitor-w frame-w) 2)
-                         (/ (- monitor-h frame-h) 2))))
-      (apply 'set-frame-position (flatten-list (list frame center))))))
-
-;; (add-hook 'after-init-hook #'lem/frame-recenter)
-(add-hook 'after-make-frame-functions #'lem/frame-recenter)
-
-;;;;; Fringe
-(use-package fringe
-  :straight (:type built-in)
-  :custom
-  ;; allow fringe indicators
-  (fringe-mode '(1 . 0)))
-
 
 (provide 'lem-setup-frames)
 ;;; lem-setup-frames.el ends here

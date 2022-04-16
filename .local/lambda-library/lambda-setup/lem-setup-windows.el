@@ -23,7 +23,7 @@
 
 ;;; Code:
 
-;;;; Windows
+;;;; Window Division
 ;; Vertical window divider
 (use-package frame
   :straight (:type built-in)
@@ -71,10 +71,10 @@
              windmove-down
              windmove-left
              windmove-right)
-  :bind (("C-<left>" . #'windmove-left)
-         ("C-<right>" . #'windmove-right)
-         ("C-<down>" . #'windmove-down)
-         ("C-<up>" . #'windmove-up))
+  :bind (("C-c C-h" . #'windmove-left)
+         ("C-c C-l" . #'windmove-right)
+         ("C-c C-j" . #'windmove-down)
+         ("C-c C-k" . #'windmove-up))
   :config
   (windmove-default-keybindings))
 
@@ -98,37 +98,6 @@
 (use-package winner
   :straight nil
   :hook (after-init . winner-mode))
-
-;;;; Dialogs, Menus, & Popups
-
-;;;;; Dialogs and popups
-;; No file dialog
-(setq use-file-dialog nil)
-;; No dialog box
-(setq use-dialog-box nil)
-;; No confirmation for visiting non-existent files
-(setq confirm-nonexistent-file-or-buffer nil)
-;; Set popup windows
-(setq-default pop-up-windows t)
-;; Set popup frames
-(setq-default pop-up-frames nil)
-
-;;;;; Hydra Menus
-(use-package hydra :defer 1)
-
-;;;;; Transient Menus
-(use-package transient
-  :defer 1
-  :custom
-  (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
-  (transient-values-file (concat lem-cache-dir "transient/values.el"))
-  (transient-history-file (concat lem-cache-dir "transient/history.el"))
-  ;; set transient popop to top of window
-  (transient-display-buffer-action '(display-buffer-in-side-window
-                                     (side . top)
-                                     (dedicated . t)
-                                     (inhibit-same-window . t)
-                                     (window-parameters (no-other-window . t)))))
 
 
 (provide 'lem-setup-windows)
