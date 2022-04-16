@@ -19,20 +19,123 @@
 
 ;;; Commentary:
 
-;; This file provides settings that determine most of the look and feel of
-;; 𝛌-Emacs that isn't related to theme, completion ui, or specific modes. This
-;; includes all ui settings for help and info buffers.
+;; This file provides settings for dialogues, popups, help, and info buffers.
 
 ;;; Code:
 
+
+;;;; Dialogs, Menus, & Popups
+
+;;;;; Dialogs and popups
+;; No file dialog
+(setq use-file-dialog nil)
+;; No dialog box
+(setq use-dialog-box nil)
+;; No confirmation for visiting non-existent files
+(setq confirm-nonexistent-file-or-buffer nil)
+;; Set popup windows
+(setq-default pop-up-windows t)
+;; Set popup frames
+(setq-default pop-up-frames nil)
+
+;;;;; Hydra Menus
+(use-package hydra :defer 1)
+
+;;;;; Transient Menus
+(use-package transient
+  :defer 1
+  :custom
+  (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
+  (transient-values-file (concat lem-cache-dir "transient/values.el"))
+  (transient-history-file (concat lem-cache-dir "transient/history.el"))
+  ;; set transient popop to top of window
+  (transient-display-buffer-action '(display-buffer-in-side-window
+                                     (side . top)
+                                     (dedicated . t)
+                                     (inhibit-same-window . t)
+                                     (window-parameters (no-other-window . t)))))
+
 ;;;; Help & Information
+
+;;;;; Menu-bar
+;; Use menu bar in GUI on MacOS as its useful for discovery & doesn't take any
+;; extra room.
+(if (and sys-mac (display-graphic-p))
+    (customize-set-variable 'menu-bar-mode t)
+  (customize-set-variable 'menu-bar-mode nil))
+
+;;;;; Help Focus
+(use-package help
+  :straight (:type built-in)
+  :custom
+  ;; Always focus on help window/buffer
+  (help-window-select 't))
+
+;;;;; Help At Point
+(use-package help-at-pt
+  :straight (:type built-in)
+  :custom
+  (help-at-pt-timer-delay 0.1)
+  (help-at-pt-display-when-idle '(flymake-diagnostic)))
+
+;;;;; Better Help with Helpful
+;; Better help info
+;; Much better lookup both in details and headings/aesthetics
+
+;; NOTE: emacs 29 has a breaking change so using el-patch to keep helpful working
+;; see https://github.com/Wilfred/helpful/pull/283
+
+(use-package helpful
+  :defer t
+  :bind (("C-h f"   . #'helpful-function)
+         ("C-h k"   . #'helpful-key)
+         ("C-h o"   . #'helpful-symbol)
+         ("C-h v"   . #'helpful-variable)
+         ("C-h C-." . #'helpful-at-point)
+         ("C-h C-l" . #'find-library))
+  :init
+  ;; HACK: - see https://github.com/hlissner/doom-emacs/issues/6063
+  (defvar read-symbol-positions-list nil)
+  :config/el-patch
+  (defun helpful--autoloaded-p (sym buf)
+    "Return non-nil if function SYM is autoloaded."
+    (-when-let (file-name (buffer-file-name buf))
+      (setq file-name (s-chop-suffix ".gz" file-name))
+      (help-fns--autoloaded-p sym)))
+
+  (defun helpful--skip-advice (docstring)
+    "Remove mentions of advice from DOCSTRING."
+    (let* ((lines (s-lines docstring))
+           (relevant-lines
+            (--take-while
+             (not (or (s-starts-with-p ":around advice:" it)
+                      (s-starts-with-p "This function has :around advice:" it)))
+             lines)))
+      (s-trim (s-join "\n" relevant-lines)))))
+
+;; Display file commentary section
+(global-set-key (kbd "C-h C-c") 'finder-commentary)
+
+;;;;; Elisp Demos
+;; Provide examples of Elisp code
+(use-package elisp-demos
+  :defer 1
+  :config
+  ;; inject demos into helpful
+  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
+
+;;;;; Better Info
+;; Better looking info pages
+(use-package info-colors
+  :straight (:host github :repo "ubolonton/info-colors")
+  :hook (Info-selection . info-colors-fontify-node))
 
 ;;;;; Help Transient
 
 ;; A little more useful for calling help than just C-h (less info density)
 ;; see https://luca.cambiaghi.me/vanilla-emacs/readme.html#h:14F8ECDE-9E15-46F7-B903-ECE383251C48
 (with-eval-after-load 'transient
-  ;; (bind-key (concat lem-prefix " h") 'lem/help-transient)
+  (bind-key (concat lem-prefix " h") 'lem/help-transient)
   (transient-define-prefix lem/help-transient ()
     ["Help Commands"
      ["Mode & Bindings"
@@ -69,7 +172,7 @@
      ["Describe"
       ("s" "Symbol" helpful-symbol)
       ("." "At Point   " helpful-at-point)
-      ("C-f" "Face" describe-face)
+      ("C-d" "Face" describe-face)
       ("w" "Where Is" where-is)
       ("=" "Position" what-cursor-position)
       ]
@@ -90,60 +193,6 @@
       ]
      ]
     ))
-
-;;;;; Better Help with Helpful
-;; Much better lookup both in details and headings/aesthetics
-;; Better help info
-
-;; NOTE: emacs 29 has a breaking change so using el-patch to keep helpful working
-;; see https://github.com/Wilfred/helpful/pull/283
-
-(use-package helpful
-  :defer t
-  :bind (("C-h f"   . #'helpful-function)
-         ("C-h k"   . #'helpful-key)
-         ("C-h o"   . #'helpful-symbol)
-         ("C-h v"   . #'helpful-variable)
-         ("C-h C-." . #'helpful-at-point)
-         ("C-h C-l" . #'find-library))
-  :init
-  ;; HACK: - see https://github.com/hlissner/doom-emacs/issues/6063
-  (defvar read-symbol-positions-list nil)
-  :config/el-patch
-  (defun helpful--autoloaded-p (sym buf)
-    "Return non-nil if function SYM is autoloaded."
-    (-when-let (file-name (buffer-file-name buf))
-      (setq file-name (s-chop-suffix ".gz" file-name))
-      (help-fns--autoloaded-p sym)))
-
-  (defun helpful--skip-advice (docstring)
-    "Remove mentions of advice from DOCSTRING."
-    (let* ((lines (s-lines docstring))
-           (relevant-lines
-            (--take-while
-             (not (or (s-starts-with-p ":around advice:" it)
-                      (s-starts-with-p "This function has :around advice:" it)))
-             lines)))
-      (s-trim (s-join "\n" relevant-lines)))))
-
-;; Display file commentary section
-(global-set-key (kbd "C-h C-c") 'finder-commentary)
-
-
-;;;;; Elisp Demos
-(use-package elisp-demos
-  :defer 1
-  :config
-  ;; inject demos into helpful
-  (advice-add 'helpful-update :after #'elisp-demos-advice-helpful-update))
-
-
-
-;;;;; Better Info
-;; Better looking info pages
-(use-package info-colors
-  :straight (:host github :repo "ubolonton/info-colors")
-  :hook (Info-selection . info-colors-fontify-node))
 
 ;;;;; Completing-Read Info
 ;; Info search commands using completing-read
@@ -340,17 +389,6 @@ If TOP-NODE is provided, then just select from its sub-nodes."
 (bind-key "C-h i" #'completing-read-info)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+;;; Provide
 (provide 'lem-setup-help)
 ;;; lem-setup-help.el ends here
