@@ -71,7 +71,7 @@
           ;; other tags
           ("DONE:"  . ((lambda (tag) (svg-tag-make "DONE:"  :face 'shadow  :inverse t ))))
           ("FIXME:" . ((lambda (tag) (svg-tag-make "FIXME:" :face 'error :inverse t))))
-          ("HACK:"  . ((lambda (tag) (svg-tag-make "HACK:"  :face 'whitespace-line :inverse t))))
+          ("HACK:"  . ((lambda (tag) (svg-tag-make "HACK:"  :face 'warning :inverse t))))
           ("NOTE:"  . ((lambda (tag) (svg-tag-make "NOTE:"  :face 'warning :inverse t))))
           ("TODO:"  . ((lambda (tag) (svg-tag-make "TODO:"  :face 'warning :inverse t)))))))
 
@@ -90,9 +90,7 @@
   (hl-line-inhibit-highlighting-for-modes '(dired-mode))
   (hl-line-when-idle-interval 2)
   :config
-  (toggle-hl-line-when-idle 1 t)
-  ;; don't highlight when idle on splash page
-  (add-hook 'lem-splash-mode-hook (lambda () (when lem-splash-mode (toggle-hl-line-when-idle)))))
+  (toggle-hl-line-when-idle 1 t))
 
 ;;;;; Highlight Numbers & TODOS
 (use-package highlight-numbers

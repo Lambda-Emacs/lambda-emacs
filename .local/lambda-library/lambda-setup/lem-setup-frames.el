@@ -19,8 +19,8 @@
 
 ;;; Commentary:
 
-;; Setup for frames
-;; Note that some basic settings are placed in early-init for better startup.
+;; Setup for frames. Note that some basic settings are placed in early-init for
+;; better startup.
 
 ;;; Code:
 

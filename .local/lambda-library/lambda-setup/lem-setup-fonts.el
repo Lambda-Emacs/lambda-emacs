@@ -82,6 +82,7 @@
 
 (use-package font-lock+
   :defer 1)
+
 ;; icons for dired
 (use-package all-the-icons-dired
   :if (display-graphic-p)
