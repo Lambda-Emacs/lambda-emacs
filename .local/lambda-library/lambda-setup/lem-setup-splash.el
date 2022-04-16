@@ -26,17 +26,10 @@
 ;;
 ;;  An alternative splash screen:
 
-;;  - "q" or <esc> kills the splash screen
-;;  - Any other key open the about-emacs buffer
-;;
 ;; Note: The screen is not shown if there are opened file buffers. For
 ;;       example, if you start emacs with a filename on the command
 ;;       line, the splash is not shown.
-;;
-;; Usage:
-;;
-;;  (require 'setup-splash)
-;;
+
 ;;; Code:
 (require 'cl-lib)
 
@@ -50,6 +43,7 @@
     (forward-line lines)
     (point)))
 
+;; Init info
 ;; See https://github.com/emacs-dashboard/emacs-dashboard/blob/master/dashboard-widgets.el
 ;; https://github.com/hlissner/doom-emacs/blob/eddaae40e84b5eb1f0136aaba23d918f71b6a986/core/core.el#L479
 
@@ -209,13 +203,17 @@
       (switch-to-buffer "*splash*")))
   (lem-splash-mode))
 
+(defun splash-screen-bury ()
+  "Bury the splash screen buffer (immediately)."
+  (interactive)
+  (when (get-buffer "*splash*")
+    (bury-buffer)))
+
 (defun splash-screen-kill ()
   "Kill the splash screen buffer (immediately)."
   (interactive)
-  (if (get-buffer "*splash*")
-      (progn
-        (lem-splash-mode)
-        (kill-buffer "*splash*"))))
+  (when (get-buffer "*splash*")
+    (kill-buffer)))
 
 ;;; Define Minor Mode
 ;; Custom splash screen
@@ -226,8 +224,9 @@
     (define-key map (kbd "m") 'lem/open-email-in-workspace)
     (define-key map (kbd "n") 'lem/open-notes-in-workspace)
     (define-key map (kbd "p") 'lem/open-existing-project-and-workspace)
-    (define-key map (kbd "q") 'splash-screen-kill)
-    (define-key map (kbd "esc") 'splash-screen-kill)
+    (define-key map (kbd "q") 'splash-screen-bury)
+    (define-key map (kbd "esc") 'splash-screen-bury)
+    (define-key map (kbd "k") 'splash-screen-kill)
     map)
   "Keymap for lem-splash-mode.")
 
