@@ -140,9 +140,17 @@
            ("r" . consult-recent-file              )
            ("y" . lem/show-and-copy-buffer-filename))
 
-;;;;; Linting (Flycheck)
-(bind-keys :prefix-map lem+flycheck-keys
-           :prefix (concat lem-prefix " F"))
+;;;;; Linting (Flymake)
+(bind-keys :prefix-map lem+flymake-keys
+           :prefix (concat lem-prefix " F"        )
+           ("b" . flymake-start                   )
+           ("c" . consult-flymake                 )
+           ("d" . flymake-show-buffer-diagnostic  )
+           ("p" . flymake-show-project-diagnostics)
+           ("P" . package-lint-current-buffer     )
+           ("u" . use-package-lint                )
+           )
+
 
 ;;;;; Mail Keybindings
 (bind-keys :prefix-map lem+mail-keys
@@ -285,13 +293,13 @@
 ;;;;; Workspace Keybindings
 (bind-keys :prefix-map lem+workspace-keys
            :prefix (concat lem-prefix " W")
-           ("c"  .  workspaces-create-workspace)
-           ("d"  .  workspaces-close-workspace)
-           ("k"  .  workspaces-kill-buffers-close-workspace)
-           ("n"  .  workspaces-create-new-project-and-workspace)
-           ("p"  .  workspaces-project-switch-project-open-file)
-           ("s"  .  workspaces-switch-to-or-create-workspace)
-           ("w"  .  workspaces-open-existing-project-and-workspace))
+           ("c"  .  tabspaces-create-workspace)
+           ("d"  .  tabspaces-close-workspace)
+           ("k"  .  tabspaces-kill-buffers-close-workspace)
+           ("n"  .  tabspaces-create-new-project-and-workspace)
+           ("p"  .  tabspaces-project-switch-project-open-file)
+           ("s"  .  tabspaces-switch-to-or-create-workspace)
+           ("w"  .  tabspaces-open-existing-project-and-workspace))
 
 ;;;;; Zettelkasten/Notes/Wiki
 (bind-keys :prefix-map lem+notes-keys
