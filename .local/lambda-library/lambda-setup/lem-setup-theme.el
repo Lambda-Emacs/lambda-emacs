@@ -19,7 +19,9 @@
 
 ;;; Commentary:
 
-;; Theme settings & functions
+;; Theme settings & functions 𝛌-Emacs comes with its own set of themes --
+;; 𝛌-Themes. The user can of course configure things to use whatever theme they
+;; like. The Modus themes are especially good and included with Emacs 28+.
 
 ;;; Code:
 
@@ -41,28 +43,11 @@
 ;;;; What Face?
 ;; https://stackoverflow.com/a/66287459/6277148
 (defun what-face (pos)
+  "State the face at point POS in the minibuffer."
   (interactive "d")
   (let ((face (or (get-char-property (point) 'read-face-name)
                   (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
-
-;;;; Autothemer
-;; Make creating themes (and running them) easier
-(use-package autothemer
-  :straight t)
-
-;;;; Bespoke Theme
-(use-package bespoke-themes
-  ;; :straight (:type git :host github :repo "mclear-tools/bespoke-themes")
-  :disabled
-  :straight nil
-  :load-path "~/.emacs.d/.local/lambda-library/lambda-user/custom-themes/bespoke-themes"
-  :config
-  ;; Set use of italics
-  (setq bespoke-set-italic-comments t
-        bespoke-set-italic-keywords t)
-  ;; Set variable pitch
-  (setq bespoke-set-variable-pitch t))
 
 ;;;; Disable All Custom Themes
 (defun lem/disable-all-themes ()
@@ -130,14 +115,18 @@
   "Run `after-load-theme-hook'."
   (run-hooks 'lem-after-load-theme-hook))
 
-;;;; Reload Active Theme
-(defun lem/bespoke-reload-theme ()
-  "reload current bespoke theme"
-  (interactive)
-  (progn
-    (bespoke--disable-all-themes)
-    (load-theme 'bespoke t)))
+;;;; Lambda Themes
+;; Set a default theme
+(use-package lambda-themes
+  :straight nil
+  :load-path "~/.emacs.d/.local/lambda-library/lambda-user/custom-themes/lambda-themes"
+  :custom
+  ;; Custom settings. To turn any of these off just set to `nil'.
+  (lambda-themes-set-variable-pitch t)
+  (lambda-themes-set-italic-comments t)
+  (lambda-themes-set-italic-keywords t))
 
 
+;;; Provide
 (provide 'lem-setup-theme)
 ;;; lem-setup-theme.el ends here
