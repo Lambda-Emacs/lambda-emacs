@@ -1,7 +1,44 @@
-;; Programming
+;;; lem-setup-programming.el --- Programming settings -*- lexical-binding: t -*-
 
-;;; Delimiters & Identifiers
-;;;; Visualization of Delimiters (Rainbow Delimiters)
+;; Author: Colin McLear
+;; Maintainer: Colin McLear
+
+;; This file is not part of GNU Emacs
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+;;; Commentary:
+
+;; Settings for better programming/coding. This includes delimiters, languages,
+;; indentation, linting, documentation, and compilation.
+
+;;; Code:
+
+;;;; Show Pretty Symbols
+(use-package prog-mode
+  :straight (:type built-in)
+  :defer t
+  :custom
+  ;; Show markup at point
+  (prettify-symbols-unprettify-at-point t)
+  :config
+  ;; Pretty symbols
+  (global-prettify-symbols-mode +1))
+
+;;;; Delimiters & Identifiers
+;;;;; Visualization of Delimiters (Rainbow Delimiters)
 ;; https://github.com/Fanael/rainbow-delimiters Useful package that will highlight
 ;; delimiters such as parentheses, brackets or braces according to their depth. Each
 ;; successive level is highlighted in a different color. This makes it easy to spot
@@ -18,7 +55,7 @@
 (use-package rainbow-identifiers
   :commands rainbow-identifiers-mode)
 
-;;;; Surround & Change Delimiters
+;;;;; Surround & Change Delimiters
 
 (use-package embrace
   :straight (:type git :host github :repo "cute-jumper/embrace.el")
@@ -33,7 +70,7 @@
       (embrace-add-pair (car lst) (cadr lst) (cddr lst))))
   (add-hook 'markdown-mode-hook 'embrace-markdown-mode-hook))
 
-;;;; Edit & Traverse Delimiters
+;;;;; Edit & Traverse Delimiters
 
 (use-package puni
   :straight (:type git :host github :repo "AmaiKinono/puni")
@@ -41,21 +78,21 @@
                     eval-expression-minibuffer-setup) . puni-mode))
 
 
-;;; Multiple Cursors
+;;;; Multiple Cursors
 (use-package iedit
   :straight (:type git :host github :repo "victorhge/iedit")
   :bind (:map lem+search-keys
          ("c" . iedit-mode)))
 
-;;; Languages
-;;;; Applescript
+;;;; Languages
+;;;;; Applescript
 (use-package applescript-mode
   :mode (("\\.scpt\\'" . applescript-mode)
          ("\\.applescript\\'"       . applescript-mode))
   :commands (applescript-mode))
 
-;;;; Elisp
-;;;;; Lisp Packages
+;;;;; Elisp
+;;;;;; Lisp Packages
 (use-package lisp-mode
   :straight (:type built-in)
   :commands lisp-mode
@@ -93,7 +130,7 @@
                                   (rainbow-delimiters-mode)))
 
 
-;;;;; Lisp Functions
+;;;;;; Lisp Functions
 ;; idea from http://www.reddit.com/r/emacs/comments/312ge1/i_created_this_function_because_i_was_tired_of/
 (defun lem/eval-current-form ()
   "Looks for the current def* or set* command then evaluates, unlike `eval-defun', does not go to topmost function"
@@ -113,7 +150,7 @@
         (find-variable-other-window symb)
       (find-function-at-point))))
 
-;;;;; Fix Parentheses
+;;;;;; Fix Parentheses
 
 (defun lem/fix-lonely-parens ()
   "Move all closing parenthesis at start of indentation to previous line."
@@ -123,7 +160,7 @@
     (while (re-search-forward "^\\s-*)" nil t)
       (delete-indentation))))
 
-;;;;; Elisp indentation
+;;;;;; Elisp indentation
 ;; Fix the indentation of keyword lists in Emacs Lisp. See [1] and [2].
 ;;
 ;; Before:
@@ -217,11 +254,11 @@ Lisp function does not specify a special indentation."
               (current-column)))
            (t $else)))))))
 
-;;;; Haskell
+;;;;; Haskell
 (use-package haskell-mode
   :commands haskell-mode)
 
-;;;; HTML
+;;;;; HTML
 (use-package web-mode
   :commands (web-mode)
   :mode ("\\.html$" . web-mode)
@@ -232,21 +269,21 @@ Lisp function does not specify a special indentation."
         web-mode-enable-auto-closing t
         web-mode-enable-auto-quoting t))
 
-;;;; Lua
+;;;;; Lua
 (use-package lua-mode
   :commands lua-mode
   :init
   (dolist (pattern '("\\.lua\\'"))
-  (add-to-list 'auto-mode-alist (cons pattern 'lua-mode))))
+    (add-to-list 'auto-mode-alist (cons pattern 'lua-mode))))
 
-;;;; PHP
+;;;;; PHP
 (use-package php-mode
   :commands php-mode
   :init
   (dolist (pattern '("\\.php\\'"))
-  (add-to-list 'auto-mode-alist (cons pattern 'php-mode))))
+    (add-to-list 'auto-mode-alist (cons pattern 'php-mode))))
 
-;;;; Shell Scripts
+;;;;; Shell Scripts
 (use-package sh-script
   :commands sh-script-mode
   :init
@@ -261,13 +298,13 @@ Lisp function does not specify a special indentation."
                        "zshrc\\'"))
       (add-to-list 'auto-mode-alist (cons pattern 'sh-mode)))))
 
-  (defun spacemacs//setup-shell ()
-      (when (and buffer-file-name
-                 (string-match-p "\\.zsh\\'" buffer-file-name))
-        (sh-set-shell "zsh")))
-    (add-hook 'sh-mode-hook 'spacemacs//setup-shell)
+(defun spacemacs//setup-shell ()
+  (when (and buffer-file-name
+             (string-match-p "\\.zsh\\'" buffer-file-name))
+    (sh-set-shell "zsh")))
+(add-hook 'sh-mode-hook 'spacemacs//setup-shell)
 
-;;;; YAML
+;;;;; YAML
 (use-package yaml-mode
   :commands yaml-mode
   :mode (("\\.yml$" . yaml-mode)
@@ -275,30 +312,30 @@ Lisp function does not specify a special indentation."
   :config
   (add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
 
-;;;; Plist
+;;;;; Plist
 (use-package plist-mode
   :straight nil
   :load-path "~/bin/lisp-projects/plist-mode"
   :commands (plist-mode))
 
-;;;; Vim
-  (use-package vimrc-mode
-    :commands vimrc-mode)
+;;;;; Vim
+(use-package vimrc-mode
+  :commands vimrc-mode)
 
-;;; Macrostep
+;;;; Macrostep
 ;; https://github.com/joddie/macrostep Interactive macro expander for emacs
 (use-package macrostep :commands macrostep-expand)
 
-;;; Documentation
+;;;; Documentation
 (use-package tldr
   :commands (tldr tldr-update-docs)
   :init
   (with-eval-after-load 'evil
-  (evil-set-initial-state 'tldr-mode 'emacs))
+    (evil-set-initial-state 'tldr-mode 'emacs))
   :config
   (setq tldr-directory-path (expand-file-name "tldr/" lem-etc-dir)))
 
-;;; Indentation
+;;;; Indentation
 (use-package aggressive-indent
   :preface
   (defun lem/aggressive-indent-mode-off ()
@@ -327,79 +364,47 @@ Lisp function does not specify a special indentation."
                 highlight-indent-guides-auto-enabled t))
 
 
-;;; Linting/Error Checking (Flycheck)
-(use-package flycheck
-  :straight (:type git :host github :repo "flycheck/flycheck")
-  :bind (:map lem+flycheck-keys
-         ("b"   . flycheck-buffer)
-         ("C"   . flycheck-clear)
-         ("m" . flycheck-compile)
-         ("n"   . flycheck-next-error)
-         ("p"   . flycheck-previous-error)
-         ("l"   . flycheck-list-errors)
-         ("w"   . flycheck-copy-errors-as-kill)
-         ("s"   . flycheck-select-checker)
-         ("?"   . flycheck-describe-checker)
-         ("h"   . flycheck-display-error-at-point)
-         ("e"   . flycheck-explain-error-at-point)
-         ("H"   . display-local-help)
-         ("i"   . flycheck-manual)
-         ("V"   . flycheck-version)
-         ("v"   . flycheck-verify-setup)
-         ("x"   . flycheck-disable-checker))
-  :hook ((emacs-lisp-mode
-	      php-mode
-	      sh-mode
-	      shell-mode
-	      shell-script-mode)
-         . flycheck-mode)
+;;;; Linting/Error Checking (Flymake)
+;; Both Flycheck and Flymake are good linters, but let's stick with the built-in Flymake
+
+(use-package flymake
+  :straight (:type built-in)
+  :hook (prog-mode . flymake-mode)
   :custom
-  (flycheck-indication-mode nil)
+  (flymake-fringe-indicator-position 'left-fringe)
+  (flymake-suppress-zero-counters t)
+  (flymake-start-on-flymake-mode t)
+  (flymake-no-changes-timeout nil)
+  (flymake-start-on-save-buffer t)
+  (flymake-proc-compilation-prevents-syntax-check t)
+  (flymake-wrap-around nil)
+  ;; Customize mode-line
+  (flymake-mode-line-counter-format '("" flymake-mode-line-error-counter flymake-mode-line-warning-counter flymake-mode-line-note-counter ""))
+  (flymake-mode-line-format '(" " flymake-mode-line-exception flymake-mode-line-counters)))
+
+(use-package package-lint
+  :straight (:type git :host github :repo "purcell/package-lint")
+  :commands (package-lint-batch-and-exit
+             package-lint-current-buffer
+             package-lint-buffer)
   :config
-  ;; don't limit reported errors
-  (setq flycheck-checker-error-threshold nil)
-  ;; Settings
-  (setq-default flycheck-emacs-lisp-initialize-packages 'auto
-                flycheck-emacs-lisp-load-path 'inherit
-                flycheck-highlighting-mode 'lines
-                flycheck-check-syntax-automatically '(save)))
+  (add-hook 'emacs-lisp-mode-hook #'package-lint-flymake-setup)
+  ;; Avoid`package-not-installable' errors
+  ;; See https://github.com/purcell/package-lint/issues/153
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'package-archive-contents)))
 
-  ;; For .el files which are intended to be packages
-  (use-package flycheck-package
-    :after flycheck
-    :config
-    (add-to-list 'flycheck-checkers 'flycheck-emacs-lisp-package)
-    (flycheck-package-setup))
-
-(use-package consult-flycheck
-  :straight (:type git :host github :repo "minad/consult-flycheck")
-  :bind (:map lem+flycheck-keys
-         ("c" . consult-flycheck)))
-
-;; (use-package flymake
-;;   :straight (:type built-in)
-;;   :commands flymake-mode
-;;   :config
-;;   (setq flymake-fringe-indicator-position 'left-fringe)
-;;   (setq flymake-suppress-zero-counters t)
-;;   (setq flymake-start-on-flymake-mode t)
-;;   (setq flymake-no-changes-timeout nil)
-;;   (setq flymake-start-on-save-buffer t)
-;;   (setq flymake-proc-compilation-prevents-syntax-check t)
-;;   (setq flymake-wrap-around nil))
-
-;; (use-package package-lint-flymake
-;;   :straight t
-;;   :after flymake
-;;   :config
-;;   (package-lint-flymake-setup))
-
+(use-package consult-flymake
+  :disabled
+  :straight (:type git :host github :repo "minad/consult-flymake")
+  :bind (:map lem+flymake-keys
+         ("c" . consult-flymake)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Compiling
+;;;; Compiling
 
-;;;; Multi-Compile
+;;;;; Multi-Compile
 (use-package multi-compile
   :commands (compile multi-compile-run)
   :config
@@ -443,7 +448,7 @@ Lisp function does not specify a special indentation."
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;; Compile with Nearest Makefile
+;;;;; Compile with Nearest Makefile
 ;; See https://www.emacswiki.org/emacs/CompileCommand
 (defun lem/upward-find-file (filename &optional startdir)
   "Move up directories until we find a certain filename. If we
@@ -481,5 +486,6 @@ Lisp function does not specify a special indentation."
 
 
 
-;;; End Programming Setup
+;;; Provide
 (provide 'lem-setup-programming)
+;;; lem-setup-programming.el ends here
