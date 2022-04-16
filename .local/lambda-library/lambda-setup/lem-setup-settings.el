@@ -16,7 +16,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
 
 ;; Sane settings
@@ -26,26 +25,25 @@
 ;;;; General Settings
 
 ;;;;; Custom File Location
-;; Don't use persistent custom file (speeds up load time)
+;; Set custom settings in a separate file in the cache-dir
 (use-package cus-edit
   :straight (:type built-in)
   :defer 1
+  :custom
+  (custom-file (expand-file-name "custom.el" lem-cache-dir))
   :config
-  (setq custom-file (expand-file-name "custom.el" lem-cache-dir))
   (when (not (file-exists-p custom-file))
     (write-file custom-file))
   (when (file-exists-p custom-file)
     (load custom-file)))
 
-;; :custom
-;; (custom-file null-device "Don't store customizations"))
+;; NOTE: If you don't want to use custom settings at all put one of the
+;; following in the `:custom' section above:
+;; (custom-file null-device "Don't store customizations")
 ;; (custom-file (make-temp-file "emacs-custom"))
 
-;; If using custom settings put them in a separate file
-;; (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-
 ;;;;; Private File
-;; where to store private or "secret" info
+;; Where to store private or "secret" info
 (let ((private (expand-file-name "private.el" lem-user-dir)))
   (if (file-exists-p private)
 	  (load-file private)))
@@ -54,15 +52,8 @@
 ;; Make sure your text files end in a newline
 (setq require-final-newline t)
 
-;; Keep focus while navigating help buffers
-(setq help-window-select 't)
 ;; Allow large(r) files
 (setq large-file-warning-threshold 100000000)
-
-;; Pretty symbols
-(global-prettify-symbols-mode +1)
-;; Show markup at point
-(setq prettify-symbols-unprettify-at-point t)
 
 ;; Single space between sentences is more widespread than double
 (setq-default sentence-end-double-space nil)
@@ -71,8 +62,21 @@
 (global-subword-mode 1)
 
 ;; Allow visual lines
-(global-visual-line-mode)
-(setq line-move-visual t) ;; move via visual lines
+(use-package simple
+  :straight (:type built-in)
+  :hook (after-init . global-visual-line-mode)
+  :custom
+  ;; move via visual lines
+  (line-move-visual t))
+
+;;;; Line Numbers
+(use-package display-line-numbers
+  :straight (:type built-in)
+  ;; :hook (markdown-mode prog-mode)
+  :commands display-line-numbers-mode
+  :init
+  (setq-default display-line-numbers-type 'visual)
+  (setq-default display-line-numbers-width-start t))
 
 ;;;;; Indentation & Tabs
 ;; yes, both are needed!
@@ -89,18 +93,6 @@
 ;;;;; UTF 8
 ;; UTF-8 for all the things!
 (prefer-coding-system 'utf-8)
-;; (set-default-coding-systems 'utf-8)
-;; (set-terminal-coding-system 'utf-8)
-;; (set-keyboard-coding-system 'utf-8)
-;; (set-selection-coding-system 'utf-8)
-;; (set-language-environment "UTF-8")
-
-;; (setq-default buffer-file-coding-system 'utf-8)
-;; (setq coding-system-for-read 'utf-8)
-;; (setq coding-system-for-write 'utf-8)
-;; (setq locale-coding-system 'utf-8)
-;; (setq default-buffer-file-coding-system 'utf-8)
-;; (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 ;;;;; Interface settings
 ;; No audible bell/alert
@@ -134,7 +126,6 @@
   :config
   (use-package visual-regexp-steroids
     :commands (vr/select-query-replace)))
-
 
 ;;;;; Whitespace
 ;; Manage whitespace in prog modes
@@ -315,7 +306,6 @@
 
 ;; Follow symlinks
 (setq find-file-visit-truename t)
-
 
 ;;;; Mouse
 ;; Hide mouse cursor while typing. Why?
