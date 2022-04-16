@@ -115,13 +115,6 @@
 (global-set-key (kbd "M-l") 'downcase-dwim)
 (global-set-key (kbd "M-c") 'capitalize-dwim)
 
-;;;; Emacs Everywhere
-;; Write with emacs everywhere
-;; https://github.com/tecosaur/emacs-everywhere
-(use-package emacs-everywhere
-  :straight (:host github :repo "tecosaur/emacs-everywhere")
-  :commands (emacs-everywhere))
-
 ;;;; Markdown
 (use-package markdown-mode
   :commands (markdown-mode gfm-mode)
@@ -133,23 +126,6 @@
          ("s-b" . markdown-insert-bold)
          ("s-i" . markdown-insert-italic))
   :config
-  (setq markdown-command
-        (concat
-         "/usr/local/bin/pandoc"
-         " --from=markdown --to=html"
-         " --standalone --mathjax --highlight-style=pygments"
-         " --css=/Users/roambot/.pandoc/pandoc.css"
-         " --quiet"
-         " --number-sections"
-         " --lua-filter=/Users/roambot/dotfiles/pandoc/cutsection.lua"
-         " --lua-filter=/Users/roambot/dotfiles/pandoc/cuthead.lua"
-         " --lua-filter=/Users/roambot/dotfiles/pandoc/date.lua"
-         ;; " --metadata-file=/Users/roambot/dotfiles/pandoc/metadata.yml"
-         " --metadata=reference-section-title:References"
-         " --citeproc"
-         " --bibliography=/Users/roambot/Dropbox/Work/bibfile.bib"
-         ))
-
   (setq markdown-enable-math nil
         markdown-enable-wiki-links t
         markdown-nested-imenu-heading-index t
@@ -173,19 +149,13 @@
     (progn
       (turn-on-flyspell)
       (auto-fill-mode)
-      ;; (centered-cursor-mode 1)
-      ;; (git-gutter-mode 1)
       (hl-todo-mode)))
 
   ;; markdown hooks
   (add-hook 'markdown-mode-hook 'lem--markdown-settings)
 
   ;; for use with meow point movement
-  (modify-syntax-entry ?@ "_" markdown-mode-syntax-table)
-
-  )
-;; remove strikout comment face
-;; (set-face-attribute 'markdown-comment-face nil :weight 'bold :strike-through nil)
+  (modify-syntax-entry ?@ "_" markdown-mode-syntax-table))
 
 ;; macro: delete backslashes in paragraph to cleanup markdown conversion
 (fset 'lem/md-delete-backslash
@@ -221,11 +191,6 @@
        (t
         (call-interactively 'pandoc-convert-to-pdf) (lem/pandoc-pdf-open))))
 
-    ;; (defun lem/pandoc-command-line-convert-to-pdf ()
-    ;;   "convert to pdf"
-    ;;   (interactive)
-    ;;   (evil-ex "!pandoc -s -N -V mainfont=Optima --pdf-engine=xelatex --bibliography=~/Dropbox/Work/bibfile.bib --template=~/.pandoc/pandoc-templates/default.latex -o '%.pdf' '%'"))
-
     (defun lem/pandoc-pdf-open ()
       "Open created PDF file"
       (interactive)
@@ -251,9 +216,7 @@
   (interactive)
   (git-gutter-mode 0)
   (linum-mode 0)
-  ;; (centered-cursor-mode)
-  (writeroom-mode)
-  )
+  (writeroom-mode))
 
 ;;;; Interleave (Notes)
 (use-package interleave
@@ -263,8 +226,7 @@
 (use-package lorem-ipsum
   :commands (Lorem-ipsum-insert-sentences Lorem-ipsum-insert-list Lorem-ipsum-insert-paragraphs)
   :config
-  (lorem-ipsum-use-default-bindings)
-  )
+  (lorem-ipsum-use-default-bindings))
 
 ;;;; Palimpsest (make archive)
 (use-package palimpsest
@@ -399,19 +361,6 @@
   :bind (:map lem+search-keys
          ("w" . sdcv-search)))
 
-;;;; Prose Linting
-;; Uses vale and proselint
-(with-eval-after-load 'flycheck
-  (flycheck-define-checker vale
-    "A checker for prose"
-    :command ("vale" "--output" "line"
-              source)
-    :standard-input nil
-    :error-patterns
-    ((error line-start (file-name) ":" line ":" column ":" (id (one-or-more (not (any ":")))) ":" (message) line-end))
-    :modes (markdown-mode org-mode text-mode)
-    )
-  (add-to-list 'flycheck-checkers 'vale 'append))
 ;;;; Writegood Mode
 (use-package writegood-mode
   :disabled
@@ -458,13 +407,7 @@
         (t (narrow-to-defun))))
 
 
+;;; Provide
 (provide 'lem-setup-writing)
-;;;; Line Numbers
-(use-package display-line-numbers
-  :straight (:type built-in)
-  ;; :hook (markdown-mode prog-mode)
-  :commands display-line-numbers-mode
-  :init
-  (setq-default display-line-numbers-type 'visual)
-  (setq-default display-line-numbers-width-start t))
+
 ;;; lem-setup-writing.el ends here
