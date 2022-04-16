@@ -19,10 +19,10 @@
 
 ;;; Commentary:
 
-;; All code related to navigating emacs goes here.
+;; Setup code for "navigating" Emacs, in the sense of outlines, goto functions,
+;; saving place, recent files, etc.
 
 ;;; Code:
-
 
 ;;;; Imenu list outline
 ;; Make a useful outline buffer
@@ -136,6 +136,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; Provide
 (provide 'lem-setup-navigation)
 
 ;;; lem-setup-navigation.el ends here
