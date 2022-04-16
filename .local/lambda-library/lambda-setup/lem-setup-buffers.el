@@ -36,7 +36,7 @@
   (setq scroll-preserve-screen-position t
         scroll-conservatively 101
         maximum-scroll-margin 0.5
-        scroll-margin 20))
+        scroll-margin 15))
 
 (use-package pixel-scroll
   :straight (:type built-in)
@@ -64,6 +64,19 @@
    ;; a time (instead of 5 at default). Simply hold down shift to move twice as
    ;; fast, or hold down control to move 3x as fast. Perfect for trackpads.
    mouse-wheel-scroll-amount '(2 ((shift) . 4) ((control) . 6))))
+
+;;;; Mouse
+;; Don't be afraid of the mouse!
+;; For ideas see https://ruzkuku.com/texts/emacs-mouse.html
+(use-package mouse
+  :straight (:type built-in)
+  :config
+  (setq context-menu-functions
+        '(context-menu-ffap
+          occur-context-menu
+          context-menu-region
+          context-menu-undo
+          context-menu-dictionary)))
 
 ;;;; Switch to Buffer Preserve Window
 
@@ -209,8 +222,6 @@
      help-mode
      compilation-mode))
   :init
-  ;; Turn on popper
-  ;; (popper-mode +1)
   ;; For echo area hints
   (popper-echo-mode +1)
   :config
@@ -247,18 +258,13 @@
   :bind (:map xwidget-webkit-mode-map
          ("v" . xwwp-follow-link)))
 
-;;;; Mouse
-;; Don't be afraid of the mouse!
-;; For ideas see https://ruzkuku.com/texts/emacs-mouse.html
-(use-package mouse
+;;;; Fringe
+(use-package fringe
   :straight (:type built-in)
-  :config
-  (setq context-menu-functions
-        '(context-menu-ffap
-          occur-context-menu
-          context-menu-region
-          context-menu-undo
-          context-menu-dictionary)))
+  :custom
+  ;; allow fringe indicators
+  (fringe-mode '(1 . 0)))
+
 ;;; Provide
 (provide 'lem-setup-buffers)
 ;;; lem-setup-buffers.el ends here
