@@ -1,15 +1,18 @@
-Lambda-Emacs (𝛌-Emacs) is a configuration that is intended to serve as a useful
-starting point for your own custom configuration. The design of this
-configuration is aimed at writing and academic work in the humanities (for
-discussion of my view of the use of text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]),
-rather than opposed to, e.g., a programming language emphasis, though I've tried
-to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is to
-provide enough commentary on the configuration such that it might be useful to
-those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally.
+Lambda-Emacs (𝛌-Emacs) is intended to serve as a useful starting point for your
+own custom configuration. The design of this configuration is aimed at writing
+and academic work in the humanities (for discussion of my view of the use of
+text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]), rather than opposed to, e.g., a
+programming language emphasis, though I've tried to make it user-friendly for
+programmers as well. Another goal of 𝛌-Emacs is to provide enough commentary on
+the configuration such that it might be useful to those new to emacs or even
+[[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally.
+
+*NOTE*: This repo is still very much a work in progress. I am porting sections
+from [[https://github.com/mclear-tools/dotemacs][my own config]], though this is a slow process.
 
 * Why use 𝛌-Emacs?
 
-Why choose this configuration over all of the other amazing Emacs "distros" out
+Why choose this configuration over any of the other amazing Emacs "distros" out
 there, such as (if you use vim-bindings) [[http://spacemacs.org][spacemacs]], or [[https://github.com/hlissner/doom-emacs][doom-emacs]], or the more
 traditional configurations of [[Https://github.com/purcell/emacs.d][Purcell]], [[https://github.com/bbatsov/prelude][Batsov (prelude)]], [[https://github.com/seagle0128/.emacs.d][Zhang (Centaur Emacs)]],
 the [[https://github.com/gilbertw1/bmacs][bmacs]] configuration of Bryan Gilbert (see also his [[https://github.com/gilbertw1/emacs-literate-starter][literate starter kit]]) and
@@ -24,7 +27,7 @@ useful way for me to think about how "best" to configure Emacs.
 
 * 𝛌-Emacs Structure
 
-- Directory Structure
+- Directory Structure:
    + User Emacs directory (.emacs.d)
       - Local directory (.local)
          + Library directory (lambda-library)
@@ -34,7 +37,7 @@ useful way for me to think about how "best" to configure Emacs.
          + Temp directory (temp)
             - Volatile storage (cache)
             - Non-volatile storage (etc)
-- File structure
+- File structure:
    + early-init.el
    + early-config.el (supplied by user, if any)
    + init.el
@@ -64,7 +67,7 @@ elisp files grouped according to the following areas:
 - *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
   org do? Since many people use Emacs almost exclusively for org-mode, it
   warrants its own group. 
-- *Languages*: Programming languages. 
+- *Programming & Languages*: Editing and Language specific settings. 
 - *Shell*: Configuration for shell and command-line related settings. 
 - *Project*: Version control settings and configuration for the built-in project.el
 
