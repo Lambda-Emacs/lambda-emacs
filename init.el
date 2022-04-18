@@ -25,15 +25,15 @@
   "The path to the emacs.d directory.")
 
 (defconst lem-local-dir (concat lem-emacs-dir ".local/")
-  "The root directory for local Emacs files. This contains all
-elisp libraries as well as non-essential and/or ephemeral files.
-There are two main directories -- lem-library-dir, which
-contains all libraries and packages, and lem-temp-dir, which
-contains non-essential files and emphemera.")
+  "The root directory for local Emacs files.
+This contains all elisp libraries as well as non-essential and/or
+ephemeral files. There are two main directories --
+lem-library-dir, which contains all libraries and packages, and
+lem-temp-dir, which contains non-essential files and emphemera.")
 
 (defconst lem-library-dir (concat lem-local-dir "lambda-library/")
-  "The directory for 𝛌-Emacs Lisp libraries. This will house all
-setup libraries and external libraries or packages.")
+  "The directory for 𝛌-Emacs Lisp libraries.
+This will house all setup libraries and external libraries or packages.")
 
 ;; Set user project directory
 (defconst lem-user-elisp-dir nil
@@ -46,20 +46,21 @@ setup libraries and external libraries or packages.")
   "The storage location of the setup-init files.")
 
 (defconst lem-temp-dir (concat lem-local-dir "temp/")
-  "The directory for non-essential file storage. Used by
-  `lem-etc-dir' and `lem-cache-dir'.")
+  "The directory for non-essential file storage.
+Used by `lem-etc-dir' and `lem-cache-dir'.")
 
 (defconst lem-etc-dir (concat lem-temp-dir "etc/")
-  "The directory for non-volatile storage. These are not deleted or
-tampered with by emacs functions. Use this for dependencies like
-servers or config files that are stable (i.e. it should be
-unlikely that you need to delete them if something goes wrong).")
+  "The directory for non-volatile storage.
+These are not deleted or tampered with by emacs functions. Use
+this for dependencies like servers or config files that are
+stable (i.e. it should be unlikely that you need to delete them
+if something goes wrong).")
 
 (defconst lem-cache-dir (concat lem-temp-dir "cache/")
-  "The directory for volatile storage. Use this for transient files
-that are generated on the fly like caches and ephemeral/temporary
-files. Anything that may need to be cleared if there are
-problems.")
+  "The directory for volatile storage.
+Use this for transient files that are generated on the fly like
+caches and ephemeral/temporary files. Anything that may need to
+be cleared if there are problems.")
 
 ;;;;; User Configuration Variables
 ;; Find the user configuration file
@@ -156,10 +157,6 @@ problems.")
 ;; async fetch
 (autoload #'straight-x-fetch-all "straight-x")
 
-;;;;;; Straight Helper Functions
-;; delete .DS_Store before prune
-(advice-add 'straight-prune-build :before #'(lambda () (move-file-to-trash "/Users/roambot/.emacs.d/.local/straight/build/.DS_Store")))
-
 ;;;;; Use-Package
 ;; install use package
 (straight-use-package 'use-package)
@@ -232,9 +229,9 @@ problems.")
     "core"
     "test")
   "Custom switches for conditional loading from command line.
-`clean' loads only the init.el file w/no personal config; `core'
+`clean' loads only the `init.el' file w/no personal config; `core'
 loads the set of modules set in `lem-core-modules'; `test' loads
-only a lem-setup-test.el' file for easy testing.")
+only a `lem-setup-test.el' file for easy testing.")
 
 (defun lem--emacs-switches (switch)
   "Depending on command line argument SWITCH, load Emacs with minimal settings & no modules; useful for testing."

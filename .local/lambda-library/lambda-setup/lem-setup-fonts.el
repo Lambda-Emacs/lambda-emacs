@@ -1,6 +1,6 @@
 ;;;; lem-setup-fonts.el ---Setup for fonts           -*- lexical-binding: t; -*-
 ;; Copyright (C) 2022
-;; SPDX-License-Identifier: MIT
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Author: Colin McLear
 
 ;;; Commentary:
@@ -24,11 +24,7 @@
   (when (member "Apple Color Emoji" (font-family-list))
     (set-fontset-font t 'emoji
                       '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
-  ;; (when (member "Apple Color Emoji" (font-family-list))
-  ;;   (set-fontset-font
-  ;;    t 'unicode (font-spec :family "Apple Color Emoji") nil 'append))
-
-  ;; Fall back font for glyph missing in Roboto
+  ;; Fall back font for missing glyph
   (defface fallback '((t :family "Fira Code"
                          :inherit fringe)) "Fallback")
   (set-display-table-slot standard-display-table 'truncation
@@ -36,21 +32,48 @@
   (set-display-table-slot standard-display-table 'wrap
                           (make-glyph-code ?↩ 'fallback)))
 
-(use-package faces
-  :straight (:type built-in)
-  :config
-  (set-face-attribute 'default nil
-                      :font   "SF Mono"
-                      :height 130
-                      :weight 'normal)
-  (set-face-attribute 'variable-pitch nil
-                      :font "Avenir Next"
-                      :height 1.5
-                      :weight 'normal)
-  (set-face-attribute 'fixed-pitch nil
-                      :font "SF Pro"
-                      :height 1.4
-                      :weight 'normal))
+;;;; Font
+(defun lem-ui--set-default-font (spec)
+  "Set the default font based on SPEC.
+SPEC is expected to be a plist with the same key names
+as accepted by `set-face-attribute'."
+  (when spec
+    (apply 'set-face-attribute 'default nil spec)))
+
+(defun lem-ui--set-variable-width-font (spec)
+  "Set the default font based on SPEC.
+SPEC is expected to be a plist with the same key names
+as accepted by `set-face-attribute'."
+  (when spec
+    (apply 'set-face-attribute 'variable-pitch nil spec)))
+
+(defcustom lem-ui-default-font nil
+  "The configuration of the `default' face.
+Use a plist with the same key names as accepted by `set-face-attribute'."
+  :group 'lambda-emacs
+  :type '(plist :key-type: symbol)
+  :tag "Default font"
+  :set (lambda (sym val)
+         (let ((prev-val (if (boundp 'lem-ui-default-font)
+                             lem-ui-default-font
+                           nil)))
+           (set-default sym val)
+           (when (and val (not (eq val prev-val)))
+             (lem-ui--set-default-font val)))))
+
+(defcustom lem-ui-variable-width-font nil
+  "The configuration of the `default' face.
+Use a plist with the same key names as accepted by `set-face-attribute'."
+  :group 'lambda-emacs
+  :type '(plist :key-type: symbol)
+  :tag "Variable width font"
+  :set (lambda (sym val)
+         (let ((prev-val (if (boundp 'lem-ui-variable-width-font)
+                             lem-ui-variable-width-font
+                           nil)))
+           (set-default sym val)
+           (when (and val (not (eq val prev-val)))
+             (lem-ui--set-variable-width-font val)))))
 
 ;; Set default line spacing (in pixels)
 (setq-default line-spacing 0.05)

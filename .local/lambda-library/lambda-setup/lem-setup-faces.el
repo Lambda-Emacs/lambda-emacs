@@ -1,6 +1,6 @@
 ;;; lem-setup-faces.el --- Setup for faces          -*- lexical-binding: t; -*-
 ;; Copyright (C) 2022
-;; SPDX-License-Identifier: MIT
+;; SPDX-License-Identifier: GPL-3.0-or-later
 ;; Author: Colin McLear
 ;;; Commentary:
 ;;
