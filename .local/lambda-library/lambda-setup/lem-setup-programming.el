@@ -132,7 +132,7 @@
 
 ;;;;;; Lisp Functions
 ;; idea from http://www.reddit.com/r/emacs/comments/312ge1/i_created_this_function_because_i_was_tired_of/
-(defun lem/eval-current-form ()
+(defun lem-eval-current-form ()
   "Looks for the current def* or set* command then evaluates, unlike `eval-defun', does not go to topmost function"
   (interactive)
   (save-excursion
@@ -140,7 +140,7 @@
     (forward-list)
     (call-interactively 'eval-last-sexp)))
 
-(defun lem/nav-find-elisp-thing-at-point-other-window ()
+(defun lem-nav-find-elisp-thing-at-point-other-window ()
   "Find thing under point and go to it another window."
   (interactive)
   (let ((symb (variable-at-point)))
@@ -152,7 +152,7 @@
 
 ;;;;;; Fix Parentheses
 
-(defun lem/fix-lonely-parens ()
+(defun lem-fix-lonely-parens ()
   "Move all closing parenthesis at start of indentation to previous line."
   (interactive)
   (save-excursion
@@ -338,7 +338,7 @@ Lisp function does not specify a special indentation."
 ;;;; Indentation
 (use-package aggressive-indent
   :preface
-  (defun lem/aggressive-indent-mode-off ()
+  (defun lem-aggressive-indent-mode-off ()
     (aggressive-indent-mode 0))
   :hook
   ((css-mode . aggressive-indent-mode)
@@ -450,7 +450,7 @@ Lisp function does not specify a special indentation."
 
 ;;;;; Compile with Nearest Makefile
 ;; See https://www.emacswiki.org/emacs/CompileCommand
-(defun lem/upward-find-file (filename &optional startdir)
+(defun lem-upward-find-file (filename &optional startdir)
   "Move up directories until we find a certain filename. If we
   manage to find it, return the containing directory. Else if we
   get to the toplevel directory and still can't find it, return
@@ -477,9 +477,9 @@ Lisp function does not specify a special indentation."
                                         ; return statement
     (if found dirname nil)))
 
-(defun lem/compile-next-makefile ()
+(defun lem-compile-next-makefile ()
   (interactive)
-  (let* ((default-directory (or (lem/upward-find-file "Makefile") "."))
+  (let* ((default-directory (or (lem-upward-find-file "Makefile") "."))
          (compile-command (concat "cd " default-directory " && "
                                   compile-command)))
     (compile compile-command)))

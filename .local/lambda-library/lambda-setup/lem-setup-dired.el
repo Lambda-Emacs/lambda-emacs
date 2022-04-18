@@ -30,11 +30,11 @@
   :commands (dired dired-jump dired-jump-other-window)
   :bind (:map dired-mode-map
          ("l" . dired-find-alternate-file)
-         ("h" . lem/dired-updirectory))
+         ("h" . lem-dired-updirectory))
   ;; "q" #'quit-window)
   :config
   ;; Function to move up a directory like in ranger
-  (defun lem/dired-updirectory ()
+  (defun lem-dired-updirectory ()
     (interactive)
     (find-alternate-file ".."))
 
@@ -89,11 +89,11 @@
           :map peep-dired-mode-map
           ("j"    . peep-dired-next-file)
           ("k"    . peep-dired-prev-file)
-          ("RET"  . lem/peep-dired-open)
-          ("TAB"  . lem/other-window))
+          ("RET"  . lem-peep-dired-open)
+          ("TAB"  . lem-other-window))
   :config
   ;; helper function for opening files in full window
-  (defun lem/peep-dired-open ()
+  (defun lem-peep-dired-open ()
     "open files from peep-dired & clean-up"
     (interactive)
     (peep-dired-kill-buffers-without-window)

@@ -171,7 +171,7 @@
          vc-make-backup-files t            ; backup versioned files, which Emacs does not do by default
          )
 
-  (defun lem/full-auto-save ()
+  (defun lem-full-auto-save ()
     (interactive)
     (save-excursion
       (dolist (buf (buffer-list))
@@ -179,12 +179,12 @@
         (if (and (buffer-file-name) (buffer-modified-p))
             (basic-save-buffer)))))
 
-  (add-hook 'auto-save-hook 'lem/full-auto-save)
+  (add-hook 'auto-save-hook 'lem-full-auto-save)
 
   ;; Save all buffers after idle time
-  (run-with-idle-timer 5 t (lambda () (lem/full-auto-save)))
+  (run-with-idle-timer 5 t (lambda () (lem-full-auto-save)))
   ;; Save on exit from insert state
-  ;; (add-hook 'meow-insert-exit-hook #'lem/full-auto-save)
+  ;; (add-hook 'meow-insert-exit-hook #'lem-full-auto-save)
   )
 
 (use-package backup-walker
@@ -226,14 +226,14 @@
                 "\\)$"))
   (desktop-save-mode 0))
 
-(defun lem/my-desktop ()
+(defun lem-my-desktop ()
   "Load the desktop and enable autosaving"
   (interactive)
   (let ((desktop-load-locked-desktop "ask"))
     (desktop-read)
     (desktop-save-mode 1)))
 
-(defun lem/save-desktop-save-buffers-kill-emacs ()
+(defun lem-save-desktop-save-buffers-kill-emacs ()
   "Save buffers and current desktop every time when quitting emacs."
   (interactive)
   (desktop-save-in-desktop-dir)
@@ -242,14 +242,14 @@
 ;;;; Time Stamps
 (use-package time-stamp
   :straight (:type built-in)
-  :commands (time-stamp lem/time-stamp)
+  :commands (time-stamp lem-time-stamp)
   :config
   (setq time-stamp-active t          ; do enable time-stamps
         time-stamp-line-limit 10     ; check first 10 buffer lines for Time-stamp:
         time-stamp-format "Last modified on %Y-%02m%02d-%02H:%02M:%02S") ; date format
   (add-hook 'before-save-hook 'time-stamp) ; update when saving
 
-  (defun lem/time-stamp ()
+  (defun lem-time-stamp ()
     (interactive)
     (insert (concat  "Time-stamp: <"(format-time-string "%Y-%02m%02d-%02H:%02M:%02S")">"))))
 
@@ -258,11 +258,11 @@
   (let ((system-time-locale "en_US.UTF-8"))
     (insert (format-time-string format))))
 
-(defun lem/insert-date ()
+(defun lem-insert-date ()
   (interactive)
   (format-date "%A, %B %d %Y"))
 
-(defun lem/insert-date-and-time ()
+(defun lem-insert-date-and-time ()
   (interactive)
   (format-date "%m-%d-%Y %H:%M:%S"))
 

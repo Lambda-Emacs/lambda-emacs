@@ -164,43 +164,43 @@
          ("r"  . pdf-view-revert-buffer)
          ("o"  . pdf-links-action-perform)
          ("O"  . pdf-outline)
-         ("!"  . lem/pdf-no-filter)
-         ("#"  . lem/pdf-midnight-dark)
-         ("@"  . lem/pdf-midnight-amber)
-         ("$"  . lem/pdf-midnight-green))
+         ("!"  . lem-pdf-no-filter)
+         ("#"  . lem-pdf-midnight-dark)
+         ("@"  . lem-pdf-midnight-amber)
+         ("$"  . lem-pdf-midnight-green))
   :config
   ;; HiDPI
   (setq pdf-view-use-scaling t)
 
-  (defun lem/pdf-no-filter ()
+  (defun lem-pdf-no-filter ()
     "View pdf without colour filter."
     (interactive)
     (pdf-view-midnight-minor-mode -1))
 
-  (defun lem/pdf-midnight-mode ()
+  (defun lem-pdf-midnight-mode ()
     "View pdf with colour filter."
     (interactive)
     (pdf-view-midnight-minor-mode))
 
-  (defun lem/pdf-color-theme ()
+  (defun lem-pdf-color-theme ()
     (if (eq active-theme 'light-theme)
-        (lem/pdf-no-filter)
-      (lem/pdf-midnight-mode)))
+        (lem-pdf-no-filter)
+      (lem-pdf-midnight-mode)))
 
   ;; Set midnight mode colour functions
-  (defun lem/pdf-midnight-dark ()
+  (defun lem-pdf-midnight-dark ()
     "Set pdf-view-midnight-colors to dark & low contrast colours."
     (interactive)
     (setq pdf-view-midnight-colors '("#ECEFF4" . "#434C5E" ))
     (pdf-view-midnight-minor-mode))
 
-  (defun lem/pdf-midnight-amber ()
+  (defun lem-pdf-midnight-amber ()
     "Set pdf-view-midnight-colors to amber on dark slate blue."
     (interactive)
     (setq pdf-view-midnight-colors '("#ff9900" . "dark slate blue")) ; amber
     (pdf-view-midnight-minor-mode))
 
-  (defun lem/pdf-midnight-green ()
+  (defun lem-pdf-midnight-green ()
     "Set pdf-view-midnight-colors to green on black."
     (interactive)
     (setq pdf-view-midnight-colors '("#00B800" . "#000000" )) ; green
@@ -211,7 +211,7 @@
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer)
   ;; other hooks
   (add-hook 'pdf-view-mode-hook (lambda ()
-                                  (lem/pdf-color-theme)
+                                  (lem-pdf-color-theme)
                                   (blink-cursor-mode -1)
                                   (linum-mode -1)
                                   (line-number-mode -1)

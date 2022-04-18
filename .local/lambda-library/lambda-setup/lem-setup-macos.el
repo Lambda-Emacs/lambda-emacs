@@ -80,8 +80,8 @@ Get it from:  <http://hasseg.org/trash/>"
   (global-set-key (kbd "<H-backspace>") 'delete-forward-char)
 
   ;; Keybindings
-  (global-set-key (kbd "s-q") 'lem/delete-frame-or-quit)
-  (global-set-key (kbd "H-q") 'lem/kill-all-emacsen)
+  (global-set-key (kbd "s-q") 'lem-delete-frame-or-quit)
+  (global-set-key (kbd "H-q") 'lem-kill-all-emacsen)
   (global-set-key (kbd "s-v") 'yank)
   (global-set-key (kbd "s-c") 'meow-clipboard-save)
   (global-set-key (kbd "s-a") 'mark-whole-buffer)

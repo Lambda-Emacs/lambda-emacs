@@ -99,7 +99,7 @@
           ("s-v" . #'vterm-yank        )
           ("C-v" . #'vterm-yank        )
           ;; "<C-escape>" #'evil-collection-vterm-toggle-send-escape)
-          ("<C-escape>" . #'lem/vterm-escape-toggle)))
+          ("<C-escape>" . #'lem-vterm-escape-toggle)))
   :custom (vterm-install t)
   :config
   (eval-when-compile
@@ -116,7 +116,7 @@
               (meow-insert-mode))))
 
 ;; Escape to vim mode in shell
-(defun lem/vterm-escape-toggle ()
+(defun lem-vterm-escape-toggle ()
   (interactive)
   ;; (evil-collection-vterm-toggle-send-escape)
   (vterm-send-key "<escape>"))
@@ -219,7 +219,7 @@
                                  ))
   (setq eshell-visual-subcommands '(("git" "log" "diff" "show"))))
 
-(defun lem/setup-eshell ()
+(defun lem-setup-eshell ()
   (interactive)
   ;; turn off semantic-mode in eshell buffers
   (semantic-mode -1)
@@ -361,7 +361,7 @@
   :hook (eshell-mode . esh-autosuggest-mode))
 
 ;;;; Open in iTerm
-(defun lem/open-dir-in-iterm ()
+(defun lem-open-dir-in-iterm ()
   "Open the current directory of the buffer in iTerm."
   (interactive)
   (let* ((iterm-app-path "/Applications/iTerm.app")

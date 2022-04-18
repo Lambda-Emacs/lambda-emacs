@@ -43,10 +43,10 @@
              ace-swap-window
              aw-flip-window))
 
-(defun lem/other-window ()
+(defun lem-other-window ()
   (interactive)
   (other-window 1))
-(bind-key* "C-c C-o" 'lem/other-window)
+(bind-key* "C-c C-o" 'lem-other-window)
 
 ;; Move by window numbers
 (use-package emacs-winum
@@ -79,13 +79,13 @@
   (windmove-default-keybindings))
 
 ;; Easy split and move functions
-(defun lem/split-window-right-and-focus ()
+(defun lem-split-window-right-and-focus ()
   "Split the window horizontally and focus the new window."
   (interactive)
   (require 'windmove)
   (split-window-right)
   (windmove-right))
-(defun lem/split-window-below-and-focus ()
+(defun lem-split-window-below-and-focus ()
   "Split the window vertically and focus the new window."
   (interactive)
   (require 'windmove)

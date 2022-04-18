@@ -54,7 +54,7 @@
                     tab-bar-format-add-tab))
   :config
   ;; https://protesilaos.com/codelog/2020-08-03-emacs-custom-functions-galore/
-  (defun lem/tab-bar-select-tab-dwim ()
+  (defun lem-tab-bar-select-tab-dwim ()
     "Do-What-I-Mean function for getting to a `tab-bar-mode' tab.
 If no other tab exists, create one and switch to it.  If there is
 one other tab (so two in total) switch to it without further

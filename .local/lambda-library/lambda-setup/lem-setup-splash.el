@@ -113,7 +113,7 @@
 	       (width (/ lem-splash--max-columns 2))
            ;; ascii image from here:
            ;; https://github.com/Triagle/emax/blob/master/boot.txt
-           (image          (lem/get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
+           (image          (lem-get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
 
 
       (with-current-buffer splash-buffer
@@ -156,26 +156,26 @@
 
         (goto-char (- (* height 6) 4))
         (save-excursion (insert-text-button " [a] Agenda "
-                                            'action (lambda (_) (lem/open-agenda-in-workspace))
+                                            'action (lambda (_) (lem-open-agenda-in-workspace))
                                             'help-echo "Visit setup directory"
                                             'face 'lem-splash-menu-face
                                             'follow-link t))
         (goto-char (- (* height 7) 18))
         (save-excursion (insert-text-button " [c] Config "
-                                            'action (lambda (_) (lem/open-emacsd-in-workspace))
+                                            'action (lambda (_) (lem-open-emacsd-in-workspace))
                                             'help-echo "Visit setup directory"
                                             'face 'lem-splash-menu-face
                                             'follow-link t))
         (goto-char (- (* height 8) 32))
         (save-excursion (insert-text-button " [m] Mail "
-                                            'action (lambda (_)  (lem/open-email-in-workspace))
+                                            'action (lambda (_)  (lem-open-email-in-workspace))
                                             'help-echo "Open Email in Mu4e"
                                             'face 'lem-splash-menu-face
                                             'follow-link t))
 
         (goto-char (- (* height 9) 48))
         (save-excursion (insert-text-button " [n] Notes "
-                                            'action (lambda (_)  (lem/open-notes-in-workspace))
+                                            'action (lambda (_)  (lem-open-notes-in-workspace))
                                             'help-echo "Visit setup directory"
                                             'face 'lem-splash-menu-face
                                             'follow-link t))
@@ -219,11 +219,11 @@
 ;; Custom splash screen
 (defvar lem-splash-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "a") 'lem/open-agenda-in-workspace)
-    (define-key map (kbd "c") 'lem/open-emacsd-in-workspace)
-    (define-key map (kbd "m") 'lem/open-email-in-workspace)
-    (define-key map (kbd "n") 'lem/open-notes-in-workspace)
-    (define-key map (kbd "p") 'lem/open-existing-project-and-workspace)
+    (define-key map (kbd "a") 'lem-open-agenda-in-workspace)
+    (define-key map (kbd "c") 'lem-open-emacsd-in-workspace)
+    (define-key map (kbd "m") 'lem-open-email-in-workspace)
+    (define-key map (kbd "n") 'lem-open-notes-in-workspace)
+    (define-key map (kbd "p") 'lem-open-existing-project-and-workspace)
     (define-key map (kbd "q") 'splash-screen-bury)
     (define-key map (kbd "esc") 'splash-screen-bury)
     (define-key map (kbd "k") 'splash-screen-kill)

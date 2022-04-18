@@ -246,7 +246,7 @@ only a `lem-setup-test.el' file for easy testing.")
 (when (file-exists-p (concat site-lisp "emacs-git-version.el"))
   (require 'emacs-git-version))
 
-(defun lem/emacs-version ()
+(defun lem-emacs-version ()
   "A convenience function to print emacs-version and put
 emacs-version string on the kill ring"
   (interactive)

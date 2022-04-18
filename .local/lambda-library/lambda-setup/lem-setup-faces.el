@@ -107,7 +107,7 @@
 
 ;; hydra for TODOs
 (with-eval-after-load 'hydra
-  (defhydra lem/hydra-todo
+  (defhydra lem-hydra-todo
     (:pre
      (hl-todo-mode 1)
      :post
@@ -119,7 +119,7 @@
     ("q" nil "Quit" :color blue :exit t)))
 
 ;; ;;https://github.com/erickgnavar/dotfiles/tree/master/.emacs.d#highlight-todo-fixme-etc
-;; (defun lem/highlight-todo-like-words ()
+;; (defun lem-highlight-todo-like-words ()
 ;;   (font-lock-add-keywords
 ;;    nil `(("\\<\\(FIXME\\|TODO\\|NOTE\\)"
 ;;           1 font-lock-warning-face t))))

@@ -11,7 +11,7 @@
              project-switch-project-open-file)
   :bind (:map project-prefix-map
          ("P" .  project-switch-project)
-         ("t" .  lem/goto-projects)
+         ("t" .  lem-goto-projects)
          ("R" .  project-remember-projects-under))
   :config
   (setq lem-project-dir "~/Dropbox/Work/projects")
@@ -110,7 +110,7 @@ to directory DIR."
   (setq bmkp-last-as-first-bookmark-file (concat lem-cache-dir "bookmarks")))
 
 ;;; New Git Project
-(defun lem/git-new-project ()
+(defun lem-git-new-project ()
   "Initializes a new git repo and adds it to project.el's known projects."
   (interactive)
   (let ((project-dir (expand-file-name
@@ -123,7 +123,7 @@ to directory DIR."
 
 ;;; Clone a Git Repo from Clipboard
 ;; http://xenodium.com/emacs-clone-git-repo-from-clipboard/
-(defun lem/git-clone-clipboard-url ()
+(defun lem-git-clone-clipboard-url ()
   "Clone git URL in clipboard asynchronously and open in dired when finished."
   (interactive)
   (cl-assert (string-match-p "^\\(http\\|https\\|ssh\\)://" (current-kill 0)) nil "No URL in clipboard")

@@ -214,13 +214,13 @@
                  (window-parameters (mode-line-format . none))))
 
   ;; Useful Functions
-  (define-key embark-file-map (kbd "D") 'lem/dired-here)
-  (defun lem/dired-here (file)
+  (define-key embark-file-map (kbd "D") 'lem-dired-here)
+  (defun lem-dired-here (file)
     "Open dired in this directory"
     (dired (file-name-directory file)))
 
-  (define-key embark-file-map (kbd "g") 'lem/consult-rg-here)
-  (defun lem/consult-rg-here (file)
+  (define-key embark-file-map (kbd "g") 'lem-consult-rg-here)
+  (defun lem-consult-rg-here (file)
     "consult-ripgrep in this directory."
     (let ((default-directory (file-name-directory file)))
       (consult-ripgrep)))
@@ -541,10 +541,10 @@ targets."
   (setq yas-installed-snippets-dir yas-snippet-dirs)
   (setq yas--default-user-snippets-dir yas-snippet-dirs)
   ;; see https://emacs.stackexchange.com/a/30150/11934
-  (defun lem/yas-org-mode-hook ()
+  (defun lem-yas-org-mode-hook ()
     (setq-local yas-buffer-local-condition
                 '(not (org-in-src-block-p t))))
-  (add-hook 'org-mode-hook #'lem/yas-org-mode-hook)
+  (add-hook 'org-mode-hook #'lem-yas-org-mode-hook)
   (yas-global-mode 1))
 
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets

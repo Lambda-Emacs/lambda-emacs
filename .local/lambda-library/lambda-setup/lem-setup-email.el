@@ -242,7 +242,7 @@ the real email address"
                '(tag
                  :char       ("g" . " ")
                  :prompt     "gtag"
-                 :ask-target (lambda () (lem/select-mail-tag))
+                 :ask-target (lambda () (lem-select-mail-tag))
                  :action      (lambda (docid msg target)
                                 (mu4e-action-retag-message msg target))))
   (mu4e~headers-defun-mark-for tag)
@@ -276,7 +276,7 @@ the real email address"
       )
     "List of email tags")
 
-  (defun lem/select-mail-tag ()
+  (defun lem-select-mail-tag ()
     (interactive)
     (completing-read "Select Tag (+/-): " lem-mail-tags))
 
@@ -525,19 +525,19 @@ the pos of the keyword which is a cons cell, nil if not found."
 
   ;; Helpful discussion at
   ;; https://github.com/daviwil/emacs-from-scratch/blob/master/show-notes/Emacs-Mail-05.org
-  (defun lem/capture-mail-comment (msg)
+  (defun lem-capture-mail-comment (msg)
     "Capture for message follow-up"
     (interactive)
     (call-interactively 'org-store-link)
     (org-capture nil "mc"))
 
-  (defun lem/capture-mail-respond (msg)
+  (defun lem-capture-mail-respond (msg)
     "Capture for message follow-up"
     (interactive)
     (call-interactively 'org-store-link)
     (org-capture nil "mr"))
 
-  (defun lem/capture-mail-remind (msg)
+  (defun lem-capture-mail-remind (msg)
     "Capture for message read-later"
     (interactive)
     (call-interactively 'org-store-link)
@@ -545,17 +545,17 @@ the pos of the keyword which is a cons cell, nil if not found."
 
   ;; Add custom actions for our capture templates
   (add-to-list 'mu4e-headers-actions
-               '("Comment on" . lem/capture-mail-comment) t)
+               '("Comment on" . lem-capture-mail-comment) t)
   (add-to-list 'mu4e-view-actions
-               '("Comment on" . lem/capture-mail-comment) t)
+               '("Comment on" . lem-capture-mail-comment) t)
   (add-to-list 'mu4e-headers-actions
-               '("respond" . lem/capture-mail-respond) t)
+               '("respond" . lem-capture-mail-respond) t)
   (add-to-list 'mu4e-view-actions
-               '("respond" . lem/capture-mail-respond) t)
+               '("respond" . lem-capture-mail-respond) t)
   (add-to-list 'mu4e-headers-actions
-               '("Remind" . lem/capture-mail-remind) t)
+               '("Remind" . lem-capture-mail-remind) t)
   (add-to-list 'mu4e-view-actions
-               '("Remind" . lem/capture-mail-remind) t)
+               '("Remind" . lem-capture-mail-remind) t)
 
 ;;;;; Mail Custom Bookmarks/Searches
 
@@ -733,12 +733,12 @@ the pos of the keyword which is a cons cell, nil if not found."
 
 ;;;;; Mu4e & Swiftbar
 
-  (defun lem/swiftbar-email-update ()
+  (defun lem-swiftbar-email-update ()
     "Update swiftbar mail plugin"
     (interactive)
     (call-process-shell-command "open -g 'swiftbar://refreshplugin?name=mail-mu'" nil 0))
 
-  (add-hook 'mu4e-index-updated-hook #'lem/swiftbar-email-update)
+  (add-hook 'mu4e-index-updated-hook #'lem-swiftbar-email-update)
 
 ;;;;; Miscellaneous
 
@@ -758,7 +758,7 @@ the pos of the keyword which is a cons cell, nil if not found."
   (setq mu4e-org-link-query-in-headers-mode nil)
 
   ;; Quickly store links for search queries
-  (defun lem/store-link-to-mu4e-query ()
+  (defun lem-store-link-to-mu4e-query ()
     (interactive)
     (let ((org-mu4e-link-query-in-headers-mode t))
       (call-interactively 'org-store-link)))
@@ -766,7 +766,7 @@ the pos of the keyword which is a cons cell, nil if not found."
   ;; Go to unread
   (defvar lem-mu4e-unread-query
     "flag:unread")
-  (defun lem/go-to-mail-unread ()
+  (defun lem-go-to-mail-unread ()
     (interactive)
     (if (member "Email" (workspaces--list-workspaces))
         (progn
@@ -782,7 +782,7 @@ the pos of the keyword which is a cons cell, nil if not found."
   ;; Go to inbox
   (defvar lem-mu4e-inbox-query
     "(maildir:/UNL/INBOX OR maildir:/Fastmail/INBOX)")
-  (defun lem/go-to-mail-inbox ()
+  (defun lem-go-to-mail-inbox ()
     (interactive)
     (if (member "Email" (workspaces--list-workspaces))
         (progn
@@ -795,7 +795,7 @@ the pos of the keyword which is a cons cell, nil if not found."
         (mu4e)
         (mu4e-headers-search lem-mu4e-inbox-query))))
 
-  (defun lem/mu-kill-server ()
+  (defun lem-mu-kill-server ()
     "Forcefully kill the mu server process. This is especially
 useful when mu4e-quit doesn't kill the server and the whole
 things ends up hanging. See also this issue:
@@ -831,7 +831,7 @@ https://github.com/djcb/mu/issues/2198"
   :defer nil
   :bind (:map mu4e-headers-mode-map
 	     ("v" . mu4e-views-mu4e-select-view-msg-method) ;; select viewing method
-         ("C-v" . lem/mu4e-text-view-toggle)
+         ("C-v" . lem-mu4e-text-view-toggle)
 	     ("M-n" . mu4e-views-cursor-msg-view-window-down) ;; from headers window scroll the email view
 	     ("M-p" . mu4e-views-cursor-msg-view-window-up) ;; from headers window scroll the email view
          ("f" . mu4e-views-toggle-auto-view-selected-message) ;; toggle opening messages automatically when moving in the headers view
@@ -851,7 +851,7 @@ https://github.com/djcb/mu/issues/2198"
   (add-to-list 'mu4e-view-actions
                '("e: export message" . mu4e-views-export-msg-action) t))
 
-(defun lem/mu4e-text-view-toggle ()
+(defun lem-mu4e-text-view-toggle ()
   "Toggle between text and html-block views in mu4e."
   (interactive)
   (let ((view (mu4e-views--get-current-viewing-method-name)))
@@ -874,14 +874,14 @@ https://github.com/djcb/mu/issues/2198"
 				                       (reply-to-text	. (text)))
 	    org-msg-convert-citation t)
 
-  (defun lem/org-msg-hooks ()
+  (defun lem-org-msg-hooks ()
     "Hooks for org-msg"
     (progn
       (auto-fill-mode -1)
       (hl-line-mode 1)
       ;; FIXME: Try remove auto-save hook *locally* to avoid multiple saved drafts
-      (remove-hook 'auto-save-hook #'lem/full-auto-save t)))
-  (add-hook 'org-msg-edit-mode-hook #'lem/org-msg-hooks)
+      (remove-hook 'auto-save-hook #'lem-full-auto-save t)))
+  (add-hook 'org-msg-edit-mode-hook #'lem-org-msg-hooks)
 
   (org-msg-mode))
 
@@ -892,7 +892,7 @@ https://github.com/djcb/mu/issues/2198"
 ;;http://blog.binchen.org/posts/how-to-use-yasnippets-to-produce-email-templates-in-emacs.html
 ;; http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
 
-(defun lem/mu4e-get-names-for-yasnippet ()
+(defun lem-mu4e-get-names-for-yasnippet ()
   "Return comma separated string of names for an email"
   (interactive)
   (let ((email-name "") str email-string email-list email-name2 tmpname)

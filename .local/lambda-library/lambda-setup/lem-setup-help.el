@@ -135,8 +135,8 @@
 ;; A little more useful for calling help than just C-h (less info density)
 ;; see https://luca.cambiaghi.me/vanilla-emacs/readme.html#h:14F8ECDE-9E15-46F7-B903-ECE383251C48
 (with-eval-after-load 'transient
-  (bind-key (concat lem-prefix " h") 'lem/help-transient)
-  (transient-define-prefix lem/help-transient ()
+  (bind-key (concat lem-prefix " h") 'lem-help-transient)
+  (transient-define-prefix lem-help-transient ()
     ["Help Commands"
      ["Mode & Bindings"
       ("m" "Mode" describe-mode)

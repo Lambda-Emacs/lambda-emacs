@@ -84,48 +84,52 @@
              goto-address-mode))
 
 ;;;; Goto Functions
-(defun lem/goto-private ()
+(defun lem-goto-private ()
   (interactive)
   (find-file (concat lem-user-dir "private.el")))
-(defun lem/goto-journal ()
+(defun lem-goto-journal ()
   (interactive)
   (find-file (concat org-directory "journal.org")))
-(defun lem/goto-early-init.el ()
+(defun lem-goto-early-init.el ()
   "Open early-init.el file"
   (interactive)
   (find-file "~/.emacs.d/early-init.el"))
-(defun lem/goto-init.el ()
+(defun lem-goto-init.el ()
   "Open init.el file"
   (interactive)
   (find-file user-init-file))
-(defun lem/goto-custom.el ()
+(defun lem-goto-custom.el ()
   "Open custom.el file"
   (interactive)
   (find-file custom-file))
-(defun lem/goto-config ()
+(defun lem-goto-config ()
   "Open user config file"
   (interactive)
   (find-file lem-config-file))
-(defun lem/load-config ()
+(defun lem-load-config ()
   "Load config "
   (interactive)
   (load-file user-init-file)
   (load-file lem-config-file))
-(defun lem/goto-emacs-dir ()
+(defun lem-goto-emacs-dir ()
   "Open 𝛌-Emacs directory"
   (interactive)
   (find-file user-emacs-directory))
-(defun lem/goto-org-files ()
+(defun lem-goto-org-files ()
   "Open directory with org files"
   (interactive)
   (find-file org-directory))
-(defun lem/goto-projects ()
+(defun lem-goto-projects ()
   "Open projects dir"
   (interactive)
   (find-file lem-project-dir))
+(defun lem-goto-elisp-library ()
+  "Open user elisp library."
+  (interactive)
+  (find-file lem-user-elisp-dir))
 
 ;;;; Jump in Buffer
-(defun lem/jump-in-buffer ()
+(defun lem-jump-in-buffer ()
   "Jump between headlines in buffer using consult"
   (interactive)
   (cond

@@ -92,7 +92,7 @@
 
 
 ;;;;; Spelling Goto Next Error
-(defun lem/flyspell-ispell-goto-next-error ()
+(defun lem-flyspell-ispell-goto-next-error ()
   "Custom function to spell check next highlighted word"
   (interactive)
   (flyspell-goto-next-error)
@@ -158,7 +158,7 @@
   (modify-syntax-entry ?@ "_" markdown-mode-syntax-table))
 
 ;; macro: delete backslashes in paragraph to cleanup markdown conversion
-(fset 'lem/md-delete-backslash
+(fset 'lem-md-delete-backslash
       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ("\361\361f\\x" 0 "%d")) arg)))
 
 
@@ -169,7 +169,7 @@
 
 ;;;; Pandoc
 (use-package pandoc-mode
-  :commands (lem/pandoc-convert-to-pdf run-pandoc pandoc-convert-to-pdf)
+  :commands (lem-pandoc-convert-to-pdf run-pandoc pandoc-convert-to-pdf)
   :config
   (setq pandoc-use-async t)
   ;; stop pandoc from just hanging forever and not completing conversion
@@ -183,15 +183,15 @@
       (pandoc-main-hydra/body))
     (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
 
-    (defun lem/pandoc-convert-to-pdf ()
+    (defun lem-pandoc-convert-to-pdf ()
       (interactive)
       (cond
        ((eq major-mode 'org-mode)
         (call-interactively 'org-pandoc-export-to-latex-pdf-and-open))
        (t
-        (call-interactively 'pandoc-convert-to-pdf) (lem/pandoc-pdf-open))))
+        (call-interactively 'pandoc-convert-to-pdf) (lem-pandoc-pdf-open))))
 
-    (defun lem/pandoc-pdf-open ()
+    (defun lem-pandoc-pdf-open ()
       "Open created PDF file"
       (interactive)
       (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".pdf"))))
@@ -281,19 +281,19 @@
 
 
 ;; Auto-fill for LaTeX
-(defun lem/latex-auto-fill ()
+(defun lem-latex-auto-fill ()
   "Turn on auto-fill for LaTeX mode."
   (turn-on-auto-fill)
   (set-fill-column 80)
   (setq default-justification 'left))
-(add-hook 'LaTeX-mode-hook #'lem/latex-auto-fill)
+(add-hook 'LaTeX-mode-hook #'lem-latex-auto-fill)
 
 ;; Compilation command
 (add-hook 'LaTeX-mode-hook (lambda () (setq compile-command "latexmk -pdflatex=xelatex -f -pdf %f")))
 
 ;; Prevent ispell from verifying some LaTeX commands
 ;; http://stat.genopole.cnrs.fr/dw/~jchiquet/fr/latex/emacslatex
-(defvar lem/ispell-tex-skip-alists
+(defvar lem-ispell-tex-skip-alists
   '("cite" "nocite"
     "includegraphics"
     "author" "affil"
@@ -302,11 +302,11 @@
 (setq ispell-tex-skip-alists
       (list
        (append (car ispell-tex-skip-alists)
-               (mapcar #'(lambda (cmd) (list (concat "\\\\" cmd) 'ispell-tex-arg-end)) lem/ispell-tex-skip-alists))
+               (mapcar #'(lambda (cmd) (list (concat "\\\\" cmd) 'ispell-tex-arg-end)) lem-ispell-tex-skip-alists))
        (cadr ispell-tex-skip-alists)))
 
 ;; Indentation with align-current in LaTeX environments
-(defvar lem/LaTeX-align-environments '("tabular" "tabular*"))
+(defvar lem-LaTeX-align-environments '("tabular" "tabular*"))
 (add-hook 'LaTeX-mode-hook
           (lambda ()
             (require 'align)
@@ -316,7 +316,7 @@
                             ;; The car is an environment
                             (let ((env (car item)))
                               ;; If this environment is in our list...
-                              (if (member env lem/LaTeX-align-environments)
+                              (if (member env lem-LaTeX-align-environments)
                                   ;; ...then replace this item with a correct one
                                   (list env 'align-current)
                                 ;; else leave it alone
@@ -359,7 +359,7 @@
   :disabled
   :hook (markdown-mode . writegood-mode)
   :config
-  (setq lem/weasel-words
+  (setq lem-weasel-words
         '("actually"
           "basically"
           "easily"
@@ -368,7 +368,7 @@
           "simple"
           "simply"))
   (setq writegood-weasel-words
-        (-concat writegood-weasel-words lem/weasel-words)))
+        (-concat writegood-weasel-words lem-weasel-words)))
 
 ;;;; Prose Linting
 (use-package flymake-proselint
@@ -380,7 +380,7 @@
                               (flymake-proselint-setup))))
 
 ;;;; Narrow/Widen
-(defun lem/narrow-or-widen-dwim (p)
+(defun lem-narrow-or-widen-dwim (p)
   "Widen if buffer is narrowed, narrow-dwim otherwise.
   Dwim means: region, org-src-block, org-subtree, markdown
   subtree, or defun, whichever applies first. Narrowing to

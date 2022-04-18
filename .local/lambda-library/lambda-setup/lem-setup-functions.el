@@ -25,14 +25,15 @@
 ;;;;; Call an emacs instance
 ;; Call an emacs instance for testing
 
-(defun lem/call-emacs ()
+(defun lem-call-emacs ()
   (interactive)
   (start-process "Emacs" nil
                  ;; (executable-find "/usr/local/bin/emacs")))
                  (executable-find "/Applications/Emacs.app/Contents/MacOS/Emacs")))
 ;; (executable-find "Emacs")))
+
 ;;;;; Archive region to setup-archive
-(defun lem/setup-kill-and-archive-region ()
+(defun lem-setup-kill-and-archive-region ()
   "Delete & append region to end of setup-archive.el"
   (interactive)
   (append-to-file (region-beginning) (region-end) (concat lem-setup-dir "lem-setup-archive.el"))
@@ -47,9 +48,9 @@
   "Define titles, quick-keys, and directories to be searched for files.")
 
 (defun lem--files-make-source (name char dir)
-  "Return a notes source list suitable for `consult--multi'.
+  "Return a source list suitable for `consult--multi'.
   NAME is the source name, CHAR is the narrowing character,
-  and DIR is the directory to find notes. "
+  and DIR is the directory to find files. "
   (let ((idir (propertize (file-name-as-directory dir) 'invisible t)))
     `(:name     ,name
       :narrow   ,char
@@ -61,7 +62,7 @@
       :action   ,(lambda (f) (find-file f)))))
 
 ;;;###autoload
-(defun lem/find-lambda-file ()
+(defun lem-find-lambda-file ()
   "Find a file from list of 𝛌-Emacs configuration files."
   (interactive)
   (require 'consult)
@@ -71,7 +72,7 @@
 		          :history 'file-name-history))
 
 ;;;###autoload
-(defun lem/search-lambda-files ()
+(defun lem-search-lambda-files ()
   "Search all configuration files in 𝛌-Emacs with consult-ripgrep."
   (interactive)
   (require 'consult)
@@ -81,12 +82,12 @@
     (consult-ripgrep lem-emacs-dir)))
 
 ;; Load init file
-(defun lem/load-init-file ()
+(defun lem-load-init-file ()
   "Load the base init file."
   (interactive)
   (load-file (concat user-emacs-directory "init.el")))
 
-(defun lem/load-config-file ()
+(defun lem-load-config-file ()
   "Load the user config file."
   (interactive)
   (load-file lem-config-file))
@@ -118,7 +119,7 @@
 
 ;;;; Search Functions
 ;;;;; Search given directory
-(defun lem/search-in-input-dir ()
+(defun lem-search-in-input-dir ()
   "Grep for a string in the input directory using completing read function"
   (interactive)
   (let ((current-prefix-arg '(4))) (call-interactively #'consult-ripgrep)))
@@ -126,7 +127,7 @@
 
 ;;;; Frame Functions
 ;;;;; Delete Frame or Quit
-(defun lem/delete-frame-or-quit ()
+(defun lem-delete-frame-or-quit ()
   "Delete the selected frame & kill terminal buffers. If the last frame, kill Emacs."
   (interactive)
   (kill-matching-buffers "*vterm" nil t)
@@ -136,7 +137,7 @@
 
 ;;;;; Create Capture Frame
 ;; have these functions available for server
-(defun lem/activate-capture-frame ()
+(defun lem-activate-capture-frame ()
   "run org-capture in capture frame"
   (require 'org)
   (select-frame-by-name "capture")
@@ -144,18 +145,18 @@
   (org-capture))
 
 ;;;;; Weather Capture Frame
-(defun lem/weather-journal-capture ()
+(defun lem-weather-journal-capture ()
   (interactive)
   (require 'org)
   (select-frame-by-name "capture")
   (switch-to-buffer (get-buffer-create "*scratch*"))
-  (lem/org-journal)
-  (lem/insert-weather)
+  (lem-org-journal)
+  (lem-insert-weather)
   (goto-char (point-max)))
 
 ;;;; Window Functions
 ;;;;; Toggle Dedicated Window
-(defun lem/toggle-window-dedicated ()
+(defun lem-toggle-window-dedicated ()
   "Toggle whether the current active window is dedicated or not"
   (interactive)
   (message
@@ -170,7 +171,7 @@
 ;; Mike Zamansky's video.
 ;; http://cestlaz.github.io/posts/using-emacs-36-touch-of-elisp/#.WX5Wg0czpcx
 
-(defun lem/window-exchange-buffer ()
+(defun lem-window-exchange-buffer ()
   "Swap buffer in windows and leave focus in original window"
   (interactive)
   (ace-swap-window)
@@ -178,7 +179,7 @@
 
 ;;;;; Rotate Windows
 ;; from magnars modified by ffevotte for dedicated windows support
-(defun lem/rotate-windows (count)
+(defun lem-rotate-windows (count)
   "Rotate your windows.
   Dedicated windows are left untouched. Giving a negative prefix
   argument takes the kindows rotate backwards."
@@ -207,13 +208,13 @@
                (set-window-start w2 s1)
                (setq i next-i)))))))
 
-(defun lem/rotate-windows-backward (count)
+(defun lem-rotate-windows-backward (count)
   "Rotate your windows backward."
   (interactive "p")
-  (lem/rotate-windows (* -1 count)))
+  (lem-rotate-windows (* -1 count)))
 
 ;;;;; Split Windows
-(defun lem/toggle-window-split ()
+(defun lem-toggle-window-split ()
   "Move from a horizontal to a vertical split and vice versa"
   (interactive)
   (if (= (count-windows) 2)
@@ -241,7 +242,7 @@
 
 
 ;;;;; Jump to Minibuffer Window
-(defun lem/goto-minibuffer-window ()
+(defun lem-goto-minibuffer-window ()
   "locate point to minibuffer window if it is active."
   (interactive)
   (if (active-minibuffer-window)
@@ -249,14 +250,14 @@
     (error "Minibuffer is not active")))
 
 ;; (with-eval-after-load 'general
-;; (general-def "C-c m" #'lem/goto-minibuffer-window))
+;; (general-def "C-c m" #'lem-goto-minibuffer-window))
 
 ;;;; Buffer Functions
 ;;;;; Blank Buffer New Frame
 ;; Make a blank buffer when opening a new frame. From
 ;; https://stackoverflow.com/a/25792276.
 
-(defun lem/new-buffer-new-frame ()
+(defun lem-new-buffer-new-frame ()
   "Create a new frame with a new empty buffer."
   (interactive)
   (let ((buffer (generate-new-buffer "untitled")))
@@ -265,7 +266,7 @@
 
 
 ;;;;; Create new buffer
-(defun lem/create-new-buffer ()
+(defun lem-create-new-buffer ()
   (interactive)
   (let ((buffer (generate-new-buffer "*new*")))
     (set-window-buffer nil buffer)
@@ -273,7 +274,7 @@
       (funcall (default-value 'major-mode)))))
 
 ;;;;; Make Temp Buffer
-(defun lem/tmp-buffer()
+(defun lem-tmp-buffer()
   "Make a temporary buffer and switch to it"
   (interactive)
   (switch-to-buffer (get-buffer-create (concat "tmp-" (format-time-string "%m.%dT%H.%M.%S"))))
@@ -281,7 +282,7 @@
 
 ;;;;; Revert all buffers
 ;;
-(defun lem/revert-all-file-buffers ()
+(defun lem-revert-all-file-buffers ()
   "Refresh all open file buffers without confirmation.
 Buffers in modified (not yet saved) state in emacs will not be reverted. They
 will be reverted though if they were modified outside emacs.
@@ -306,12 +307,12 @@ will be killed."
 
 ;;;;; Clipboard to/from Buffer
 ;; http://stackoverflow.com/a/10216338/4869
-(defun lem/copy-whole-buffer-to-clipboard ()
+(defun lem-copy-whole-buffer-to-clipboard ()
   "Copy entire buffer to clipboard"
   (interactive)
   (clipboard-kill-ring-save (point-min) (point-max)))
 
-(defun lem/copy-clipboard-to-whole-buffer ()
+(defun lem-copy-clipboard-to-whole-buffer ()
   "Copy clipboard and replace buffer"
   (interactive)
   (delete-region (point-min) (point-max))
@@ -320,7 +321,7 @@ will be killed."
 
 ;;;;; Useful Buffers
 ;; TODO: make this respect workspace buffers
-(defun lem/user-buffer-q ()
+(defun lem-user-buffer-q ()
   "Return t if current buffer is a user buffer, else nil.
   Typically, if buffer name starts with *, it's not considered a user buffer.
   This function is used by buffer switching command and close buffer command, so that next buffer shown is a user buffer.
@@ -334,37 +335,37 @@ will be killed."
       t
       )))
 
-(defun lem/next-user-buffer ()
+(defun lem-next-user-buffer ()
   "Switch to the next user buffer.
-  “user buffer” is determined by `lem/user-buffer-q'.
+  “user buffer” is determined by `lem-user-buffer-q'.
   URL `http://ergoemacs.org/emacs/elisp_next_prev_user_buffer.html'
   Version 2016-06-19"
   (interactive)
   (next-buffer)
   (let ((i 0))
     (while (< i 20)
-      (if (not (lem/user-buffer-q))
+      (if (not (lem-user-buffer-q))
           (progn (next-buffer)
                  (setq i (1+ i)))
         (progn (setq i 100))))))
 
-(defun lem/previous-user-buffer ()
+(defun lem-previous-user-buffer ()
   "Switch to the previous user buffer.
-  “user buffer” is determined by `lem/user-buffer-q'.
+  “user buffer” is determined by `lem-user-buffer-q'.
   URL `http://ergoemacs.org/emacs/elisp_next_prev_user_buffer.html'
   Version 2016-06-19"
   (interactive)
   (previous-buffer)
   (let ((i 0))
     (while (< i 20)
-      (if (not (lem/user-buffer-q))
+      (if (not (lem-user-buffer-q))
           (progn (previous-buffer)
                  (setq i (1+ i)))
         (progn (setq i 100))))))
 
 ;;;;; Eval emacs buffer until error
 
-(defun lem/eval-buffer-until-error ()
+(defun lem-eval-buffer-until-error ()
   "Evaluate emacs buffer until error occured."
   (interactive)
   (goto-char (point-min))
@@ -375,14 +376,14 @@ will be killed."
 ;; wrapper on (kill-buffer) to kill the current buffer. This is sometimes better
 ;; than (evil-delete-buffer) since it keeps the window.
 
-(defun lem/kill-this-buffer ()
+(defun lem-kill-this-buffer ()
   (interactive)
   (kill-buffer))
 
 ;;;;; Show Filename of Buffer
 
 ;; http://camdez.com/blog/2013/11/14/emacs-show-buffer-file-name/
-(defun lem/show-and-copy-buffer-full-filename ()
+(defun lem-show-and-copy-buffer-full-filename ()
   "Show the full path to the current file in the minibuffer and copy to clipboard."
   (interactive)
   (let ((file-name (buffer-file-name)))
@@ -392,7 +393,7 @@ will be killed."
           (kill-new file-name))
       (error "Buffer not visiting a file"))))
 
-(defun lem/show-and-copy-buffer-filename ()
+(defun lem-show-and-copy-buffer-filename ()
   "Show the abbreviated path to the current file in the minibuffer and copy to clipboard."
   (interactive)
   (let ((file-name (abbreviate-file-name buffer-file-name)))
@@ -413,7 +414,7 @@ will be killed."
 ;;;;; Delete Current File
 ;; from magnars
 
-(defun lem/delete-current-buffer-file ()
+(defun lem-delete-current-buffer-file ()
   "Removes file connected to current buffer and kills buffer."
   (interactive)
   (let ((filename (buffer-file-name))
@@ -427,7 +428,7 @@ will be killed."
         (message "File '%s' successfully removed" filename)))))
 
 ;;;;; Get string from file
-(defun lem/get-string-from-file (filePath)
+(defun lem-get-string-from-file (filePath)
   "Read a file and return the contents as a string"
   (with-temp-buffer
     (insert-file-contents filePath)
@@ -436,12 +437,12 @@ will be killed."
 
 ;;;;; Duplicate file
 ;; Duplicate a file in dired or deer
-(defun lem/duplicate-file ()
+(defun lem-duplicate-file ()
   (interactive)
   (dired-do-copy-regexp "\\(.*\\)\\.\\(.*\\)" "\\1 (copy).\\2"))
 
 ;;;;; Move File
-(defun lem/move-file ()
+(defun lem-move-file ()
   "Write this file to a new location, and delete the old one."
   (interactive)
   (let ((old-location (buffer-file-name)))
@@ -463,7 +464,7 @@ will be killed."
 
 ;;;; Text Functions
 ;;;;; Fill Paragraph
-(defun lem/fill-paragraph ()
+(defun lem-fill-paragraph ()
   "if in an org buffer use org-fill-paragraph; else use fill-paragraph"
   (interactive)
   (if (derived-mode-p 'org-mode)
@@ -471,31 +472,31 @@ will be killed."
     (call-interactively #'fill-paragraph)))
 
 (global-set-key [remap fill-paragraph]
-                #'lem/fill-paragraph)
+                #'lem-fill-paragraph)
 
 ;;;;; Unfill Paragraph
 ;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
-(defun lem/unfill-paragraph (&optional region)
+(defun lem-unfill-paragraph (&optional region)
   "Takes a multi-line paragraph and makes it into a single line of text."
   (interactive (progn (barf-if-buffer-read-only) '(t)))
   (let ((fill-column (point-max))
         ;; This would override `fill-column' if it's an integer.
         (emacs-lisp-docstring-fill-column t))
     (fill-paragraph nil region)))
-(global-set-key (kbd "M-Q") #'lem/unfill-paragraph)
+(global-set-key (kbd "M-Q") #'lem-unfill-paragraph)
 
 ;;;;; Insert seconds
-(defun lem/insert-time-string ()
+(defun lem-insert-time-string ()
   "Insert year, day, hour, month, and second as a single string
       with no seperation"
   (interactive)
   (insert (format-time-string "%Y%d%H%M%S")))
 
-(defun lem/insert-time-seconds-epoch ()
+(defun lem-insert-time-seconds-epoch ()
   "Insert the integer number of seconds since the epoch."
   (interactive)
   (insert (format-time-string "%s")))
-;; (global-set-key (kbd "C-c e") 'lem/insert-time-seconds-epoch)
+;; (global-set-key (kbd "C-c e") 'lem-insert-time-seconds-epoch)
 
 ;;;;; Formatted Copy
 (defun formatted-copy ()
@@ -519,7 +520,7 @@ will be killed."
 ;; ======================================================
 ;; https://github.com/kuanyui/writing-utils.el/blob/db29d30e11b6d6d96c0d351b642af97631f3365f/writing-utils.el#L85
 
-(defun lem/insert-commented-separator()
+(defun lem-insert-commented-separator()
   "Insert a commented separator in your code. Like this in
       ELisp:
       ;; ======================================================
@@ -529,7 +530,7 @@ will be killed."
       "
   (interactive)
   (let* ((line (make-string 54 (string-to-char "=")))
-	    (comment-start (if (member major-mode '(emacs-lisp-mode lisp-mode))
+	     (comment-start (if (member major-mode '(emacs-lisp-mode lisp-mode))
 			                ";; " comment-start))
          (seperator (concat comment-start line)))
     (when (> (current-column) 0) (end-of-line) (newline))
@@ -540,7 +541,7 @@ will be killed."
 
 ;;;;; Insert Weather
 ;; From [[https://www.baty.blog/2019/insert-weather-into-emacs-buffer][Jack Baty]] with some slight modifications for formatting. See also [[https://github.com/chubin/wttr.in][wttr.in]].
-(defun lem/insert-weather ()
+(defun lem-insert-weather ()
   (interactive)
   (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT'")))
     (insert (mapconcat (function (lambda (x) (format ": %s" x)))
@@ -549,61 +550,61 @@ will be killed."
   (newline))
 
 ;;;;; Clipboard Transforms Using Pandoc
-(defun lem/org-to-markdown ()
+(defun lem-org-to-markdown ()
   "convert clipboard contents from org to markdown and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f org -t markdown"))
   (yank))
 
-(defun lem/markdown-to-org ()
+(defun lem-markdown-to-org ()
   "convert clipboard contents from markdown to org and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f markdown -t org"))
   (yank))
 
-(defun lem/tex-to-org ()
+(defun lem-tex-to-org ()
   "convert clipboard contents from markdown to org and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f latex -t org"))
   (yank))
 
-(defun lem/org-to-tex ()
+(defun lem-org-to-tex ()
   "convert clipboard contents from org to tex and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f org -t latex"))
   (yank))
 
-(defun lem/tex-to-markdown ()
+(defun lem-tex-to-markdown ()
   "convert clipboard contents from markdown to org and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f latex -t markdown --markdown-headings=atx"))
   (yank))
 
-(defun lem/markdown-to-tex ()
+(defun lem-markdown-to-tex ()
   "convert clipboard contents from markdown to org and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f markdown -t latex"))
   (yank))
 
-(defun lem/cite-to-org ()
+(defun lem-cite-to-org ()
   "convert clipboard contents from markdown to org with citations and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc --bibliography=/Users/Roambot/Dropbox/Work/Master.bib -s -t markdown-native_divs-raw_html-citations | pandoc -f markdown -t org"))
   (yank))
 
-(defun lem/cite-to-markdown ()
+(defun lem-cite-to-markdown ()
   "convert clipboard contents to markdown with citations and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc --bibliography=/Users/Roambot/Dropbox/Work/bibfile.bib -s -t markdown-native_divs-raw_html-citations --markdown-headings=atx"))
   (yank))
 
-(defun lem/bibtex-to-yaml-reference ()
+(defun lem-bibtex-to-yaml-reference ()
   "convert clipboard bibtex contents to yaml and paste"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc-citeproc -y -f bibtex | pbcopy"))
   (yank))
 
-(defun lem/md-to-rtf ()
+(defun lem-md-to-rtf ()
   "convert md to rtf and send to clipboard"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f markdown -t rtf | pbcopy"))
@@ -611,15 +612,15 @@ will be killed."
 
 
 ;; NOTE: piping to pbcopy doesn't seem to work but it is ready to paste as is
-(defun lem/org-to-rtf ()
+(defun lem-org-to-rtf ()
   "convert org to rtf and send to clipboard"
   (interactive)
   (kill-new (shell-command-to-string "pbpaste | pandoc -f org -t html | /usr/bin/textutil -stdin -stdout -format html -convert rtf -fontsize 14 -font Helvetica | pbcopy")))
 
-(defun lem/org-to-mail-rtf ()
+(defun lem-org-to-mail-rtf ()
   "copy buffer, convert clipboard contents from org to rtf, and send to mail message"
   (interactive)
-  (lem/copy-whole-buffer-to-clipboard)
+  (lem-copy-whole-buffer-to-clipboard)
   ;; (kill-new (shell-command-to-string "pbpaste | pandoc -f org -t rtf"))
   (kill-new (shell-command-to-string "pbpaste | pandoc -f org -t html | /usr/bin/textutil -stdin -stdout -format html -convert rtf -fontsize 14 | pbcopy"))
   (kill-buffer)
@@ -688,7 +689,7 @@ will be killed."
 ;; http://lists.gnu.org/archive/html/help-gnu-emacs/2007-05/msg00975.html
 
 ;;;;; Wrap in Yaml block
-(defun lem/yaml-wrap ()
+(defun lem-yaml-wrap ()
   "wrap region in --- for a yaml block"
   (interactive)
   (let ((start (region-beginning))
@@ -700,7 +701,7 @@ will be killed."
 
 ;;;;; Jump to sexp
 
-(defun lem/forward-or-backward-sexp (&optional arg)
+(defun lem-forward-or-backward-sexp (&optional arg)
   "Go to the matching parenthesis character if one is adjacent to point."
   (interactive "^p")
   (cond ((looking-at "\\s(") (forward-sexp arg))
@@ -711,7 +712,7 @@ will be killed."
 
 ;;;; UI Functions
 ;;;;; Toggle markup
-(defun lem/toggle-display-markup ()
+(defun lem-toggle-display-markup ()
   "Toggle the display of markup in markdown and org modes"
   (interactive)
   (if (eq major-mode 'org-mode)

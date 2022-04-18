@@ -50,7 +50,7 @@
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 ;;;; Disable All Custom Themes
-(defun lem/disable-all-themes ()
+(defun lem-disable-all-themes ()
   "disable all active themes."
   (interactive)
   (progn
@@ -76,23 +76,23 @@
     (force-mode-line-update)))
 
 ;;;; Load Theme Wrapper
-(defun lem/load-theme ()
+(defun lem-load-theme ()
   (interactive)
   (progn
-    (lem/disable-all-themes)
+    (lem-disable-all-themes)
     (call-interactively 'load-theme)))
 
 ;;;; Toggle Menubar
 ;; toggle menubar to light or dark
-(defun lem/osx-toggle-menubar-theme ()
+(defun lem-osx-toggle-menubar-theme ()
   "toggle menubar to dark or light using shell command"
   (interactive)
   (shell-command "dark-mode"))
-(defun lem/osx-menubar-theme-light ()
+(defun lem-osx-menubar-theme-light ()
   "turn dark mode off"
   (interactive)
   (shell-command "dark-mode off"))
-(defun lem/osx-menubar-theme-dark ()
+(defun lem-osx-menubar-theme-dark ()
   "turn dark mode on"
   (interactive)
   (shell-command "dark-mode on"))
@@ -103,9 +103,9 @@
   "Coordinate setting of theme with os theme and toggle"
   (interactive)
   (if (eq active-theme 'light-theme)
-      (progn (lem/osx-menubar-theme-dark)
+      (progn (lem-osx-menubar-theme-dark)
              (setq active-theme 'dark-theme))
-    (progn (lem/osx-menubar-theme-light)
+    (progn (lem-osx-menubar-theme-light)
            (setq active-theme 'light-theme))))
 
 ;;;; After Load Theme Hook

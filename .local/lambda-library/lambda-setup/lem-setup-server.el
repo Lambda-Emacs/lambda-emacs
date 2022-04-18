@@ -12,13 +12,13 @@
       (server-start)))
 
 ;; functions for killing server-related emacsen
-(defun lem/kill-all-emacsen ()
+(defun lem-kill-all-emacsen ()
   (interactive)
   (progn
     (save-buffers-kill-emacs)
     (shell-command-to-string "pkill -i emacs")))
 
-(defun lem/kill-emacs-capture-daemon ()
+(defun lem-kill-emacs-capture-daemon ()
   (interactive)
   (shell-command-to-string "pkill -f /Applications/Emacs.app/Contents/MacOS/emacs"))
 
