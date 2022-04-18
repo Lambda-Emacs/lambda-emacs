@@ -78,6 +78,7 @@
 ;; Highlight lines. You can toggle this off
 (use-package hl-line+
   :straight t
+  :defer 1
   :custom-face
   ;; subtle highlighting
   (hl-line ((t (:inherit highlight))))

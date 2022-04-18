@@ -373,6 +373,7 @@
 ;;;; Prose Linting
 (use-package flymake-proselint
   :straight t
+  :defer t
   :config
   (add-hook 'text-mode-hook (lambda ()
                               (flymake-mode)
