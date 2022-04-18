@@ -24,19 +24,18 @@
 ;;; Code:
 
 ;;;; Scrolling
-(use-package emacs
-  :straight (:type built-in)
-  :config
-  ;; Reduce cursor lag by a tiny bit by not auto-adjusting `window-vscroll'
-  ;; for tall lines.
-  (setq auto-window-vscroll nil)
-  ;; Settings for better cursor
-  ;; see https://two-wrongs.com/centered-cursor-mode-in-vanilla-emacs
-  ;;  (NOTE: A number of 101+ disables re-centering.)
-  (setq scroll-preserve-screen-position t
-        scroll-conservatively 101
-        maximum-scroll-margin 0.5
-        scroll-margin 15))
+(measure-time
+ (message "*Load scrolling settings...*")
+ ;; Reduce cursor lag by a tiny bit by not auto-adjusting `window-vscroll'
+ ;; for tall lines.
+ (setq auto-window-vscroll nil)
+ ;; Settings for better cursor
+ ;; see https://two-wrongs.com/centered-cursor-mode-in-vanilla-emacs
+ ;;  (NOTE: A number of 101+ disables re-centering.)
+ (setq scroll-preserve-screen-position t
+       scroll-conservatively 101
+       maximum-scroll-margin 0.5
+       scroll-margin 15))
 
 (use-package pixel-scroll
   :straight (:type built-in)

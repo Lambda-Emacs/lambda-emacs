@@ -43,11 +43,8 @@
 
 
 ;;;; Cursor
-(use-package emacs
-  :straight (:type built-in)
-  :custom
-  ;; don't show cursor in inactive windows
-  (cursor-in-non-selected-windows nil))
+;; don't show cursor in inactive windows
+(customize-set-variable 'cursor-in-non-selected-windows nil)
 
 ;;;; Reveal Mode
 ;; Toggle uncloaking of invisible text near point, including folded org headlines (Reveal mode).

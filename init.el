@@ -285,6 +285,14 @@ emacs-version string on the kill ring"
                             (";;;;;; " . 4)
                             (";;;;;;; " . 5))))))
 
+;;;; Measure Time Macro
+;; https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp
+(defmacro measure-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "*Elapsed time: %.06f*" (float-time (time-since time)))))
+
 ;;;; Load Configuration Modules
 ;; Set module groups and load modules. NOTE: These are just convenience
 ;; functions. You can also load all setup libraries individually, or even just
@@ -312,7 +320,6 @@ emacs-version string on the kill ring"
   (require 'lem-setup-navigation)
   (require 'lem-setup-dired)
   (require 'lem-setup-help)
-  (require 'lem-setup-tabs)
   (require 'lem-setup-modeline)
   (require 'lem-setup-theme)
   (require 'lem-setup-search)
@@ -322,16 +329,16 @@ emacs-version string on the kill ring"
 (defun lem--project-modules ()
   (require 'lem-setup-projects)
   (require 'lem-setup-vc)
-  (require 'lem-setup-workspaces))
+  (require 'lem-setup-tabs))
 
 (defun lem--editing-modules ()
   (require 'lem-setup-citation)
   (require 'lem-setup-writing)
-  (require 'lem-setup-programming) ;; some of this should go in language module
-  (require 'lem-setup-debug)
   (require 'lem-setup-notes))
 
-(defun lem--language-modules ())
+(defun lem--programming-modules ()
+  (require 'lem-setup-programming)
+  (require 'lem-setup-debug))
 
 (defun lem--shell-modules ()
   (require 'lem-setup-shell))
