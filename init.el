@@ -364,7 +364,7 @@ emacs-version string on the kill ring"
  ;; Load the just essential modules
  ((lem--emacs-switches "-basic")
   (progn
-    (message "*Loading basic 𝛌-Emacs configuration*")
+    (message "*Loading basic (core + ui) 𝛌-Emacs configuration*")
     (lem--core-modules)
     (lem--ui-modules)))
  ;; Load test module only
@@ -381,7 +381,7 @@ emacs-version string on the kill ring"
     (progn
       (message "*Loading 𝛌-Emacs & user config*")
       (load lem-config-file 'noerror))))
- ;; Otherwise load core modules
+ ;; Otherwise load all modules
  ((message "*Loading 𝛌-Emacs*")
   (lem--core-modules)
   (lem--ui-modules)
