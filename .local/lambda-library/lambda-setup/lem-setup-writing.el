@@ -354,31 +354,6 @@
   :bind (:map lem+search-keys
          ("w" . sdcv-search)))
 
-;;;; Writegood Mode
-(use-package writegood-mode
-  :disabled
-  :hook (markdown-mode . writegood-mode)
-  :config
-  (setq lem-weasel-words
-        '("actually"
-          "basically"
-          "easily"
-          "easy"
-          "specifically"
-          "simple"
-          "simply"))
-  (setq writegood-weasel-words
-        (-concat writegood-weasel-words lem-weasel-words)))
-
-;;;; Prose Linting
-(use-package flymake-proselint
-  :straight t
-  :defer t
-  :config
-  (add-hook 'text-mode-hook (lambda ()
-                              (flymake-mode)
-                              (flymake-proselint-setup))))
-
 ;;;; Narrow/Widen
 (defun lem-narrow-or-widen-dwim (p)
   "Widen if buffer is narrowed, narrow-dwim otherwise.
