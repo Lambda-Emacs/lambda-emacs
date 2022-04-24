@@ -8,7 +8,6 @@
 ;;; Code:
 
 ;;;; Startup
-
 ;;;;; System Variables
 ;; Check the system used
 (defconst sys-linux   (eq system-type 'gnu/linux))
@@ -102,7 +101,7 @@ be cleared if there are problems.")
 (setenv "PATH" (concat homebrew ":" (getenv "PATH") ":" lem-local-bin ":" usr-local-bin ":" usr-local-sbin))
 (setq exec-path (append exec-path (list homebrew lem-local-bin usr-local-bin usr-local-sbin)))
 
-;;;; Package Settings
+;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
 ;; settings. Defer package loading as much as possible to either the
 ;; after-init-hook or after some number of seconds of idle. This helps
@@ -179,7 +178,7 @@ be cleared if there are problems.")
   :custom
   (el-patch-enable-use-package-integration t))
 
-;;;; Security
+;;;;; Security
 ;; Properly verify outgoing ssl connections.
 ;; See https://glyph.twistedmatrix.com/2015/11/editor-malware.html
 
@@ -190,7 +189,7 @@ be cleared if there are problems.")
   (gnutls-verify-error t)
   (gnutls-min-prime-bits 3072))
 
-;;;; Benchmark Init
+;;;;; Benchmark Init
 (use-package benchmark-init
   ;; demand when using
   ;; :demand t
@@ -199,7 +198,7 @@ be cleared if there are problems.")
   ;; To disable collection of benchmark data after init is done.
   (add-hook 'emacs-startup-hook 'benchmark-init/deactivate))
 
-;;;; Auto-compile
+;;;;; Auto-compile
 ;; Automatically byte-recompile changed elisp libraries
 (use-package auto-compile
   :defer 1
@@ -212,7 +211,7 @@ be cleared if there are problems.")
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode))
 
-;;;; Command Line Switches
+;;;;; Command Line Switches
 
 ;; Conditionally load parts of config depending on command line switches.
 ;; This allows startup with a clean emacs that still recognizes straight.
@@ -239,7 +238,7 @@ only a `lem-setup-test.el' file for easy testing.")
     (setq command-line-args (delete switch command-line-args))
     found-switch))
 
-;;;; Emacs Build Version
+;;;;; Emacs Build Version
 ;; When built with https://github.com/mclear-tools/build-emacs-macos, Emacs has
 ;; git-version patch to include git sha1 in emacs-version string.
 (setq site-lisp "/Applications/Emacs.app/Contents/Resources/site-lisp/")
@@ -254,7 +253,7 @@ emacs-version string on the kill ring"
     (message (emacs-version))
     (kill-new emacs)))
 
-;;;; Outline Navigation
+;;;;; Outline Navigation
 ;; Navigate elisp files easily. Outline is a built-in library and we can easily
 ;; configure it to treat elisp comments as headings.
 (use-package outline
@@ -282,7 +281,7 @@ emacs-version string on the kill ring"
                             (";;;;;; " . 4)
                             (";;;;;;; " . 5))))))
 
-;;;; Measure Time Macro
+;;;;; Measure Time Macro
 ;; https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp
 (defmacro measure-time (&rest body)
   "Measure the time it takes to evaluate BODY."
@@ -290,7 +289,7 @@ emacs-version string on the kill ring"
      ,@body
      (message "*Elapsed time: %.06f*" (float-time (time-since time)))))
 
-;;;; Load Configuration Modules
+;;;;; Load Configuration Modules
 ;; Set module groups and load modules. NOTE: These are just convenience
 ;; functions. You can also load all setup libraries individually, or even just
 ;; load everything in the lem-setup-library directory like so:
@@ -402,6 +401,6 @@ emacs-version string on the kill ring"
                                 (setq gc-cons-threshold 800000)
                                 ;; Startup time
                                 (message (format ";; ======================================================\n;; Emacs ready in %.2f seconds with %d garbage collections.\n;; ======================================================"
- (float-time
-  (time-subtract after-init-time before-init-time)) gcs-done)
-    (put 'narrow-to-page 'disabled nil))))
+                                                 (float-time
+                                                  (time-subtract after-init-time before-init-time)) gcs-done)
+                                         (put 'narrow-to-page 'disabled nil))))
