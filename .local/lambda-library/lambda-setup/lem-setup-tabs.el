@@ -81,7 +81,7 @@ questions.  Otherwise use completion to select the tab."
   :bind (:map project-prefix-map
          ("m" . tab-bookmark)))
 
-;;;; Workspaces
+;;;; Tab Workspaces
 
 (use-package tabspaces
   ;; :straight (:type git :host github :repo "mclear-tools/emacs-workspaces")
@@ -92,7 +92,8 @@ questions.  Otherwise use completion to select the tab."
          ("p" . tabspaces-open-existing-project-and-workspace)
          ("n" . tabspaces-create-new-project-and-workspace))
   :custom
-  (tabspaces-use-filtered-buffers-as-default t))
+  (tabspaces-use-filtered-buffers-as-default t)
+  (tabspaces-default-tab "Home"))
 
 ;;;; Per Workspace Buffers with Consult
 ;; Filter Buffers for Consult-Buffer
@@ -104,12 +105,14 @@ questions.  Otherwise use completion to select the tab."
   (defvar consult--source-workspace
     (list :name     "Workspace Buffers"
           :narrow   ?w
+          :history  'buffer-name-history
           :category 'buffer
           :state    #'consult--buffer-state
           :default  t
-          :items    (lambda ()
-                      (tabspaces--tab-bar-buffer-name-filter ((lambda () (consult--buffer-query :sort 'visibility
-                                                                                           :as #'buffer-name))))))
+          :items    (lambda () (consult--buffer-query
+                           :predicate #'tabspaces-local-buffer-p
+                           :sort 'visibility
+                           :as #'buffer-name)))
 
     "Set workspace buffer list for consult-buffer.")
   (push consult--source-workspace consult-buffer-sources))
