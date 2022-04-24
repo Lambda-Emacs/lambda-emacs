@@ -204,7 +204,7 @@
            ("H" . hidden-mode-line-mode       )
            ("e" . toggle-indicate-empty-lines )
            ("E" . eldoc-mode                  )
-           ("F" . flycheck-mode               )
+           ("F" . flymake-mode                )
            ("m" . lem-toggle-display-markup   )
            ("n" . display-line-numbers-mode   )
            ("N" . org-numbers-overlay-mode    )
@@ -220,30 +220,11 @@
            ("z" . zone                        ))
 
 ;;;;; User Keybindings
-;; FIXME: I should probably just delete these except for the prefix.
+;; NOTE: This keymap is for user-specific keybindings. Define this in your
+;; `config.el' file.
 (bind-keys :prefix-map lem+user-keys
            :prefix (concat lem-prefix " u")
-           ("a" .  lem-jump-to-org-super-agenda                 )
-           ("c" . lem-find-files-setup-config-directory         )
-           ("C" . lem-search-setup-config-files                 )
-           ("d" .  osx-dictionary-search-input                  )
-           ("m" .  lem-org-to-markdown                          )
-           ("g" .  org-mac-grab-link                            )
-           ("h" .  lem-org-export-to-buffer-html-as-body        )
-           ("i" .  lem-org-goto-inbox                           )
-           ("k" .  kill-compilation                             )
-           ("l" .  desktop-read                                 )
-           ("o" .  lem-markdown-to-org                          )
-           ("O" .  lem-goto-org-files                           )
-           ("p" .  run-pandoc                                   )
-           ("P" .  lem-pandoc-pdf-open                          )
-           ("s" .  sb-expand-current-file                       )
-           ("S" .  just-one-space                               )
-           ("t" .  lem-jump-to-org-agenda-all-todos             )
-           ("j" .  lem-goto-journal                             )
-           ("u" .  lem-straight-update-packages-asynchronously  )
-           ("w" .  count-words                                  )
-           ("W" .  lem-jump-to-week-agenda                      ))
+           )
 
 ;;;;; Version Control (Git) Keybindings
 (bind-keys :prefix-map  lem+vc-keys
