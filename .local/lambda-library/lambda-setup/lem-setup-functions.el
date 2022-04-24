@@ -486,16 +486,23 @@ will be killed."
 (global-set-key (kbd "M-Q") #'lem-unfill-paragraph)
 
 ;;;;; Insert seconds
+;; Functions for inserting times. For the explanation of why we use
+;; `with-temp-buffer' see https://emacs.stackexchange.com/q/24060/11934
+
 (defun lem-insert-time-string ()
   "Insert year, day, hour, month, and second as a single string
       with no seperation"
   (interactive)
-  (insert (format-time-string "%Y%d%H%M%S")))
+  (with-temp-buffer
+    (insert (format-time-string "%Y%d%H%M%S"))
+    (buffer-string)))
 
 (defun lem-insert-time-seconds-epoch ()
   "Insert the integer number of seconds since the epoch."
   (interactive)
-  (insert (format-time-string "%s")))
+  (with-temp-buffer
+    (insert (format-time-string "%s"))
+    (buffer-string)))
 ;; (global-set-key (kbd "C-c e") 'lem-insert-time-seconds-epoch)
 
 ;;;;; Formatted Copy
