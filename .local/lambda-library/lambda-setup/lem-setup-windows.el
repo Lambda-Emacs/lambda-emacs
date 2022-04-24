@@ -23,6 +23,19 @@
 
 ;;; Code:
 
+;;;; Window Setup
+(use-package window
+  :straight (:type built-in)
+  :custom
+  ;; Emacs often opens buffers in new windows. Make window splitting and
+  ;; placement more predictable.
+  (display-buffer-base-action
+   '((display-buffer-use-least-recent-window
+      display-buffer-reuse-window
+      display-buffer-reuse-mode-window
+      display-buffer-same-window
+      display-buffer-in-previous-window))))
+
 ;;;; Window Division
 ;; Vertical window divider
 (use-package frame
