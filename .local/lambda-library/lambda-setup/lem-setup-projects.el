@@ -13,15 +13,19 @@
          ("P" .  project-switch-project)
          ("t" .  lem-goto-projects)
          ("R" .  project-remember-projects-under))
+  :custom
+  ;; Use Ripgrep if installed
+  (when (shell-command-to-string "command rg --version")
+    (xref-search-program 'ripgrep))
+  (project-list-file (concat lem-cache-dir "projects"))
+  (project-switch-commands '((project-find-file "Find file")
+                             (project-find-regexp "Find regexp")
+                             (project-find-dir "Find directory")
+                             (project-vterm "Vterm shell")
+                             (project-vc-dir "VC-Dir")
+                             (project-magit-dir "Magit status")))
   :config
   (setq lem-project-dir "~/Dropbox/Work/projects")
-  (setq project-list-file (concat lem-cache-dir "projects"))
-  (setq project-switch-commands '((project-find-file "Find file")
-                                  (project-find-regexp "Find regexp")
-                                  (project-find-dir "Find directory")
-                                  (project-vterm "Vterm shell")
-                                  (project-vc-dir "VC-Dir")
-                                  (project-magit-dir "Magit status")))
   ;; remove deleted projects from list
   (project-forget-zombie-projects))
 
@@ -47,42 +51,8 @@
     (if (and vterm (not current-prefix-arg))
         (pop-to-buffer-same-window vterm)
       (vterm (generate-new-buffer-name default-project-shell-name)))))
-
 ;; Add to keymap
 (define-key (current-global-map) (kbd "C-x p s") #'project-vterm)
-
-;; Use fd
-;; See https://www.manueluberti.eu/emacs/2020/09/18/project/
-(with-eval-after-load 'el-patch
-  (el-patch-defun project--files-in-directory (dir ignores &optional files)
-    (el-patch-remove
-      (require 'find-dired)
-      (require 'xref)
-      (defvar find-name-arg))
-    (let* ((default-directory dir)
-           ;; Make sure ~/ etc. in local directory name is
-           ;; expanded and not left for the shell command
-           ;; to interpret.
-           (localdir (file-local-name (expand-file-name dir)))
-           (command (el-patch-swap
-                      (format "%s %s %s -type f %s -print0"
-                              find-program
-                              localdir
-                              (xref--find-ignores-arguments ignores localdir)
-                              (if files
-                                  (concat (shell-quote-argument "(")
-                                          " " find-name-arg " "
-                                          (mapconcat
-                                           #'shell-quote-argument
-                                           (split-string files)
-                                           (concat " -o " find-name-arg " "))
-                                          " "
-                                          (shell-quote-argument ")"))
-                                ""))
-                      (format "fd -t f -0 . %s" localdir))))
-      (project--remote-file-names
-       (sort (split-string (shell-command-to-string command) "\0" t)
-             #'string<)))))
 
 ;;;; Open project & file
 (with-eval-after-load 'project
