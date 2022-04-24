@@ -32,10 +32,19 @@
  ;; Settings for better cursor
  ;; see https://two-wrongs.com/centered-cursor-mode-in-vanilla-emacs
  ;;  (NOTE: A number of 101+ disables re-centering.)
- (setq scroll-preserve-screen-position t
-       scroll-conservatively 101
-       maximum-scroll-margin 0.5
-       scroll-margin 15))
+ ;; Smooth scrolling
+ (setq-default mouse-wheel-scroll-amount '(1 ((shift) . 1))
+               mouse-wheel-progressive-speed t
+               mouse-wheel-follow-mouse t
+               scroll-conservatively 10000
+               scroll-step 1
+               scroll-margin 1
+               scroll-preserve-screen-position 1))
+
+ ;; (setq scroll-preserve-screen-position t
+ ;;       scroll-conservatively 101
+ ;;       maximum-scroll-margin 0.5
+ ;;       scroll-margin 15))
 
 (use-package pixel-scroll
   :straight (:type built-in)
@@ -70,6 +79,9 @@
 (use-package mouse
   :straight (:type built-in)
   :config
+  ;; Focus follows mouse
+  (setq mouse-autoselect-window t
+        focus-follows-mouse t)
   (setq context-menu-functions
         '(context-menu-ffap
           occur-context-menu
@@ -209,7 +221,7 @@
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :custom
-  (popper-window-height 15)
+  (popper-window-height 20)
   (popper-display-control t)
   ;; set display to top -- if user prefers they can set this to `bottom'
   (popper-display-function #'popper-select-popup-at-top)
