@@ -329,6 +329,7 @@ emacs-version string on the kill ring"
 
 (defun lem--editing-modules ()
   (require 'lem-setup-citation)
+  (require 'lem-setup-scratch)
   (require 'lem-setup-writing)
   (require 'lem-setup-notes))
 
@@ -346,7 +347,7 @@ emacs-version string on the kill ring"
 (defun lem--misc-modules ()
   (require 'lem-setup-pdf)
   (require 'lem-setup-email)
-  (require 'lem-setup-scratch))
+  )
 
 ;; Conditionally load configuration files based on switches.
 (cond
