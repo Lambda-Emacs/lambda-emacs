@@ -11,6 +11,7 @@
 
 (use-package fontset
   :straight (:type built-in)
+  :defer 1
   :custom
   ;; Set this to nil to set symbols entirely separately
   (use-default-font-for-symbols t)
