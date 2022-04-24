@@ -382,6 +382,7 @@ Lisp function does not specify a special indentation."
   (flymake-mode-line-counter-format '("" flymake-mode-line-error-counter flymake-mode-line-warning-counter flymake-mode-line-note-counter ""))
   (flymake-mode-line-format '(" " flymake-mode-line-exception flymake-mode-line-counters)))
 
+;; Linting for emacs package libraries
 (use-package package-lint
   :straight (:type git :host github :repo "purcell/package-lint")
   :commands (package-lint-batch-and-exit
@@ -394,11 +395,18 @@ Lisp function does not specify a special indentation."
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'package-archive-contents)))
 
+;; A collection of flymake backends
+(use-package flymake-collection
+  :straight t
+  :hook (after-init . flymake-collection-hook-setup))
+
+;; Use Consult with Flymake
 (use-package consult-flymake
   :disabled
   :straight (:type git :host github :repo "minad/consult-flymake")
   :bind (:map lem+flymake-keys
          ("c" . consult-flymake)))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
