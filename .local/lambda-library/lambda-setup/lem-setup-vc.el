@@ -56,16 +56,27 @@
   ;; no magit header line as it conflicts w/bespoke-modeline
   (advice-add 'magit-set-header-line-format :override #'ignore)
   ;; display magit setting
-  (setq magit-display-buffer-function #'magit-display-buffer-traditional)
+  (setq magit-display-buffer-function #'lem-display-magit-in-other-window)
+  ;; (setq magit-display-buffer-function #'lem-magit-display-buffer-pop-up-frame)
   )
 
 ;; optional: display magit status in new frame
-(defun magit-display-buffer-pop-up-frame (buffer)
+(defun lem-magit-display-buffer-pop-up-frame (buffer)
   (if (with-current-buffer buffer (eq major-mode 'magit-status-mode))
       (display-buffer buffer
                       '((display-buffer-reuse-window
                          display-buffer-pop-up-frame)
                         (reusable-frames . t)))
+    (magit-display-buffer-traditional buffer)))
+
+;; optional: display magit in other window & create one if only 1 window
+(defun lem-display-magit-in-other-window (buffer)
+  (if (one-window-p)
+      (progn
+        (split-window-right)
+        (other-window 1)
+        (display-buffer buffer
+                        '((display-buffer-reuse-window))))
     (magit-display-buffer-traditional buffer)))
 
 ;; settings for committing using magit
@@ -121,10 +132,6 @@
      (change . "┃")
      (unknown . "?")
      (ignored . "i")))
-  ;; :custom-face
-  ;; (diff-hl-insert ((t (:slant normal :weight normal :inherit bespoke-salient))))
-  ;; (diff-hl-change ((t (:slant normal :weight normal :inherit bespoke-popout))))
-  ;; (diff-hl-delete ((t (:slant normal :weight normal :inherit bespoke-critical))))
   :init
   (defun cpm--diff-hl-fringe-face-from-type (type _pos)
     (intern (format "cpm--diff-hl-%s" type)))
