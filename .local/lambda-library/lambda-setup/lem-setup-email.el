@@ -357,7 +357,7 @@ the real email address"
   ;; Configure the function to use for sending mail
   (setq message-send-mail-function 'smtpmail-send-it)
   (setq smtpmail-queue-dir (concat mu4e-maildir "/queued-mail/"))
-
+  (setq smtpmail-debug-info t)
   ;; NOTE: Only use this if you have set up a GPG key!
   ;; Automatically sign all outgoing mails
   ;; (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
@@ -811,9 +811,7 @@ https://github.com/djcb/mu/issues/2198"
           (signal-process proc 'SIGKILL))))
     (setq
      mu4e~proc-process nil
-     mu4e~proc-buf nil))
-
-  )
+     mu4e~proc-buf nil)))
 
 ;;;;; End Mu4e
 
@@ -929,7 +927,6 @@ https://github.com/djcb/mu/issues/2198"
                  )))
     email-name))
 
-
-
+;;; Provide
 (provide 'lem-setup-email)
 ;;; setup-email.el ends here
