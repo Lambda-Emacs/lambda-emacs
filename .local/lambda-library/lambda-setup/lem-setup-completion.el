@@ -278,8 +278,6 @@ targets."
 ;; Info about candidates pulled from metadata
 (use-package marginalia
   :straight (marginalia :type git :host github :repo "minad/marginalia")
-  :custom-face
-  (marginalia-documentation ((t (:inherit bespoke-faded))))
   :bind (:map minibuffer-local-map
          ("C-M-a" . marginalia-cycle))
   :init
@@ -378,7 +376,8 @@ targets."
 ;;;;; Corfu
 (use-package corfu
   :straight (:type git :host github :repo "minad/corfu")
-  :defer 1
+  :hook
+  (after-init . global-corfu-mode)
   :bind
   (:map corfu-map
    ("C-j"      . corfu-next)
@@ -396,7 +395,6 @@ targets."
   :custom
   ;; auto-complete
   (corfu-auto t)
-
   (corfu-min-width 90)
   (corfu-max-width corfu-min-width)     ; Always have the same width
   (corfu-count 10)
@@ -408,18 +406,17 @@ targets."
   (corfu-separator  ?_)
   (corfu-quit-no-match 'separator)
   (corfu-quit-at-boundary t)
-
   (corfu-preview-current nil)       ; Preview current candidate?
   (corfu-preselect-first t)           ; Preselect first candidate?
   :config
-  (defun corfu-enable-always-in-minibuffer ()
-    "Enable Corfu in the minibuffer if Vertico/Mct are not active."
-    (unless (or (bound-and-true-p mct--active)
-                (bound-and-true-p vertico--input))
-      (setq-local corfu-auto t) ; Enable/disable auto completion
+  ;; Enable Corfu completion for commands like M-: (eval-expression) or M-!
+  ;; (shell-command)
+  (defun corfu-enable-in-minibuffer ()
+    "Enable Corfu in the minibuffer if `completion-at-point' is bound."
+    (when (where-is-internal #'completion-at-point (list (current-local-map)))
+      ;; (setq-local corfu-auto nil) Enable/disable auto completion
       (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
-  (corfu-global-mode 1))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
 
 ;; Use dabbrev with Corfu!
 (use-package dabbrev
