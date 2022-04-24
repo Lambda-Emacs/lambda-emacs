@@ -24,9 +24,12 @@
 ;;; Code:
 
 ;;;; Citation Variables
-(defvar lem-bibliography nil "User bibliography for citation.")
-(defvar lem-bib-notes nil "User citation notes directory.")
-(defvar lem-citar-note nil "Template for use with citar notes.")
+(defcustom lem-bibliography nil "User bibliography for citation."
+  :group 'lem-emacs)
+(defcustom lem-bib-notes nil "User citation notes directory."
+  :group 'lem-emacs)
+(defcustom lem-citar-note nil "Template for use with citar notes."
+  :group 'lem-emacs)
 
 ;;;; Org-Cite
 ;; Eventually this should be a full replacement for org-ref
@@ -80,9 +83,10 @@
   ;; add beref entry for bookends
   (setq citar-additional-fields '("doi" "url" "beref"))
   (setq citar-templates
-        '((main . "${author editor:30} ${date year issued:4} ${title:48}")
-          (suffix . "    ${=key= id:15} ${=type=:12}  ${=beref=:12} ${tags keywords:*}")
-          (note . lem-citar-note)))
+        `((main . "${author editor:30} ${title:48}  ${=key= id:15}")
+          (suffix . "  ${=type=:12}  ${=beref=:12} ${tags keywords:*}")
+          (preview . "${author editor} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
+          (note . ,lem-citar-note)))
   (setq citar-symbols
         `((file ,(all-the-icons-octicon "file-pdf" :face 'bespoke-red) . " ")
           (note ,(all-the-icons-octicon "file-text" :face 'bespoke-brown) . " ")
