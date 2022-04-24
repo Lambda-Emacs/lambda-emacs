@@ -132,6 +132,9 @@
 (use-package ws-butler
   :hook (prog-mode . ws-butler-mode))
 
+;; Better than the default 'just-one-space', which was M-SPC before
+(global-set-key (kbd "S-s-SPC") #'cycle-spacing)
+
 ;;;; Backups / Auto-Save
 (use-package files
   :straight (:type built-in)
