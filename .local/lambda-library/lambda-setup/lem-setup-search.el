@@ -68,6 +68,12 @@
 ;; (search many files) tools. It's fast and versatile and written in Rust.
 (use-package rg :commands rg)
 
+;;;; Xref
+;; Built-in library for cross-referencing
+(use-package xref
+  :straight (:type built-in)
+  :defer 1)
+
 ;;; Provide
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
