@@ -156,6 +156,8 @@
 ;; also impacts performance).
 (push '(tool-bar-lines . 0)   default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
+;; no titlebar (disable if not using a WM)
+(push '(undecorated . t) default-frame-alist)
 
 ;; And set these to nil so users don't have to toggle the modes twice to
 ;; reactivate them.
@@ -186,22 +188,24 @@
 ;; system light or dark mode.
 (defconst active-theme nil "Variable for holding light/dark value of theme appearance.")
 
-(defun lem--apply-default-theme (appearance)
-  "If no other theme is set, load a default theme (modus-themes),taking current system APPEARANCE into consideration."
+(defun lem--apply-default-background (appearance)
+  "If no other theme is set, load default background color taking current system APPEARANCE into consideration. This avoids the frame flashing on startup."
   (mapc #'disable-theme custom-enabled-themes)
   (pcase appearance
     ('light (progn
-              (load-theme 'modus-operandi t)
-              (setq active-theme 'light-theme)))
+              (setq active-theme 'light-theme)
+              (set-foreground-color "#282b35")
+              (set-background-color "#fffef9")))
     ('dark  (progn
-              (load-theme 'modus-vivendi t)
-              (setq active-theme 'dark-theme)))))
+              (setq active-theme 'dark-theme)
+              (set-foreground-color "#eceff1")
+              (set-background-color "#282b35")))))
+
+(add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
 
 ;; Check if there is a user early-config file. If not then load modus-themes as default.
 (let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
-  (if (not (file-exists-p early-config-file))
-      (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-theme)
-    ;; Otherwise if the user early-config file exists then load it.
+  (when (file-exists-p early-config-file)
     (load early-config-file nil 'nomessage)))
 
 ;;; early-init.el ends here

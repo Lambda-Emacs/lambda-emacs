@@ -34,10 +34,6 @@ lem-temp-dir, which contains non-essential files and emphemera.")
   "The directory for 𝛌-Emacs Lisp libraries.
 This will house all setup libraries and external libraries or packages.")
 
-;; Set user project directory
-(defconst lem-user-elisp-dir nil
-  "Directory for personal elisp projects.")
-
 (defconst lem-user-dir (concat lem-library-dir "lambda-user/")
   "Storage for personal elisp, scripts, and any other private files.")
 
@@ -63,9 +59,22 @@ be cleared if there are problems.")
 
 ;;;;; User Configuration Variables
 ;; Find the user configuration file
-(defvar lem-config-file (expand-file-name "config.el" lem-user-dir)
+(defconst lem-config-file (expand-file-name "config.el" lem-user-dir)
   "The user's configuration file.")
-(defvar lem-project-dir nil "Set the directory for user projects.")
+
+;; These next two variables are both optional, but maybe convenient.
+;; They are used with the functions `lem-goto-projects' and `lem-goto-elisp-library'.
+
+;; Set user project directory
+(defcustom lem-project-dir nil "Set the directory for user projects."
+  :group 'lambda-emacs
+  :type 'string)
+
+;; Set user elisp project dir
+(defcustom lem-user-elisp-dir nil
+  "Directory for personal elisp projects."
+  :group 'lambda-emacs
+  :type 'string)
 
 ;;;;; Path Settings
 ;; Directory paths
@@ -80,16 +89,16 @@ be cleared if there are problems.")
     (push lem-setup-dir load-path)
     (push lem-user-dir load-path)))
 
+;;;;; Exec Path
 ;; Set PATH properly for emacs. This should make a package like
 ;; `exec-path-from-shell' unnecessary
 
-;;;;; Exec Path
-;; Set local (i.e. current user) bin path
+;; Set local (i.e. current user) bin path, if it exists
 (when (file-directory-p (concat (getenv "HOME") "/bin"))
   (defconst lem-local-bin (concat (getenv "HOME") "/bin") "Local execs."))
 
 ;; If on a mac using homebrew set path correctly
-;; NOTE the location of homebrew depends on whether we're on mac silicon
+;; NOTE: the location of homebrew depends on whether we're on mac silicon
 (when (shell-command-to-string "command -v brew")
   (defconst homebrew (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin/" "/usr/local/bin/") "Path to homebrew packages."))
 
@@ -104,8 +113,9 @@ be cleared if there are problems.")
 ;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
 ;; settings. Defer package loading as much as possible to either the
-;; after-init-hook or after some number of seconds of idle. This helps
-;; especially when doing, e.g., a quick restart-and-check of something in emacs.
+;; after-init-hook or after some number of seconds of idle. This should produce
+;; shorter startup times, which helps especially when doing, e.g., a quick
+;; restart-and-check of something in emacs.
 
 ;;;;; Straight
 ;;;;;; Straight settings
@@ -157,22 +167,22 @@ be cleared if there are problems.")
 (autoload #'straight-x-fetch-all "straight-x")
 
 ;;;;; Use-Package
-;; install use package
+;; Install use package
 (straight-use-package 'use-package)
-;; settings
+;; Settings
 (use-package use-package
   :custom
   (use-package-always-defer nil)
   (use-package-verbose t)
-  ;; this is really helpful for profiling
+  ;; This is really helpful for profiling
   (use-package-minimum-reported-time 0)
   (use-package-enable-imenu-support t)
   (use-package-expand-minimally nil)
+  ;; Let straight handle package install
   (use-package-always-ensure nil))
 
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
-
 (use-package el-patch
   :straight t
   :custom
@@ -181,22 +191,12 @@ be cleared if there are problems.")
 ;;;;; Security
 ;; Properly verify outgoing ssl connections.
 ;; See https://glyph.twistedmatrix.com/2015/11/editor-malware.html
-
 (use-package gnutls
   :straight nil
   :defer 1
   :custom
   (gnutls-verify-error t)
   (gnutls-min-prime-bits 3072))
-
-;;;;; Benchmark Init
-(use-package benchmark-init
-  ;; demand when using
-  ;; :demand t
-  :defer t
-  :config
-  ;; To disable collection of benchmark data after init is done.
-  (add-hook 'emacs-startup-hook 'benchmark-init/deactivate))
 
 ;;;;; Auto-compile
 ;; Automatically byte-recompile changed elisp libraries
@@ -246,8 +246,8 @@ only a `lem-setup-test.el' file for easy testing.")
   (require 'emacs-git-version))
 
 (defun lem-emacs-version ()
-  "A convenience function to print emacs-version and put
-emacs-version string on the kill ring"
+  "A convenience function to print the emacs-version in the echo-area/*messages* buffer and put
+emacs-version string on the kill ring."
   (interactive)
   (let ((emacs (emacs-version)))
     (message (emacs-version))
@@ -282,7 +282,8 @@ emacs-version string on the kill ring"
                             (";;;;;;; " . 5))))))
 
 ;;;;; Measure Time Macro
-;; https://stackoverflow.com/questions/23622296/emacs-timing-execution-of-function-calls-in-emacs-lisp
+;; Useful macro to wrap functions in for testing
+;; See https://stackoverflow.com/q/23622296
 (defmacro measure-time (&rest body)
   "Measure the time it takes to evaluate BODY."
   `(let ((time (current-time)))
@@ -290,111 +291,127 @@ emacs-version string on the kill ring"
      (message "*Elapsed time: %.06f*" (float-time (time-since time)))))
 
 ;;;;; Load Configuration Modules
-;; Set module groups and load modules. NOTE: These are just convenience
-;; functions. You can also load all setup libraries individually, or even just
-;; load everything in the lem-setup-library directory like so:
-;; (mapc 'load (file-expand-wildcards (concat lem-setup-dir "lem-setup-*.el")))
+;; Lambda-Emacs loads a series of lisp-libraries or 'modules'. Which modules are
+;; loaded is left to the user to set in `config.el', though if there is no
+;; `config.el' file a default set of modules will be loaded.
 
-(defun lem--core-modules ()
-  "Load 𝛌-Emacs's core files for an interactive session."
-  (require 'lem-setup-libraries)
-  (require 'lem-setup-settings)
-  (require 'lem-setup-functions)
-  (require 'lem-setup-macros)
-  (require 'lem-setup-server))
+(defun lem--default-modules ()
+  "Load a default configuration for 𝛌-Emacs."
+  (message "*Loading default setup of 𝛌-Emacs Modules*")
+  (measure-time
+   (cl-dolist (mod (list
+                    ;; Core modules
+                    'lem-setup-libraries
+                    'lem-setup-settings
+                    'lem-setup-functions
+                    'lem-setup-server
+                    'lem-setup-scratch
 
-(defun lem--ui-modules ()
-  (require 'lem-setup-frames)
-  (require 'lem-setup-windows)
-  (require 'lem-setup-buffers)
-  (require 'lem-setup-splash)
-  (require 'lem-setup-colors)
-  (require 'lem-setup-completion)
-  (require 'lem-setup-fonts)
-  (require 'lem-setup-faces)
-  (require 'lem-setup-keybindings)
-  (require 'lem-setup-navigation)
-  (require 'lem-setup-dired)
-  (require 'lem-setup-help)
-  (require 'lem-setup-modeline)
-  (require 'lem-setup-theme)
-  (require 'lem-setup-search)
-  (when sys-mac
-    (require 'lem-setup-macos)))
+                    ;; UI modules
+                    'lem-setup-frames
+                    'lem-setup-windows
+                    'lem-setup-buffers
+                    'lem-setup-fonts
+                    'lem-setup-faces
+                    'lem-setup-colors
+                    'lem-setup-completion
+                    'lem-setup-keybindings
+                    'lem-setup-help
+                    'lem-setup-modeline
+                    'lem-setup-theme
+                    'lem-setup-splash
 
-(defun lem--project-modules ()
-  (require 'lem-setup-projects)
-  (require 'lem-setup-vc)
-  (require 'lem-setup-tabs))
+                    ;; Navigation & Search modules
+                    'lem-setup-navigation
+                    'lem-setup-dired
+                    'lem-setup-search
 
-(defun lem--editing-modules ()
-  (require 'lem-setup-citation)
-  (require 'lem-setup-scratch)
-  (require 'lem-setup-writing)
-  (require 'lem-setup-notes))
+                    ;; Project & Tab/Workspace modules
+                    'lem-setup-vc
+                    'lem-setup-projects
+                    'lem-setup-tabs
 
-(defun lem--programming-modules ()
-  (require 'lem-setup-programming)
-  (require 'lem-setup-debug))
+                    ;; Writing modules
+                    'lem-setup-writing
+                    'lem-setup-notes
+                    'lem-setup-citation
 
-(defun lem--shell-modules ()
-  (require 'lem-setup-shell))
+                    ;; Programming modules
+                    'lem-setup-programming
+                    'lem-setup-debug
+                    'lem-setup-shell
 
-(defun lem--org-modules ()
-  (require 'lem-setup-org)
-  (require 'lem-setup-org-extensions))
+                    ;; Org modules
+                    'lem-setup-org
+                    'lem-setup-org-extensions
 
-(defun lem--misc-modules ()
-  (require 'lem-setup-pdf)
-  (require 'lem-setup-email)
-  )
+                    ;; Productivity
+                    'lem-setup-pdf))
+     (require mod))))
 
-;; Conditionally load configuration files based on switches.
+(defun lem--minimal-modules ()
+  "Load 𝛌-Emacs with a minimal set of modules."
+  (message "*Loading 𝛌-Emacs, with minimal modules*")
+  (measure-time
+   (cl-dolist (mod (list
+                    ;; Core modules
+                    'lem-setup-libraries
+                    'lem-setup-settings
+                    'lem-setup-functions
+                    'lem-setup-server
+                    'lem-setup-scratch
+
+                    ;; UI modules
+                    'lem-setup-frames
+                    'lem-setup-windows
+                    'lem-setup-buffers
+                    'lem-setup-completion
+                    'lem-setup-keybindings
+                    'lem-setup-help
+                    'lem-setup-modeline
+                    'lem-setup-splash
+
+                    ;; Navigation & Search modules
+                    'lem-setup-navigation
+                    'lem-setup-dired
+                    'lem-setup-search))
+     (require mod))))
+
+;; Conditionally load configuration files based on command-line switches,
+;; presence of user-config file, or the default set of modules.
 (cond
- ;; Load core modules only, ignore other configuration.
- ((lem--emacs-switches "-core")
-  (progn
-    (message "*Loading 𝛌-Emacs core configuration files *only*, ignoring personal user configuration.*")
-    (set-window-margins (selected-window) 30 15)
-    (set-window-fringes (selected-window) 0 0 nil)
-    ;; FIXME: Would be good to have a real splash page here but the screen flashes when frame changes size.
-    (setq initial-scratch-message "Welcome to 𝛌-Emacs")
-    (lem--core-modules)
-    (require 'lem-setup-icomplete)))
- ;; Load the just essential modules
- ((lem--emacs-switches "-basic")
-  (progn
-    (message "*Loading basic (core + ui) 𝛌-Emacs configuration*")
-    (lem--core-modules)
-    (lem--ui-modules)))
- ;; Load test module only
+ ;; Load a subset of modules only, ignore other configuration.
+ ((lem--emacs-switches "-minimal")
+  (message "*Loading a subset of 𝛌-Emacs modules *only*, ignoring personal user configuration.*")
+  (lem--minimal-modules))
+ ;; Load test module only. This is useful for testing a specific package
+ ;; against vanilla/default emacs settings.
  ((lem--emacs-switches "-test")
-  (progn
-    (message "*Loading test file*")
-    (require 'lem-setup-test)))
- ;; Load no modules other than the built-in icomplete, for better completion.
- ((lem--emacs-switches "-clean")
-  (message "*Do not load 𝛌-Emacs setup files. Loading a clean setup plus icomplete*")
+  (message "*Loading test module only*")
+  (require 'lem-setup-test))
+ ;; Load no libraries other than the built-in icomplete, for better completion.
+ ((lem--emacs-switches "-vanilla")
+  (message "*Do not load 𝛌-Emacs setup files. Loading a clean vanilla setup plus icomplete*")
   (require 'lem-setup-icomplete))
- ;; Load user's personal config file (if it exists).
- ((when (file-exists-p lem-config-file)
-    (progn
-      (message "*Loading 𝛌-Emacs & user config*")
-      (load lem-config-file 'noerror))))
- ;; Otherwise load all modules
- ((message "*Loading 𝛌-Emacs*")
-  (lem--core-modules)
-  (lem--ui-modules)
-  (lem--project-modules)
-  (lem--editing-modules)
-  (lem--language-modules)
-  (lem--shell-modules)
-  (lem--org-modules)
-  (lem--misc-modules)))
+ ;; Load user's personal config file (if it exists) and hasn't been bypassed
+ ;; by a command-line switch to load the default libraries.
+ ((and (not (lem--emacs-switches "-default"))
+       (file-exists-p lem-config-file))
+  (message "*Loading 𝛌-Emacs & user config*")
+  (load lem-config-file 'noerror))
+ ;; Load default modules
+ (t
+  (message "*Loading 𝛌-Emacs default configuration files.*")
+  (lem--default-modules)
+  ;; MacOS settings - defer load until after init.
+  (when sys-mac
+    (message "*Load MacOS settings...*")
+    (measure-time
+     (run-with-idle-timer 1 nil
+                          (function require)
+                          'lem-setup-macos nil t)))))
 
 ;;;; After Startup
-
-
 ;; reset file-name-handler-alist
 (add-hook 'emacs-startup-hook (lambda ()
                                 (setq file-name-handler-alist lem-file-name-handler-alist)
