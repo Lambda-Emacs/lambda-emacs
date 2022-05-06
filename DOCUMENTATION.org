@@ -1,0 +1,65 @@
+#+TITLE: Lambda-Emacs Documentation
+#+DATE: May 03, 2022
+#+AUTHOR: Colin McLear
+
+Lambda-Emacs (𝛌-Emacs, or LEM) is intended to serve three goals. First, as a
+useful starting point for the user's own custom configuration. Second, and
+relatedly, as providing enough commentary on configuring Emacs such that it
+might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally. Third, as
+a "starter-kit" for writing and academic work in the humanities. 
+
+* 𝛌-Emacs Structure
+
+The configuration consists of a set of files specific to the user (all stored in
+=lambda-user=) and more general files for 𝛌-Emacs (init.el and the setup files in
+=lambda-setup=). The structure is as follows:
+
+- Directory Structure:
+   + User Emacs directory (.emacs.d)
+      - Local directory (.local)
+         + Library directory (lambda-library)
+            - Setup files (lambda-setup)
+            - External packages (straight)
+         + User directory (lambda-user)
+         + Temp directory (temp)
+            - Volatile storage (cache)
+            - Non-volatile storage (etc)
+- File structure:
+   + early-init.el
+   + early-config.el (in lambda-user, supplied by user, if any)
+   + init.el
+   + config.el (in lambda-user, supplied by user, if any)
+
+Ideally the user will not need to do anything to the files =early-init.el=,
+=init.el=, and those in =lambda-setup=, though they should read the code to get a
+sense of what each file does. I have tried to annotate the code sufficiently so
+that it does not assume familiarity with elisp to understand the basics of what
+is going on.
+
+All personal configuration by the user should go in =config.el= in the
+=lambda-user= directory. This includes setting all variables, such as theme, font,
+and bibliography and notes files. 
+
+* Code Conventions
+- Where appropriate, use =custom-set-variable= rather than =setq= when dealing with
+  =defcustom= variables. For some discussion see [[https://emacs.stackexchange.com/questions/102/advantages-of-setting-variables-with-setq-instead-of-custom-el][this stack exchange discussion]].
+- Please consult the elisp [[https://github.com/bbatsov/emacs-lisp-style-guide][style guide]] for all style conventions with regard to
+  naming, etc.
+   + Note that all functions and variables are prefixed with the "lem" namespace.
+   + Internal functions have their namespace delineated by "-\-" while
+     user-facing functions have only a single "-".
+- Provide =defcustom= variables for things we expect the user to modify and
+  make sure it is in the appropriate group.
+- Prefer =customize-set-variable= instead of =setq= for =defcustom= values. This helps
+  make sure constructors or setters attached to the variable are run when the
+  value is set.
+- Provide verbose doc-strings for =defvar=, =defcustom=, =defun=, =defmacro=,
+  etc to clearly document what is going on.
+- Make sure to follow doc-string guidelines (see [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Documentation-Tips.html][Documentation Tips]] or [[info:elisp#Documentation Tips][elisp#Documentation Tips]])
+- Add comments for blocks of code, especially to describe /why/ the code is
+  present, or the intention. These comments serve as documentation when reading
+  the code where a doc-string is not an option.
+- Add or update documentation in the /docs/ folder. 
+- If your PR addresses an issue, whether it closes or fixes the issue, or is
+  just related to it, please add the issue number in your commit message or
+  the description of your PR so they can be linked together.
