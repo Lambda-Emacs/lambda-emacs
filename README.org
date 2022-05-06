@@ -7,8 +7,9 @@ programmers as well. Another goal of 𝛌-Emacs is to provide enough commentary 
 the configuration such that it might be useful to those new to emacs or even
 [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally.
 
-*NOTE*: This repo is still very much a work in progress. I am porting sections
-from [[https://github.com/mclear-tools/dotemacs][my own config]], though this is a slow process.
+*NOTE*: This repo is still very much a work in progress!! There may be breaking
+changes so please update with that in mind. I am porting sections from [[https://github.com/mclear-tools/dotemacs][my own
+config]], though this is a slow process.
 
 * Why use 𝛌-Emacs?
 
