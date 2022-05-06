@@ -27,26 +27,16 @@
 
 ;;;;; Vertico
 ;; Enable vertico for vertical completion
-;; This and selectrum are great packages, but vertico is preferable if I can get feature parity with what I was using in selectrum
 (use-package vertico
   :straight (:host github :repo "minad/vertico"
              :includes (vertico-repeat vertico-directory vertico-buffer)
              :files (:defaults "extensions/vertico-directory.el" "extensions/vertico-buffer.el" "extensions/vertico-repeat.el"))
-  :bind (:map vertico-map
-         ("<escape>" . #'minibuffer-keyboard-quit)
-         ("C-n"      . #'vertico-next-group      )
-         ("C-p"      . #'vertico-previous-group  )
-         ("C-j"      . #'vertico-next            )
-         ("C-k"      . #'vertico-previous        )
-         ("M-RET"    . #'vertico-exit))
   :hook (after-init . vertico-mode)
   :config
   ;; Cycle through candidates
   (setq vertico-cycle t)
-
   ;; Don't resize buffer
   (setq vertico-resize nil)
-
   ;; try the `completion-category-sort-function' first
   (advice-add #'vertico--sort-function :before-until #'completion-category-sort-function)
 
@@ -186,23 +176,6 @@
                        embark-minimal-indicator
                        embark-highlight-indicator
                        embark-isearch-highlight-indicator))
-  ;; Use keymap -- completing-read on C-h
-  (embark-prompter 'embark-keymap-prompter)
-  :bind (("C-." . embark-act)
-         ("M-." . embark-dwim)
-         ("C-h B" . embark-bindings)
-         :map minibuffer-local-completion-map
-         ("C-;"   . embark-act-noexit)
-         ("C-S-o" . embark-act)
-         ("C-J"   . embark-switch-to-live-occur)
-         ("M-q"   . embark-occur-toggle-view)
-         :map completion-list-mode-map
-         (";" . embark-act)
-         :map embark-file-map
-         ("x" . consult-file-externally)
-         ;; When using the Embark package, you can bind `marginalia-cycle' as an Embark action
-         :map embark-general-map
-         ("A"  . marginalia-cycle))
   :init
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
@@ -211,58 +184,7 @@
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none))))
-
-  ;; Useful Functions
-  (define-key embark-file-map (kbd "D") 'lem-dired-here)
-  (defun lem-dired-here (file)
-    "Open dired in this directory"
-    (dired (file-name-directory file)))
-
-  (define-key embark-file-map (kbd "g") 'lem-consult-rg-here)
-  (defun lem-consult-rg-here (file)
-    "consult-ripgrep in this directory."
-    (let ((default-directory (file-name-directory file)))
-      (consult-ripgrep)))
-
-  ;; Which-key integration
-  (defun embark-which-key-indicator ()
-    "An embark indicator that displays keymaps using which-key.
-The which-key help message will show the type and value of the
-current target followed by an ellipsis if there are further
-targets."
-    (lambda (&optional keymap targets prefix)
-      (if (null keymap)
-          (which-key--hide-popup-ignore-command)
-        (which-key--show-keymap
-         (if (eq (plist-get (car targets) :type) 'embark-become)
-             "Become"
-           (format "Act on %s '%s'%s"
-                   (plist-get (car targets) :type)
-                   (embark--truncate-target (plist-get (car targets) :target))
-                   (if (cdr targets) "…" "")))
-         (if prefix
-             (pcase (lookup-key keymap prefix 'accept-default)
-               ((and (pred keymapp) km) km)
-               (_ (key-binding prefix 'accept-default)))
-           keymap)
-         nil nil t (lambda (binding)
-                     (not (string-suffix-p "-argument" (cdr binding))))))))
-
-  (setq embark-indicators
-        '(embark-which-key-indicator
-          embark-highlight-indicator
-          embark-isearch-highlight-indicator))
-
-  (defun embark-hide-which-key-indicator (fn &rest args)
-    "Hide the which-key indicator immediately when using the completing-read prompter."
-    (which-key--hide-popup-ignore-command)
-    (let ((embark-indicators
-           (remq #'embark-which-key-indicator embark-indicators)))
-      (apply fn args)))
-
-  (advice-add #'embark-completing-read-prompter
-              :around #'embark-hide-which-key-indicator))
+                 (window-parameters (mode-line-format . none)))))
 
 (use-package embark-consult
   :straight t
@@ -345,7 +267,7 @@ targets."
 
   (setq consult-ripgrep-args
         "rg --null --line-buffered --color=never --max-columns=1000 --path-separator /\
-   --smart-case --no-heading --line-number --hidden --glob=!.git/ .")
+  --smart-case --no-heading --line-number --hidden --glob=!.git/ -L .")
 
   ;; Make consult locate work with macos spotlight
   (setq consult-locate-args "mdfind -name")

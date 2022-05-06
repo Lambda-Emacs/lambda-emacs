@@ -56,7 +56,7 @@
         (format "%d packages loaded in %s" package-count time))))
   "Init info with packages loaded and init time."
   :type '(function string)
-  :group 'lem-splash)
+  :group 'lambda-splash)
 
 ;;;; Splash Faces
 (defface lem-splash-title-face nil
@@ -233,7 +233,7 @@
 (define-minor-mode lem-splash-mode
   "Emacs minor mode for splash screen."
   :global nil
-  :group 'lem-splash
+  :group 'lambda-emacs
   :require 'lem-setup-splash.el
 
   (buffer-disable-undo)

@@ -10,7 +10,16 @@
 (use-package outline-minor-faces
   :after outline
   :config (add-hook 'outline-minor-mode-hook
-                    'outline-minor-faces-add-font-lock-keywords))
+                    #'outline-minor-faces-mode))
+
+;;;; What Face?
+;; https://stackoverflow.com/a/66287459/6277148
+(defun what-face (pos)
+  "State the face at point POS in the minibuffer."
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 ;;;; Underline
 (customize-set-variable 'x-underline-at-descent-line t)
@@ -33,14 +42,10 @@
   (dimmer-configure-vertico))
 
 (defun dimmer-configure-vertico ()
-  "Convenience settings for vertico-buffer users."
+  "Convenience settings for Dimmer & Vertico users."
   (with-no-warnings
     (add-to-list
      'dimmer-buffer-exclusion-regexps "^ \\*Vertico\\*$")))
-
-;; (add-to-list
-;; 'dimmer-prevent-dimming-predicates #'vertico-buffer-mode)))
-
 
 ;;;; Cursor
 ;; don't show cursor in inactive windows
@@ -66,7 +71,7 @@
           ("\\(:[A-Z]+:\\)" . ((lambda (tag)
                                  (svg-tag-make tag :face 'success :inverse t :beg 1 :end -1))))
           ;; other tags
-          ("DONE:"  . ((lambda (tag) (svg-tag-make "DONE:"  :face 'shadow  :inverse t ))))
+          ("DONE:"  . ((lambda (tag) (svg-tag-make "DONE:"  :face 'fringe  :inverse t ))))
           ("FIXME:" . ((lambda (tag) (svg-tag-make "FIXME:" :face 'error :inverse t))))
           ("HACK:"  . ((lambda (tag) (svg-tag-make "HACK:"  :face 'warning :inverse t))))
           ("NOTE:"  . ((lambda (tag) (svg-tag-make "NOTE:"  :face 'warning :inverse t))))
@@ -79,14 +84,20 @@
 (use-package hl-line+
   :straight t
   :defer 1
+  :hook
+  ;; https://tech.toryanderson.com/2021/09/24/replacing-beacon.el-with-hl-line-flash/
+  (window-scroll-functions . hl-line-flash)
+  (focus-in . hl-line-flash)
+  (post-command . hl-line-flash)
   :custom-face
   ;; subtle highlighting
   (hl-line ((t (:inherit highlight))))
   :custom
   (global-hl-line-mode nil)
-  (hl-line-flash-show-period 1.0)
-  (hl-line-inhibit-highlighting-for-modes '(dired-mode))
-  (hl-line-when-idle-interval 2)
+  (hl-line-flash-show-period 0.5)
+  ;; (hl-line-inhibit-highlighting-for-modes '(dired-mode))
+  ;; (hl-line-overlay-priority -100) ;; sadly, seems not observed by diredfl
+  (hl-line-when-idle-interval 5)
   :config
   (toggle-hl-line-when-idle 1 t))
 
@@ -118,16 +129,6 @@
     ("o" hl-todo-occur "Occur")
     ("q" nil "Quit" :color blue :exit t)))
 
-;; ;;https://github.com/erickgnavar/dotfiles/tree/master/.emacs.d#highlight-todo-fixme-etc
-;; (defun lem-highlight-todo-like-words ()
-;;   (font-lock-add-keywords
-;;    nil `(("\\<\\(FIXME\\|TODO\\|NOTE\\)"
-;;           1 font-lock-warning-face t))))
-
-
-;; (add-hook 'prog-mode-hook 'my/highlight-todo-like-words)
-
-
 ;;;;; Highlight Cursor Line with Pulse
 ;; From https://karthinks.com/software/batteries-included-with-emacs/
 ;; Replace external package with internal command
@@ -135,8 +136,11 @@
 (use-package pulse
   :straight (:type built-in)
   :defer 1
+  :bind
+  ("C-<return>" . pulse-line)
   :commands (pulse-line pulse-momentary-highlight-one-line)
   :config
+  (setq pulse-delay 0.08)
   (defun pulse-line (&rest _)
     "Pulse the current line."
     (interactive)
@@ -148,7 +152,7 @@
   ;; pulse on window change
   (push 'pulse-line window-selection-change-functions))
 
-;;;; Goggles (Highlight Changes)
+;;;;; Goggles (Highlight Changes)
 (use-package goggles
   :hook ((prog-mode text-mode) . goggles-mode)
   :config
@@ -173,6 +177,18 @@
 ;; Don't show empty lines.
 ;; .. Allows you to tell if there are blank lines at the end of the file.
 (setq-default indicate-empty-lines nil)
+
+;;;; Pulsing Cursor
+(use-package pulsing-cursor
+  :straight (:type git :host github :repo "jasonjckn/pulsing-cursor")
+  :defer 1
+  :custom-face
+  (pulsing-cursor-overlay-face1 ((t (:inherit match))))
+  :custom
+  (pulsing-cursor-delay 1.0)
+  (pulsing-cursor-interval .5)
+  (pulsing-cursor-blinks 5)
+  :config (pulsing-cursor-mode +1))
 
 
 (provide 'lem-setup-faces)

@@ -29,12 +29,15 @@
   :custom
   ;; Emacs often opens buffers in new windows. Make window splitting and
   ;; placement more predictable.
-  (display-buffer-base-action
-   '((display-buffer-use-least-recent-window
-      display-buffer-reuse-window
-      display-buffer-reuse-mode-window
-      display-buffer-same-window
-      display-buffer-in-previous-window))))
+  (display-buffer-base-action nil)
+  ;; '((display-buffer-use-least-recent-window
+  ;;    display-buffer--maybe-pop-up-frame-or-window
+  ;;    display-buffer-reuse-window
+  ;;    display-buffer-reuse-mode-window
+  ;;    display-buffer-same-window
+  ;;    display-buffer-in-previous-window
+  ;;    display-buffer-pop-up-frame)))
+  )
 
 ;;;; Window Division
 ;; Vertical window divider

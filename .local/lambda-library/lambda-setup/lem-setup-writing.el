@@ -210,14 +210,6 @@
   (setq writeroom-mode-line t)
   (setq writeroom-bottom-divider-width 0))
 
-;; Set up a distraction free space
-(defun distraction-free ()
-  "distraction free writing"
-  (interactive)
-  (git-gutter-mode 0)
-  (linum-mode 0)
-  (writeroom-mode))
-
 ;;;; Interleave (Notes)
 (use-package interleave
   :commands interleave-mode)

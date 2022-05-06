@@ -45,14 +45,36 @@
   (tab-bar-close-tab-select 'recent)
   (tab-bar-new-tab-to 'rightmost)
   (tab-bar-close-last-tab-choice 'tab-bar-mode-disable)
-  (tab-bar-separator " ")
+  (tab-bar-tab-name-format-function #'lem--tab-bar-tab-name-format)
   (tab-bar-new-button nil)
   (tab-bar-close-button nil)
   (tab-bar-format '(tab-bar-format-history
                     tab-bar-format-tabs
-                    tab-bar-separator
+                    lem--tab-bar-suffix
                     tab-bar-format-add-tab))
   :config
+  ;; See https://github.com/rougier/nano-modeline/issues/33
+  (defun lem--tab-bar-suffix ()
+    "Add empty space.
+This ensures that the last tab's face does not extend to the end
+of the tab bar."
+    " ")
+
+  (defun lem--tab-bar-tab-name-format (tab i)
+    (let ((current-p (eq (car tab) 'current-tab)))
+      (propertize
+       (concat
+        (propertize " " 'display '(space :width (8)))
+        (if tab-bar-tab-hints (format "%d " i) "")
+        (alist-get 'name tab)
+        (or (and tab-bar-close-button-show
+                 (not (eq tab-bar-close-button-show
+                          (if current-p 'non-selected 'selected)))
+                 tab-bar-close-button)
+            "")
+        (propertize " " 'display '(space :width (8))))
+       'face (funcall tab-bar-tab-face-function tab))))
+
   ;; https://protesilaos.com/codelog/2020-08-03-emacs-custom-functions-galore/
   (defun lem-tab-bar-select-tab-dwim ()
     "Do-What-I-Mean function for getting to a `tab-bar-mode' tab.
@@ -69,8 +91,7 @@ questions.  Otherwise use completion to select the tab."
              (tab-next))
             (t
              (tab-bar-switch-to-tab
-              (completing-read "Select tab: " tabs nil t))))))
-  (setq tab-bar-mode t))
+              (completing-read "Select tab: " tabs nil t)))))))
 
 ;;;; Tab Bookmark
 ;; Bookmark window configurations in a tab
@@ -89,18 +110,26 @@ questions.  Otherwise use completion to select the tab."
   :hook (after-init . tabspaces-mode)
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
-         ("p" . tabspaces-open-existing-project-and-workspace)
-         ("n" . tabspaces-create-new-project-and-workspace))
+         ("p" . tabspaces-open-or-create-project-and-workspace))
   :custom
   (tabspaces-use-filtered-buffers-as-default t)
-  (tabspaces-default-tab "Home"))
+  (tabspaces-default-tab "Home")
+  :config
+  (defun lem--consult-tabspaces ()
+    "Deactivate isolated buffers when not using tabspaces."
+    (require 'consult)
+    (cond (tabspaces-mode
+           ;; hide full buffer list (still available with "b")
+           (consult-customize consult--source-buffer :hidden t :default nil)
+           (add-to-list 'consult-buffer-sources 'consult--source-workspace))
+          (t
+           (consult-customize consult--source-buffer :hidden nil :default t)
+           (setq consult-buffer-sources (remove #'consult--source-workspace consult-buffer-sources)))))
+  (add-hook 'tabspaces-mode-hook #'lem--consult-tabspaces))
 
-;;;; Per Workspace Buffers with Consult
+;;;;; Consult Isolated Workspace Buffers
 ;; Filter Buffers for Consult-Buffer
-
 (with-eval-after-load 'consult
-  ;; hide full buffer list (still available with "b")
-  (consult-customize consult--source-buffer :hidden t :default nil)
   ;; set consult-workspace buffer list
   (defvar consult--source-workspace
     (list :name     "Workspace Buffers"
@@ -113,9 +142,7 @@ questions.  Otherwise use completion to select the tab."
                            :predicate #'tabspaces-local-buffer-p
                            :sort 'visibility
                            :as #'buffer-name)))
-
-    "Set workspace buffer list for consult-buffer.")
-  (push consult--source-workspace consult-buffer-sources))
+    "Set workspace buffer list for consult-buffer."))
 
 ;;; Provide
 (provide 'lem-setup-tabs)

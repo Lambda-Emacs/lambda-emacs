@@ -38,6 +38,7 @@
           " command for a description of this toggle."))
 (defun deftoggle-fun-doc (name doc)
   (concat "Toggle " name " on or off.\n\n" doc))
+
 (defmacro deftoggle (name doc enabler disabler)
   `(progn
      (defvar ,name nil ,(deftoggle-var-doc (symbol-name name)))

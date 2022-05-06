@@ -29,44 +29,6 @@
   ;; remove deleted projects from list
   (project-forget-zombie-projects))
 
-(defun lem--project-name ()
-  "Return name of project without path"
-  (file-name-nondirectory (directory-file-name (if (vc-root-dir) (vc-root-dir) "-"))))
-
-;; magit function for project
-(defun project-magit-dir ()
-  "Run magit in the current project's root"
-  (interactive)
-  (magit-status))
-;; Add to keymap
-(define-key (current-global-map) (kbd "C-x p G") #'project-magit-dir)
-
-;; vterm function for project
-(defun project-vterm ()
-  "Run vterm in the current project's root"
-  (interactive)
-  (let* ((default-directory (project-root (project-current t)))
-         (default-project-shell-name (project-prefixed-buffer-name "shell"))
-         (vterm (get-buffer default-project-shell-name)))
-    (if (and vterm (not current-prefix-arg))
-        (pop-to-buffer-same-window vterm)
-      (vterm (generate-new-buffer-name default-project-shell-name)))))
-;; Add to keymap
-(define-key (current-global-map) (kbd "C-x p s") #'project-vterm)
-
-;;;; Open project & file
-(with-eval-after-load 'project
-  (defun project-switch-project-open-file (dir)
-    "Switch to another project by running an Emacs command.
-Open file using project-find-file
-
-When called in a program, it will use the project corresponding
-to directory DIR."
-    (interactive (list (project-prompt-project-dir)))
-    (let ((default-directory dir)
-          (project-current-inhibit-prompt t))
-      (call-interactively 'project-find-file))))
-
 ;;; Bookmarks
 (use-package bookmark
   :straight (:type built-in)

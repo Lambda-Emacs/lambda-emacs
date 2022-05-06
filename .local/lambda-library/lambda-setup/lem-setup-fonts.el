@@ -53,7 +53,7 @@ as accepted by `set-face-attribute'."
 Use a plist with the same key names as accepted by `set-face-attribute'."
   :group 'lambda-emacs
   :type '(plist :key-type: symbol)
-  :tag "Default font"
+  :tag "Lambda-Emacs Default font"
   :set (lambda (sym val)
          (let ((prev-val (if (boundp 'lem-ui-default-font)
                              lem-ui-default-font
@@ -67,7 +67,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 Use a plist with the same key names as accepted by `set-face-attribute'."
   :group 'lambda-emacs
   :type '(plist :key-type: symbol)
-  :tag "Variable width font"
+  :tag "Lambda-Emacs Variable width font"
   :set (lambda (sym val)
          (let ((prev-val (if (boundp 'lem-ui-variable-width-font)
                              lem-ui-variable-width-font

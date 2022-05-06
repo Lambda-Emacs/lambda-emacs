@@ -29,15 +29,16 @@
   :custom
   (lambda-line-abbrev t)
   (lambda-line-position 'top)
-  (lambda-line-hspace " ")
+  (lambda-line-hspace "  ")
   (lambda-line-prefix t)
+  (lambda-line-prefix-padding nil)
   (lambda-line-status-invert nil)
   (lambda-line-gui-ro-symbol  " ⨂")  ;; ⬤◯⨂
   (lambda-line-gui-mod-symbol " ⬤") ;; ⨀⬤
   (lambda-line-gui-rw-symbol  " ◯")  ;; ◉ ◎ ⬤◯
-  (lambda-line-space-top +.48)
-  (lambda-line-space-bottom -.48)
-  (lambda-line-symbol-position 0.067)
+  (lambda-line-space-top +.50)
+  (lambda-line-space-bottom -.50)
+  (lambda-line-symbol-position 0.1)
   :config
   (lambda-line-mode)
   ;; set divider line in footer

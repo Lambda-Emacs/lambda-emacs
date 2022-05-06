@@ -51,8 +51,24 @@
   (setq-default window-resize-pixelwise t)
   (setq-default frame-resize-pixelwise t)
 
+  ;; (Don't) Blink the cursor
+  (blink-cursor-mode 0)
+
   ;; Don't show icon in frame
   (setq-default ns-use-proxy-icon nil))
+
+;;;; (Re)Center Frames
+(defun lem-frame-recenter (&optional frame)
+  "Center FRAME on the screen.
+FRAME can be a frame name, a terminal name, or a frame.
+If FRAME is omitted or nil, use currently selected frame."
+  (interactive)
+  (unless (eq 'maximised (frame-parameter nil 'fullscreen))
+    (modify-frame-parameters
+     frame '((user-position . t) (top . 0.5) (left . 0.5)))))
+
+(add-hook 'after-make-frame-functions #'lem-frame-recenter)
+
 
 ;;;; Fix titlebar titling colors
 ;; see also https://github.com/d12frosted/homebrew-emacs-plus/issues/55

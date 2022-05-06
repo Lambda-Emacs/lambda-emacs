@@ -48,7 +48,7 @@
   (if (file-exists-p private)
 	  (load-file private)))
 
-;;;;; Text settings
+;;;; Text settings
 ;; Make sure your text files end in a newline
 (setq require-final-newline t)
 
@@ -69,7 +69,7 @@
   ;; move via visual lines
   (line-move-visual t))
 
-;;;; Line Numbers
+;;;;; Line Numbers
 (use-package display-line-numbers
   :straight (:type built-in)
   ;; :hook (markdown-mode prog-mode)
@@ -116,9 +116,6 @@
   :config
   (show-paren-mode t)
   (setq show-paren-delay 0))
-
-;; (Don't) Blink the cursor
-(blink-cursor-mode 0)
 
 ;;;;; Search and Replace
 (use-package visual-regexp

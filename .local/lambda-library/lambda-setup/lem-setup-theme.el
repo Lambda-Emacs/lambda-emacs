@@ -40,50 +40,10 @@
              (file-directory-p (concat basedir f)))
         (add-to-list 'custom-theme-load-path (concat basedir f)))))
 
-;;;; What Face?
-;; https://stackoverflow.com/a/66287459/6277148
-(defun what-face (pos)
-  "State the face at point POS in the minibuffer."
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
-    (if face (message "Face: %s" face) (message "No face at %d" pos))))
-
-;;;; Disable All Custom Themes
-(defun lem-disable-all-themes ()
-  "disable all active themes."
-  (interactive)
-  (progn
-    (dolist (i custom-enabled-themes)
-      (disable-theme i))
-    ;; disable window-divider mode
-    (window-divider-mode -1)
-    ;; revert to mode line
-    (setq-default header-line-format nil)
-    (setq-default mode-line-format
-                  '((:eval
-                     (list
-                      ;; evil-mode-line-tag
-                      "| "
-                      "%b "
-                      "%m "
-                      (cond ((and buffer-file-name (buffer-modified-p))
-                             (propertize "(**)" 'face `(:foreground "#f08290")))
-                            (buffer-read-only "(RO)" ))
-                      " %l:%c %0"
-                      " "
-                      ))))
-    (force-mode-line-update)))
-
-;;;; Load Theme Wrapper
-(defun lem-load-theme ()
-  (interactive)
-  (progn
-    (lem-disable-all-themes)
-    (call-interactively 'load-theme)))
-
 ;;;; Toggle Menubar
-;; toggle menubar to light or dark
+;; Toggle MacOS menubar to light or dark
+;; Requires dark-mode
+;; https://github.com/sindresorhus/dark-mode
 (defun lem-osx-toggle-menubar-theme ()
   "toggle menubar to dark or light using shell command"
   (interactive)
@@ -102,13 +62,19 @@
 (defun toggle-dark-light-theme ()
   "Coordinate setting of theme with os theme and toggle"
   (interactive)
-  (if (eq active-theme 'light-theme)
-      (progn (lem-osx-menubar-theme-dark)
-             (setq active-theme 'dark-theme))
-    (progn (lem-osx-menubar-theme-light)
-           (setq active-theme 'light-theme))))
+  (cond  ((not (executable-find "dark-mode"))
+          (ding)
+          (message "Please install dark-mode for CLI. See https://github.com/sindresorhus/dark-mode."))
+         ((eq active-theme 'light-theme)
+          (lem-osx-menubar-theme-dark)
+          (setq active-theme 'dark-theme))
+         (t
+          (lem-osx-menubar-theme-light)
+          (setq active-theme 'light-theme))))
 
-;;;; After Load Theme Hook
+;;;;; After Load Theme Hook
+;; Not all themes provide an after-load hook, so create a hook you can run after
+;; loading any theme.
 (defvar lem-after-load-theme-hook nil
   "Hook run after a color theme is loaded using `load-theme'.")
 (defadvice load-theme (after run-after-load-theme-hook activate)
@@ -116,7 +82,9 @@
   (run-hooks 'lem-after-load-theme-hook))
 
 ;;;; Lambda Themes
-;; Set a default theme
+;; Set a default theme. Lambda-themes comes with four variants:
+;; light, light-faded, dark, and dark-faded.
+;; See https://github.com/Lambda-Emacs/lambda-themes
 (use-package lambda-themes
   :straight nil
   :load-path "~/.emacs.d/.local/lambda-library/lambda-user/custom-themes/lambda-themes"
@@ -126,6 +94,40 @@
   (lambda-themes-set-italic-comments t)
   (lambda-themes-set-italic-keywords t))
 
+;;;;; System Appearance Hook
+;; See https://github.com/d12frosted/homebrew-emacs-plus#system-appearance-change
+;; NOTE: This function works only for MacOS.
+(defun lem--system-apply-theme (appearance)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (mapc #'disable-theme custom-enabled-themes)
+  (pcase appearance
+    ('light (progn
+              (load-theme 'lambda-light)
+              (setq active-theme 'light-theme)))
+    ('dark (progn
+             (load-theme 'lambda-dark)
+             (setq active-theme 'dark-theme)))))
+
+;; It seems like ns-system-appearance can only have one function hooked to it,
+;; so remove the custom early init hook (that we added to stop the frame
+;; from flashing) after startup and add regular system-apply-theme hook.
+(when sys-mac
+  (progn
+    (remove-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
+    (add-hook 'ns-system-appearance-change-functions #'lem--system-apply-theme)))
+
+;;;;; Load Theme
+(cond ((eq active-theme 'light-theme)
+       (load-theme 'lambda-light t))
+      ((eq active-theme 'dark-theme)
+       (load-theme 'lambda-dark t))
+      (t
+       (load-theme 'lambda-light t)))
+
+;; kind-icon (see lem-setup-completion) needs to have its cache flushed after
+;; theme change
+(with-eval-after-load 'kind-icon
+  (add-hook 'lambda-themes-after-load-theme-hook #'kind-icon-reset-cache))
 
 ;;; Provide
 (provide 'lem-setup-theme)

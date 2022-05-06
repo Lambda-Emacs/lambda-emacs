@@ -36,13 +36,17 @@
   (setq bind-key-describe-special-forms t))
 
 ;;;; Personal Keybindings Prefix
-(defvar lem-prefix "C-c C-SPC"
-  "Prefix for all personal keybinds.")
+(defcustom lem-prefix "C-c C-SPC"
+  "Prefix for all personal keybinds."
+  :type 'string
+  :group 'lambda-emacs)
 
 ;;;; Personal Leader Key
 
-(defvar lem+leader-map (make-sparse-keymap)
-  "An overriding keymap for <leader> key, for use with modal keybindings.")
+(defcustom lem+leader-map (make-sparse-keymap)
+  "An overriding keymap for <leader> key, for use with modal keybindings."
+  :type 'string
+  :group 'lambda-emacs)
 
 ;; Use lem-prefix as leader namespace
 (bind-keys :prefix-map lem+leader-map
@@ -148,9 +152,7 @@
            ("d" . flymake-show-buffer-diagnostic  )
            ("p" . flymake-show-project-diagnostics)
            ("P" . package-lint-current-buffer     )
-           ("u" . use-package-lint                )
-           )
-
+           ("u" . use-package-lint                ))
 
 ;;;;; Mail Keybindings
 (bind-keys :prefix-map lem+mail-keys
@@ -223,8 +225,7 @@
 ;; NOTE: This keymap is for user-specific keybindings. Define this in your
 ;; `config.el' file.
 (bind-keys :prefix-map lem+user-keys
-           :prefix (concat lem-prefix " u")
-           )
+           :prefix (concat lem-prefix " u"))
 
 ;;;;; Version Control (Git) Keybindings
 (bind-keys :prefix-map  lem+vc-keys
@@ -274,13 +275,15 @@
 ;;;;; Workspace Keybindings
 (bind-keys :prefix-map lem+workspace-keys
            :prefix (concat lem-prefix " W")
-           ("c"  .  tabspaces-create-workspace)
+           ("b"  .  tabspaces-switch-to-buffer)
+           ("c"  .  tabspaces-clear-buffers)
            ("d"  .  tabspaces-close-workspace)
            ("k"  .  tabspaces-kill-buffers-close-workspace)
-           ("n"  .  tabspaces-create-new-project-and-workspace)
+           ("o"  .  tabspaces-open-or-create-project-and-workspace)
            ("p"  .  tabspaces-project-switch-project-open-file)
-           ("s"  .  tabspaces-switch-to-or-create-workspace)
-           ("w"  .  tabspaces-open-existing-project-and-workspace))
+           ("r"  .  tabspaces-remove-current-buffer)
+           ("R"  .  tabspaces-remove-selected-buffer)
+           ("s"  .  tabspaces-switch-or-create-workspace))
 
 ;;;;; Zettelkasten/Notes/Wiki
 (bind-keys :prefix-map lem+notes-keys

@@ -25,11 +25,14 @@
 
 ;;;; Citation Variables
 (defcustom lem-bibliography nil "User bibliography for citation."
-  :group 'lem-emacs)
+  :group 'lambda-emacs
+  :tag "Lambda-Emacs User Bibliography")
 (defcustom lem-bib-notes nil "User citation notes directory."
-  :group 'lem-emacs)
+  :group 'lambda-emacs
+  :tag "Lambda-Emacs Citation Notes Directory")
 (defcustom lem-citar-note nil "Template for use with citar notes."
-  :group 'lem-emacs)
+  :group 'lambda-emacs
+  :tag "Lambda-Emacs Citar Notes Template")
 
 ;;;; Org-Cite
 ;; Eventually this should be a full replacement for org-ref
