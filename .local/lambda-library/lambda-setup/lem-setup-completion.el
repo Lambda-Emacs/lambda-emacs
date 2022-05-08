@@ -32,6 +32,13 @@
              :includes (vertico-repeat vertico-directory vertico-buffer)
              :files (:defaults "extensions/vertico-directory.el" "extensions/vertico-buffer.el" "extensions/vertico-repeat.el"))
   :hook (after-init . vertico-mode)
+  :bind (:map vertico-map
+         ("<escape>" . #'minibuffer-keyboard-quit)
+         ("C-n"      . #'vertico-next-group      )
+         ("C-p"      . #'vertico-previous-group  )
+         ("C-j"      . #'vertico-next            )
+         ("C-k"      . #'vertico-previous        )
+         ("M-RET"    . #'vertico-exit))
   :config
   ;; Cycle through candidates
   (setq vertico-cycle t)
@@ -169,6 +176,21 @@
 (use-package embark
   :straight (embark :type git :host github :repo "oantolin/embark")
   :commands (embark-act embark-keymap-help)
+  :bind (("C-." . embark-act)
+         ("M-." . embark-dwim)
+         ("C-h B" . embark-bindings)
+         :map minibuffer-local-completion-map
+         ("C-;"   . embark-act-noexit)
+         ("C-S-o" . embark-act)
+         ("C-J"   . embark-switch-to-live-occur)
+         ("M-q"   . embark-occur-toggle-view)
+         :map completion-list-mode-map
+         (";" . embark-act)
+         :map embark-file-map
+         ("x" . consult-file-externally)
+         ;; When using the Embark package, you can bind `marginalia-cycle' as an Embark action
+         :map embark-general-map
+         ("A"  . marginalia-cycle))
   :custom
   ;; Use which-key
   ;; Don't display extra embark buffer
@@ -317,8 +339,8 @@
   :custom
   ;; auto-complete
   (corfu-auto t)
-  (corfu-min-width 90)
-  (corfu-max-width corfu-min-width)     ; Always have the same width
+  (corfu-min-width 25)
+  (corfu-max-width 80)
   (corfu-count 10)
   (corfu-scroll-margin 4)
   (corfu-cycle t)
