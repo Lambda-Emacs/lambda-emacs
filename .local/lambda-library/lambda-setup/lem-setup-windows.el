@@ -29,14 +29,14 @@
   :custom
   ;; Emacs often opens buffers in new windows. Make window splitting and
   ;; placement more predictable.
+  ;; TODO: revisit this setting?
   (display-buffer-base-action nil)
+  ;; NOTE: I found the below unhelpful, but not sure what better settings would
+  ;; be.
   ;; '((display-buffer-use-least-recent-window
-  ;;    display-buffer--maybe-pop-up-frame-or-window
-  ;;    display-buffer-reuse-window
-  ;;    display-buffer-reuse-mode-window
-  ;;    display-buffer-same-window
-  ;;    display-buffer-in-previous-window
-  ;;    display-buffer-pop-up-frame)))
+  ;; display-buffer--maybe-pop-up-frame-or-window display-buffer-reuse-window
+  ;; display-buffer-reuse-mode-window display-buffer-same-window
+  ;; display-buffer-in-previous-window display-buffer-pop-up-frame)))
   )
 
 ;;;; Window Division
@@ -93,20 +93,6 @@
          ("C-c C-k" . #'windmove-up))
   :config
   (windmove-default-keybindings))
-
-;; Easy split and move functions
-(defun lem-split-window-right-and-focus ()
-  "Split the window horizontally and focus the new window."
-  (interactive)
-  (require 'windmove)
-  (split-window-right)
-  (windmove-right))
-(defun lem-split-window-below-and-focus ()
-  "Split the window vertically and focus the new window."
-  (interactive)
-  (require 'windmove)
-  (split-window-below)
-  (windmove-down))
 
 ;;;;; Window Restore
 ;; Winner mode is a built-in package for restoring window configurations

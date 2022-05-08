@@ -213,9 +213,25 @@
   (interactive "p")
   (lem-rotate-windows (* -1 count)))
 
-;;;;; Split Windows
+;;;;; Focus Window Split
+;; Easy split and move functions
+(defun lem-split-window-right-and-focus ()
+  "Split the window horizontally and focus the new window."
+  (interactive)
+  (require 'windmove)
+  (split-window-right)
+  (windmove-right))
+
+(defun lem-split-window-below-and-focus ()
+  "Split the window vertically and focus the new window."
+  (interactive)
+  (require 'windmove)
+  (split-window-below)
+  (windmove-down))
+
+;;;;; Toggle Window Split
 (defun lem-toggle-window-split ()
-  "Move from a horizontal to a vertical split and vice versa"
+  "Move from a horizontal to a vertical split and vice versa."
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
@@ -240,7 +256,6 @@
           (select-window first-win)
           (if this-win-2nd (other-window 1))))))
 
-
 ;;;;; Jump to Minibuffer Window
 (defun lem-goto-minibuffer-window ()
   "locate point to minibuffer window if it is active."
@@ -249,8 +264,7 @@
       (select-window (active-minibuffer-window))
     (error "Minibuffer is not active")))
 
-;; (with-eval-after-load 'general
-;; (general-def "C-c m" #'lem-goto-minibuffer-window))
+(bind-key "C-c m" #'lem-goto-minibuffer-window)
 
 ;;;; Buffer Functions
 ;;;;; Blank Buffer New Frame
