@@ -189,17 +189,22 @@
 (defconst active-theme nil "Variable for holding light/dark value of theme appearance.")
 
 (defun lem--apply-default-background (appearance)
-  "If no other theme is set, load default background color taking current system APPEARANCE into consideration. This avoids the frame flashing on startup."
-  (mapc #'disable-theme custom-enabled-themes)
-  (pcase appearance
-    ('light (progn
-              (setq active-theme 'light-theme)
-              (set-foreground-color "#282b35")
-              (set-background-color "#fffef9")))
-    ('dark  (progn
-              (setq active-theme 'dark-theme)
-              (set-foreground-color "#eceff1")
-              (set-background-color "#282b35")))))
+  "If no other theme is set, load default background color.
+This takes current system APPEARANCE into consideration and
+avoids the frame flashing on startup. Automatically remove this
+hook after running."
+  (progn
+    (remove-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
+    (mapc #'disable-theme custom-enabled-themes)
+    (pcase appearance
+      ('light (progn
+                (setq active-theme 'light-theme)
+                (set-foreground-color "#282b35")
+                (set-background-color "#fffef9")))
+      ('dark  (progn
+                (setq active-theme 'dark-theme)
+                (set-foreground-color "#eceff1")
+                (set-background-color "#282b35"))))))
 
 (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
 
