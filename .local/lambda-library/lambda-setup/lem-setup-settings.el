@@ -117,6 +117,9 @@
   (show-paren-mode t)
   (setq show-paren-delay 0))
 
+;; (Don't) Blink the cursor
+(blink-cursor-mode 0)
+
 ;;;;; Search and Replace
 (use-package visual-regexp
   :commands (vr/query-replace)
@@ -301,7 +304,11 @@
 
 ;;;; Miscellaneous
 
-(use-package restart-emacs :commands restart-emacs)
+;; Versions of Emacs lower than 29 don't have a restart command, so add that.
+(use-package restart-emacs
+  :when (version< emacs-version "29")
+  :commands restart-emacs)
+
 (setq confirm-kill-processes nil) ; don't object when quitting
 
 ;; Follow symlinks
