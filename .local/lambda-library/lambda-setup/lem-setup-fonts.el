@@ -33,7 +33,7 @@
   (set-display-table-slot standard-display-table 'wrap
                           (make-glyph-code ?↩ 'fallback)))
 
-;;;; Font
+;;;; Set Default & Variable Pitch Fonts
 (defun lem-ui--set-default-font (spec)
   "Set the default font based on SPEC.
 SPEC is expected to be a plist with the same key names

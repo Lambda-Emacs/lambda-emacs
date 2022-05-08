@@ -152,7 +152,7 @@
   ;; pulse on window change
   (push 'pulse-line window-selection-change-functions))
 
-;;;;; Goggles (Highlight Changes)
+;;;; Goggles (Highlight Changes)
 (use-package goggles
   :hook ((prog-mode text-mode) . goggles-mode)
   :config
