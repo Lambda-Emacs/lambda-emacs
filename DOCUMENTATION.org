@@ -1,3 +1,6 @@
+:PROPERTIES:
+:ID:       20220508T013721.797125
+:END:
 #+TITLE: Lambda-Emacs Documentation
 #+DATE: May 03, 2022
 #+AUTHOR: Colin McLear

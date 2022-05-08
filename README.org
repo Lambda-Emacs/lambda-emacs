@@ -26,6 +26,7 @@ own config, which I wanted to make more easily available to others. I also want
 a clean but useful config to point my students to. Finally, setting this up is a
 useful way for me to think about how "best" to configure Emacs. 
 
+
 * 𝛌-Emacs Features 
 
 1. Short start up time -- emacs-init-time < 1 sec (though this may vary somewhat
@@ -33,7 +34,7 @@ useful way for me to think about how "best" to configure Emacs.
 2. Uses [[https://github.com/raxod502/straight.el][straight.el]] for package management
 3. Comprehensive keybindings using [[https://github.com/jwiegley/use-package/blob/master/bind-key.el][bind-key]] 
 4. Sensible defaults
-5. Dired with sensible colors 
+5. Dired with sensible colors and settings 
 6. Completion with [[https://github.com/minad/vertico][Vertico]] and related packages
 7. [[https://github.com/Lambda-Emacs/lambda-themes][Lambda-themes]], with toggles for dark/light mode & various other options
 8. A custom status-line, [[https://github.com/Lambda-Emacs/lambda-line][Lambda-line]] 
@@ -42,8 +43,8 @@ useful way for me to think about how "best" to configure Emacs.
     and tab-bar, with [[https://github.com/mclear-tools/tabspaces][buffer-isolated tab/workspaces]]
 11. A configurable splash page
 12. A writing-centric configuration with great citation support, markdown, [[https://github.com/jgm/pandoc][pandoc]],
-    dedicated functions for notes, and org-mode
-   
+    dedicated functions for notes, and org-mode (in progress)
+
 * 𝛌-Emacs Modules
 
 𝛌-Emacs is a "modular" distribution of Emacs. It consists of a set of "setup"
@@ -56,11 +57,12 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
   belong to this group.
 - *Writing & Editing*: Settings for spelling, citation, dictionary, notes,
   typesetting (LaTeX) and writing-specific modes (markdown).
-- *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
-  org do? Since many people use Emacs almost exclusively for org-mode, it
-  warrants its own group. 
 - *Programming & Languages*: Editing and Language specific settings. 
 - *Shell*: Configuration for shell and command-line related settings. 
-- *Project*: Version control settings and configuration for the built-in project.el
+- *Project*: Version control and tab settings and configuration for the built-in
+  project.el and tab-bar.el
+- (In progress) *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
+  org do? Since many people use Emacs almost exclusively for org-mode, it
+  warrants its own group. 
 
-
+See the [[id:20220508T013721.797125][documentation]] for further details. 
