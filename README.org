@@ -39,7 +39,7 @@ useful way for me to think about how "best" to configure Emacs.
 7. [[https://github.com/Lambda-Emacs/lambda-themes][Lambda-themes]], with toggles for dark/light mode & various other options
 8. A custom status-line, [[https://github.com/Lambda-Emacs/lambda-line][Lambda-line]] 
 9. Extensive MacOS integration
-10. Single frame, tab-based, project workflow leveraging the built-in project.el
+10. Tab-based project workflow leveraging the built-in project.el
     and tab-bar, with [[https://github.com/mclear-tools/tabspaces][buffer-isolated tab/workspaces]]
 11. A configurable splash page
 12. A writing-centric configuration with great citation support, markdown, [[https://github.com/jgm/pandoc][pandoc]],
@@ -53,14 +53,15 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
 - *Core*: These files load essential libraries, useful functions, macros, and sane
   settings. 
 - *UI*: Primary settings concerning frame, window, and buffer interaction, along
-  with fonts, faces, themeing, completion, tabs/workspaces, and navigation all
-  belong to this group.
+  with fonts, faces, themeing, and completion all belong to this group.
+- *Navigation & Search*: Useful navigation and search functions, plus setup and
+  extension of the built-in dired file manager.
 - *Writing & Editing*: Settings for spelling, citation, dictionary, notes,
   typesetting (LaTeX) and writing-specific modes (markdown).
 - *Programming & Languages*: Editing and Language specific settings. 
 - *Shell*: Configuration for shell and command-line related settings. 
-- *Project*: Version control and tab settings and configuration for the built-in
-  project.el and tab-bar.el
+- *Workspaces*: Version control, tab settings, buffer-isolation, and other
+  configuration for the built-in project.el and tab-bar.el
 - (In progress) *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
   org do? Since many people use Emacs almost exclusively for org-mode, it
   warrants its own group. 
