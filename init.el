@@ -93,10 +93,6 @@ be cleared if there are problems.")
 ;; Set PATH properly for emacs. This should make a package like
 ;; `exec-path-from-shell' unnecessary
 
-;; Set local (i.e. current user) bin path, if it exists
-(when (file-directory-p (concat (getenv "HOME") "/bin"))
-  (defconst lem-local-bin (concat (getenv "HOME") "/bin") "Local execs."))
-
 ;; If on a mac using homebrew set path correctly
 ;; NOTE: the location of homebrew depends on whether we're on mac silicon
 (when (shell-command-to-string "command -v brew")
@@ -107,8 +103,8 @@ be cleared if there are problems.")
 (defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
 
 ;; Set paths
-(setenv "PATH" (concat homebrew ":" (getenv "PATH") ":" lem-local-bin ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list homebrew lem-local-bin usr-local-bin usr-local-sbin)))
+(setenv "PATH" (concat homebrew ":" (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
+(setq exec-path (append exec-path (list homebrew usr-local-bin usr-local-sbin)))
 
 ;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
