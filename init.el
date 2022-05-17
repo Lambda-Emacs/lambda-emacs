@@ -329,7 +329,7 @@ emacs-version string on the kill ring."
 
                     ;; Writing modules
                     'lem-setup-writing
-                    'lem-setup-notes
+                    ;; 'lem-setup-notes ;; coming soon!
                     'lem-setup-citation
 
                     ;; Programming modules
@@ -337,7 +337,7 @@ emacs-version string on the kill ring."
                     'lem-setup-debug
                     'lem-setup-shell
 
-                    ;; Org modules
+                    ;; Org modules (coming soon!)
                     ;; 'lem-setup-org
                     ;; 'lem-setup-org-extensions
 
