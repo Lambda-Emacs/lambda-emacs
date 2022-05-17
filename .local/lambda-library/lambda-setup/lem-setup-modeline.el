@@ -25,7 +25,7 @@
 
 ;;;; Lambda Line
 (use-package lambda-line
-  :straight (:local-repo "~/bin/lisp-projects/lambda-line")
+  :straight (:type git :host github :repo "lambda-emacs/lambda-line")
   :custom
   (lambda-line-abbrev t)
   (lambda-line-position 'top)

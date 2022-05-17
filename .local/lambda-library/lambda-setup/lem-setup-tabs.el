@@ -105,8 +105,7 @@ questions.  Otherwise use completion to select the tab."
 ;;;; Tab Workspaces
 
 (use-package tabspaces
-  ;; :straight (:type git :host github :repo "mclear-tools/emacs-workspaces")
-  :straight (:local-repo "/Users/roambot/bin/lisp-projects/tabspaces")
+  :straight (:type git :host github :repo "mclear-tools/tabspaces")
   :hook (after-init . tabspaces-mode)
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
