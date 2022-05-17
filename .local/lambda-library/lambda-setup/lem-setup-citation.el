@@ -86,8 +86,8 @@
   ;; add beref entry for bookends
   (setq citar-additional-fields '("doi" "url" "beref"))
   (setq citar-templates
-        `((main . "${author editor:30} ${title:48}  ${=key= id:15}")
-          (suffix . "  ${=type=:12}  ${=beref=:12} ${tags keywords:*}")
+        `((main . " ${=key= id:15} ${title:48}")
+          (suffix . "${author editor:30}  ${=type=:12}  ${=beref=:12} ${tags keywords:*}")
           (preview . "${author editor} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
           (note . ,lem-citar-note)))
   (setq citar-symbols
@@ -117,17 +117,12 @@ With prefix, rebuild the cache before offering candidates."
           (browse-url-default-browser link)
         (message "No ref found for %s" key-entry)))))
 
+;;;; Citar-Capf
+;; Native completion at point w/citar as parser
+(use-package citar-capf
+  :straight (:type git :host github :repo "mclear-tools/citar-capf")
+  :hook ((org-mode markdown-mode tex-mode latex-mode reftex-mode) . citar-capf-mode))
 
-;;;; Company-bibtex
-
-(use-package company-bibtex
-  :bind (("<C-tab>" . bibtex-capf))
-  :after cape
-  :config
-  ;; use with corfu/cape
-  (defalias 'bibtex-capf (cape-interactive-capf (cape-company-to-capf 'company-bibtex)))
-  (setq company-bibtex-bibliography lem-bibliography)
-  (setq company-bibtex-org-citation-regex "-?@"))
 
 
 (provide 'lem-setup-citation)
