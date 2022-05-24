@@ -338,6 +338,7 @@
   :commands (define-word define-word-at-point))
 
 (use-package osx-dictionary
+  :when sys-mac
   :straight (:type git :host github :repo "xuchunyang/osx-dictionary.el")
   :commands (osx-dictionary-search-word-at-point osx-dictionary-search-input))
 
