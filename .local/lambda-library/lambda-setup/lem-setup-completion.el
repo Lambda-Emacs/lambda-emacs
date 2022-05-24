@@ -466,7 +466,20 @@
   (defalias 'org-block-capf (cape-interactive-capf (cape-company-to-capf 'company-org-block))))
 
 ;;;;; Yasnippet
-(defvar lem-all-snippets-dir (concat lem-etc-dir "all-snippets/") "DIR for all snippet files.")
+(defcustom lem-all-snippets-dir (concat lem-etc-dir "all-snippets/")
+  "DIR for all snippet files."
+  :group 'lambda-emacs
+  :type 'string)
+
+(defcustom lem-snippets-dir (concat lem-all-snippets-dir "lem-snippets/")
+  "DIR for lem snippet files."
+  :group 'lambda-emacs
+  :type 'string)
+
+(defcustom lem-yas-dir (concat lem-all-snippets-dir "yasnippet-snippets/")
+  "DIR for yasnippet snippet files."
+  :group 'lambda-emacs
+  :type 'string)
 
 (use-package yasnippet
   :straight (:type git :host github :repo "joaotavora/yasnippet")
@@ -474,18 +487,26 @@
   :bind (:map yas-minor-mode-map
          ("C-'" . yas-expand))
   :config
+  ;; Make snippets dir if it doesn't exist
+  (dolist (dir (list lem-all-snippets-dir lem-snippets-dir lem-yas-dir))
+    (unless (file-directory-p dir)
+      (make-directory dir t)))
+
   ;; NOTE: need to specify dirs; does not look in non-snippet subdirs
-  (setq yas-snippet-dirs `(,(concat lem-all-snippets-dir "lem-snippets/") ; custom snippets
-                           ,(concat lem-all-snippets-dir "yasnippet-snippets/") ; yas snippets
+  (setq yas-snippet-dirs `(,lem-snippets-dir ; custom snippets
+                           ,lem-yas-dir ; yas snippets
                            ))
+
   (setq yas--loaddir yas-snippet-dirs)
   (setq yas-installed-snippets-dir yas-snippet-dirs)
   (setq yas--default-user-snippets-dir yas-snippet-dirs)
+
   ;; see https://emacs.stackexchange.com/a/30150/11934
   (defun lem-yas-org-mode-hook ()
     (setq-local yas-buffer-local-condition
                 '(not (org-in-src-block-p t))))
   (add-hook 'org-mode-hook #'lem-yas-org-mode-hook)
+  ;; use snippets globally
   (yas-global-mode 1))
 
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
@@ -493,7 +514,7 @@
   :straight (:type git :host github :repo "AndreaCrotti/yasnippet-snippets")
   :after (yasnippet)
   :config
-  (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
+  (setq yasnippet-snippets-dir (directory-file-name lem-yas-dir)))
 
 
 ;;;; Completion Icons
