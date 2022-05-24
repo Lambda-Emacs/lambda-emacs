@@ -396,7 +396,7 @@ emacs-version string on the kill ring."
   (message "*Loading 𝛌-Emacs & user config*")
   (load lem-config-file 'noerror))
  ;; Ask if user would like to create a config file.
- ((if (yes-or-no-p "Would you like to create a user configuration file?")
+ ((if (yes-or-no-p "Would you like to create a user configuration file? ")
       (progn
         (with-temp-file lem-config-file
           (insert ";;; config.el --- summary -*- lexical-binding: t -*-\n"
@@ -444,7 +444,8 @@ emacs-version string on the kill ring."
                   ";; Project & Tab/Workspace modules\n"
                   "'lem-setup-vc       \n"
                   "'lem-setup-projects \n"
-                  "'lem-setup-tabs     \n\n"
+                  "'lem-setup-tabs     \n"
+                  "'lem-setup-workspaces\n"
                   ";; Programming modules\n"
                   "'lem-setup-programming))\n"
                   "(require mod)))       \n\n"
