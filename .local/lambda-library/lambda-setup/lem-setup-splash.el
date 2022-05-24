@@ -223,7 +223,7 @@
     (define-key map (kbd "c") 'lem-open-emacsd-in-workspace)
     (define-key map (kbd "m") 'lem-open-email-in-workspace)
     (define-key map (kbd "n") 'lem-open-notes-in-workspace)
-    (define-key map (kbd "p") 'lem-open-existing-project-and-workspace)
+    (define-key map (kbd "p") 'tabspaces-open-or-create-project-and-workspace)
     (define-key map (kbd "q") 'splash-screen-bury)
     (define-key map (kbd "esc") 'splash-screen-bury)
     (define-key map (kbd "k") 'splash-screen-kill)
