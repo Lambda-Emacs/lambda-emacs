@@ -11,10 +11,12 @@ the configuration such that it might be useful to those new to emacs or even
 changes so please update with that in mind. I am porting sections from [[https://github.com/mclear-tools/dotemacs][my own
 config]], though this is a slow process.
 
-#+ATTR_HTML: :width 45%
-[[file:screenshots/light-splash.png]]
-#+ATTR_HTML: :width 45%
-[[file:screenshots/dark-splash.png]]
+#+BEGIN_HTML
+<div>
+<img src="./screenshots/light-splash.png" width=47.5%/>
+<img src="./screenshots/dark-splash.png" width=47.5%/>
+</div>
+#+END_HTML
 
 The themes here are from [[https://github.com/Lambda-Emacs/lambda-themes][lambda-themes.]]
 
