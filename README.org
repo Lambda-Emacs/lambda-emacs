@@ -26,7 +26,6 @@ own config, which I wanted to make more easily available to others. I also want
 a clean but useful config to point my students to. Finally, setting this up is a
 useful way for me to think about how "best" to configure Emacs. 
 
-
 * 𝛌-Emacs Features 
 
 1. Short start up time -- emacs-init-time < 1 sec (though this may vary somewhat
@@ -67,3 +66,16 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
   warrants its own group. 
 
 See the [[id:20220508T013721.797125][documentation]] for further details. 
+
+* Getting Started
+1. Clone lambda-emacs as emacs.d: =git clone
+   https://github.com/Lambda-Emacs/lambda-emacs.git ~/.emacs.d= 
+2. Run Emacs -- it will ask at startup if you want to generate a user
+   configuration file, if you do it will generate that file and start up with
+   some basic packages (this will take a little while to do). Otherwise Emacs
+   will start with all the default packages in Lambda-Emacs (which will take
+   even longer to do).
+3. Put whatever settings you prefer in your config file. This should include
+   things like the font you prefer and whatever other variable settings you
+   might like. For some hints see my [[https://github.com/mclear-tools/dotemacs/blob/master/.local/lambda-library/lambda-user/config.el][configuration file]].
+
