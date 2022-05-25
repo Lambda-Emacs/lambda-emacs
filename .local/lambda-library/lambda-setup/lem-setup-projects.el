@@ -14,9 +14,6 @@
          ("t" .  lem-goto-projects)
          ("R" .  project-remember-projects-under))
   :custom
-  ;; Use Ripgrep if installed
-  (when (shell-command-to-string "command rg --version")
-    (xref-search-program 'ripgrep))
   (project-list-file (concat lem-cache-dir "projects"))
   (project-switch-commands '((project-find-file "Find file")
                              (project-find-regexp "Find regexp")
@@ -25,6 +22,9 @@
                              (project-vc-dir "VC-Dir")
                              (project-magit-dir "Magit status")))
   :config
+  ;; Use Ripgrep if installed
+  (when (shell-command-to-string "command rg --version")
+    (setq xref-search-program 'ripgrep))
   (setq lem-project-dir "~/Dropbox/Work/projects")
   ;; remove deleted projects from list
   (project-forget-zombie-projects))
