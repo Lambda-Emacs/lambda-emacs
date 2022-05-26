@@ -39,8 +39,9 @@
 ;;;; Settings
 ;; Sane settings for ansi-term
 ;;  Other useful shell settings
-(setq-default shell-file-name "/opt/homebrew/bin/zsh")
-(setq explicit-shell-file-name "/opt/homebrew/bin/zsh")
+;; TODO: Make these compatible with location of zsh on intel macs and on linux
+;; (setq-default shell-file-name "/opt/homebrew/bin/zsh")
+;; (setq explicit-shell-file-name "/opt/homebrew/bin/zsh")
 ;; don't add newline in long lines
 (setq-default term-suppress-hard-newline t)
 ;; kill process buffers without query

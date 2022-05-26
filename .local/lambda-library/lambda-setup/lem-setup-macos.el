@@ -118,6 +118,7 @@ This will use the command `open' with the message URL."
 
 ;;;; Homebrew
 (use-package homebrew
+  :when sys-mac
   :straight (homebrew :host github :repo "jdormit/homebrew.el")
   :commands
   (homebrew-install homebrew-upgrade homebrew-update homebrew-edit homebrew-info homebrew-package-info))

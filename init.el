@@ -95,7 +95,8 @@ be cleared if there are problems.")
 
 ;; If on a mac using homebrew set path correctly
 ;; NOTE: the location of homebrew depends on whether we're on mac silicon
-(when (shell-command-to-string "command -v brew")
+(when (and sys-mac
+           (shell-command-to-string "command -v brew"))
   (defconst homebrew (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin/" "/usr/local/bin/") "Path to homebrew packages."))
 
 ;; Define the system local bins
