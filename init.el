@@ -103,8 +103,8 @@ be cleared if there are problems.")
 (defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
 
 ;; Set paths
-(setenv "PATH" (concat homebrew ":" (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list homebrew usr-local-bin usr-local-sbin)))
+(setenv "PATH" (concat (when sys-mac (concat homebrew ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
+(setq exec-path (append exec-path (list (when sys-mac homebrew) usr-local-bin usr-local-sbin)))
 
 ;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
