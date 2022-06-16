@@ -51,7 +51,7 @@ useful way for me to think about how "best" to configure Emacs.
     and tab-bar, with [[https://github.com/mclear-tools/tabspaces][buffer-isolated tab/workspaces]]
 11. A configurable splash page
 12. A writing-centric configuration with great citation support, markdown, [[https://github.com/jgm/pandoc][pandoc]],
-    dedicated functions for notes, and org-mode (in progress)
+    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]], and org-mode 
 
 * 𝛌-Emacs Modules
 
@@ -64,15 +64,23 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
   with fonts, faces, themeing, and completion all belong to this group.
 - *Navigation & Search*: Useful navigation and search functions, plus setup and
   extension of the built-in dired file manager.
-- *Writing & Editing*: Settings for spelling, citation, dictionary, notes,
-  typesetting (LaTeX) and writing-specific modes (markdown).
+- *Writing & Editing*: Settings for spelling, citation (using citar and completion
+  at point), dictionary, notes (using consult-notes), typesetting (LaTeX) and
+  writing-specific modes (markdown and org).
+- *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
+  org do? Since many people use Emacs almost exclusively for org-mode, it
+  warrants its own group. There are three modules. There is =lem-setup-org-base=,
+  which provides a base configuration. It also loads (optionally) two further
+  modules, =lem-setup-org-settings= and =lem-setup-org-extensions=. The former
+  provides configuration for various built-in aspects of org, including the
+  agenda. The latter provides a variety of useful additional packages, including
+  styling with =org-modern=. Note that no capture templates, etc., are set here.
+  The interested user might want to consult my [[https://github.com/mclear-tools/dotemacs/blob/master/.local/lambda-library/lambda-user/cpm-setup-org.el][dotfiles org setup]] as well as the
+  [[https://systemcrafters.cc/emacs-from-scratch/organize-your-life-with-org-mode/][System Crafters]] tutorial.
 - *Programming & Languages*: Editing and Language specific settings. 
 - *Shell*: Configuration for shell and command-line related settings. 
 - *Workspaces*: Version control, tab settings, buffer-isolation, and other
   configuration for the built-in project.el and tab-bar.el
-- *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
-  org do? Since many people use Emacs almost exclusively for org-mode, it
-  warrants its own group. There are three modules. There is =lem-setup-org-base=, which provides a base configuration. It also loads (optionally) two further modules, =lem-setup-org-settings= and =lem-setup-org-extensions=. The former provides configuration for various built-in aspects of org, including the agenda. The latter provides a variety of useful additional packages, including styling with =org-modern=. 
 
 See the [[id:20220508T013721.797125][documentation]] for further details. 
 
