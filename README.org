@@ -70,9 +70,9 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
 - *Shell*: Configuration for shell and command-line related settings. 
 - *Workspaces*: Version control, tab settings, buffer-isolation, and other
   configuration for the built-in project.el and tab-bar.el
-- (In progress) *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
+- *Org*: Writing, Project management, TODOs, Literate programming. What doesn't
   org do? Since many people use Emacs almost exclusively for org-mode, it
-  warrants its own group. 
+  warrants its own group. There are three modules. There is =lem-setup-org-base=, which provides a base configuration. It also loads (optionally) two further modules, =lem-setup-org-settings= and =lem-setup-org-extensions=. The former provides configuration for various built-in aspects of org, including the agenda. The latter provides a variety of useful additional packages, including styling with =org-modern=. 
 
 See the [[id:20220508T013721.797125][documentation]] for further details. 
 
