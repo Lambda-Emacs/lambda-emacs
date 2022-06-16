@@ -10,28 +10,32 @@
 (use-package org-appear
   :straight (:type git :host github :repo "awth13/org-appear"
              :branch "master")
-  ;; :branch "feature/org-fold-support")
-
   :commands (org-appear-mode)
-  :hook (org-mode . org-appear-mode)
-  :init
-  (setq org-appear-autoemphasis  t)
-  (setq org-appear-autolinks nil)
-  (setq org-appear-autosubmarkers t))
+  :custom
+  (org-appear-autoemphasis  t)
+  (org-appear-autolinks nil)
+  (org-appear-autosubmarkers t)
+  :hook (org-mode . org-appear-mode))
 
 ;;;; Org Modern (Display properties, bullets, etc)
 ;; A nicer set of default display options
 (use-package org-modern
   :straight (:type git :host github :repo "minad/org-modern")
-  :custom-face
-  (org-modern-label ((t (:height 1.1))))
+  :hook (org-mode . org-modern-mode)
   :custom
+  (org-modern-hide-stars nil)
+  (org-modern-priority nil)
+  (org-modern-todo nil)
+  (org-modern-tag nil)
   ;; Note that these stars allow differentiation of levels
-  (org-modern-star ["⦶" "⦷" "⦹" "⊕" "⍟" "⊛" "⏣" "❂"]) ; "①" "②" "③" "④" "⑤" "⑥" "⑦"
-  ;; Customize this per your font
-  (org-modern-label-border 4.80)
-  :config
-  (global-org-modern-mode))
+  ;; Alternative stars "①" "②" "③" "④" "⑤" "⑥" "⑦"
+  (org-modern-star ["⦶" "⦷" "⦹" "⊕" "⍟" "⊛" "⏣" "❂"]))
+
+;;;; Org Modern Indent
+;; Make org-modern work better with org-indent
+(use-package org-modern-indent
+  :straight (:type git :host github :repo "jdtsmith/org-modern-indent")
+  :hook (org-indent-mode . org-modern-indent-mode))
 
 ;;; Org Autolist (Smart Lists)
 ;; Better list behavior

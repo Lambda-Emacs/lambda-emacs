@@ -54,16 +54,32 @@
    '((daily today require-timed)
      (800 1000 1200 1400 1600 1800 2000)
      " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
-  (customize-set-variable 'org-agenda-current-time-string
-                          "⭠ now ─────────────────────────────────────────────────")
+  (org-agenda-current-time-string
+   "⭠ now ─────────────────────────────────────────────────")
+
   ;; Display properties
   (org-agenda-tags-column org-tags-column)
+  (org-agenda-show-inherited-tags nil)
   (org-agenda-window-setup 'only-window)
   (org-agenda-restore-windows-after-quit t)
 
+  ;; from stack overflow https://stackoverflow.com/a/22900459/6277148
+  ;; note that the formatting is nicer that just using '%b'
+  (org-agenda-prefix-format
+   '((agenda . " %-18c%?-10t ")
+     (timeline . "  % s")
+     (todo . " ")
+     (tags . " ")
+     (search . " %i %-12:c")))
+
   ;; Scheduling
+  (org-agenda-skip-scheduled-if-done t)
+  (org-agenda-skip-timestamp-if-done t)
   (org-agenda-todo-ignore-scheduled 'future)
   (org-agenda-todo-ignore-deadlines 'far)
+  (org-agenda-sorting-strategy
+   '((agenda time-up) (todo time-up) (tags time-up) (search time-up)))
+  (calendar-week-start-day 1) ;; Start week on Monday
 
   ;; Agenda Custom Commands
   ;; Configure custom agenda views
@@ -72,7 +88,11 @@
 
   (org-agenda-custom-commands
    '(("d" "Dashboard"
-      ((agenda "" ((org-agenda-span 'day) (org-deadline-warning-days 7)))
+      ((agenda "" ((org-agenda-span 'day)))
+       (tags-todo "DEADLINE=\"<today>\""
+                  ((org-agenda-overriding-header "Due Today!")))
+       (tags-todo "+DEADLINE<\"<+5d>\"+DEADLINE>\"<today>\""
+                  ((org-agenda-overriding-header "Due Soon")))
        (todo "NEXT"
              ((org-agenda-overriding-header "Next Tasks")))
        (tags-todo "email" ((org-agenda-overriding-header "Email")))
@@ -81,7 +101,6 @@
      ("n" "Next Tasks"
       ((todo "NEXT"
              ((org-agenda-overriding-header "Next Tasks")))))
-
 
      ("W" "Work Tasks" tags-todo "+work")
 
@@ -341,8 +360,8 @@ _vr_ reset      ^^                       ^^                 ^^
       (shell-command-to-string (concat "open bookends:" path)))))
 
 
-;;; Org Functions
-;;;; Org Emphasis Functions
+;;;; Org Functions
+;;;;; Org Emphasis Functions
 ;; Adapted from https://emacs.stackexchange.com/a/14586
 ;; See https://emacstil.com/til/2021/11/29/org-emphasize-dwim/
 (defun org-emphasize-dwim (&optional char)
@@ -365,7 +384,6 @@ _vr_ reset      ^^                       ^^                 ^^
 (defun lem--cursor-at-beginning-of-a-word ()
   (eq (point) (car (bounds-of-thing-at-point 'word))))
 
-
 (defun lem-maybe-mark-word ()
   "Mark the current word. If cursor is outside of a word bounds, mark the empty position."
   (interactive)
@@ -374,35 +392,7 @@ _vr_ reset      ^^                       ^^                 ^^
   (unless (lem--cursor-outside-of-any-word)
     (mark-word)))
 
-;;;; Org Fill Functions
-;;  Functions to calculate apt offsets and call regular org fill stuff. There's a
-;;  useful
-;;  [[http://stackoverflow.com/questions/14351154/org-mode-outline-level-specific-fill-column-values][stack
-;;  overflow thread]] on this.
-
-(defun calc-offset-on-org-level ()
-  "Calculate offset (in chars) on current level in org mode file."
-  (* (or (org-current-level) 0) org-indent-indentation-per-level))
-
-(defun lem-org-fill-paragraph (&optional JUSTIFY)
-  "Calculate apt fill-column value and fill paragraph."
-  (let* ((fill-column (- fill-column (calc-offset-on-org-level))))
-    (org-fill-paragraph JUSTIFY)))
-
-(defun lem-org-auto-fill-function ()
-  "Calculate apt fill-column value and do auto-fill"
-  (let* ((fill-column (- fill-column (calc-offset-on-org-level))))
-    (org-auto-fill-function)))
-
-(defun lem-org-mode-hook ()
-  (setq fill-paragraph-function   'lem-org-fill-paragraph
-        normal-auto-fill-function 'lem-org-auto-fill-function))
-;; FIXME I think these functions might be causing org-cache problems
-;; of the kind: The error was: (error "rx ‘**’ range error")
-;; (add-hook 'org-load-hook 'lem-org-mode-hook)
-;; (add-hook 'org-mode-hook 'lem-org-mode-hook)
-
-;;;; Narrow & Advance/Retreat
+;;;;; Narrow & Advance/Retreat
 ;; Functions to advance forwards or backwards through narrowed tree
 (defun lem-org-advance ()
   (interactive)
@@ -420,7 +410,7 @@ _vr_ reset      ^^                       ^^                 ^^
     (org-backward-heading-same-level 1))
   (org-narrow-to-subtree))
 
-;;;; Clone and Narrow
+;;;;; Clone and Narrow
 (defun lem-clone-buffer-and-narrow ()
   "Clone buffer and narrow outline tree"
   (interactive)
@@ -432,7 +422,7 @@ _vr_ reset      ^^                       ^^                 ^^
              (markdown-narrow-to-subtree))))
     (switch-to-buffer-other-window buf)))
 
-;;;; Goto Org Files
+;;;;; Goto Org Files
 (defun lem-goto-org-files ()
   "goto org-files directory"
   (interactive)
@@ -475,7 +465,7 @@ _vr_ reset      ^^                       ^^                 ^^
   (interactive)
   (find-file (concat org-directory "teaching.org")))
 
-;;;; Export Headings as Seperate Files
+;;;;; Export Headings as Seperate Files
 ;; export headlines to separate files
 ;; http://pragmaticemacs.com/emacs/export-org-mode-headlines-to-separate-files/ ; see also:
 ;; http://emacs.stackexchange.com/questions/2259/how-to-export-top-level-headings-of-org-mode-buffer-to-separate-files
@@ -538,7 +528,7 @@ _vr_ reset      ^^                       ^^                 ^^
            (set-buffer-modified-p modifiedp)))
        "-noexport" 'region-start-level))))
 
-;;;; Export Top Level Trees to File
+;;;;; Export Top Level Trees to File
 ;; From a useful [[https://emacs.stackexchange.com/questions/27226/how-to-export-top-level-trees-in-an-org-file-to-corresponding-files][stack exchange]] post
 (defun lem-org-map-entries (org-file in-tags func)
   (let ((tags (if (stringp in-tags)
@@ -574,7 +564,7 @@ _vr_ reset      ^^                       ^^                 ^^
                  (funcall func))
                (end-of-line)))))))
 
-;;;; Org demote/promote region
+;;;;; Org demote/promote region
 (defun lem-demote-everything (number beg end)
   "Add a NUMBER of * to all headlines between BEG and END.
     Interactively, NUMBER is the prefix argument and BEG and END are
@@ -590,7 +580,7 @@ _vr_ reset      ^^                       ^^                 ^^
           (while (search-forward-regexp "^\\*" nil t)
             (insert string)))))))
 
-;;;; Org Hide Property Drawers
+;;;;; Org Hide Property Drawers
 ;; From [[https://www.reddit.com/r/emacs/comments/9htd0r/how_to_completely_hide_the_properties_drawer_in/e6fehiw][Reddit]]
 
 (defun org-toggle-properties ()
@@ -604,7 +594,7 @@ _vr_ reset      ^^                       ^^                 ^^
             (outline-show-entry)
           (org-cycle-hide-drawers 'all))))))
 
-;;;; Org Return DWIM
+;;;;; Org Return DWIM
 ;; Note that i've disabled this for now as it was causing issues
 ;; https://gist.github.com/alphapapa/61c1015f7d1f0d446bc7fd652b7ec4fe
 (defun lem-org-return (&optional ignore)
@@ -655,12 +645,12 @@ _vr_ reset      ^^                       ^^                 ^^
 
 ;; (general-define-key :keymaps 'org-mode-map "RET" #'lem-org-return)
 
-;;;; Org Create Check Box From List Item
+;;;;; Org Create Check Box From List Item
 ;; A useful macro for converting list items to checkboxes
 (fset 'lem-org-checkbox-from-list
       [?a ?  ?\[ ?  ?\] escape ?\M-x return])
 
-;;;; Org link Syntax
+;;;;; Org link Syntax
 (defun org-update-link-syntax (&optional no-query)
   "Update syntax for links in current buffer.
 Query before replacing a link, unless optional argument NO-QUERY
@@ -688,7 +678,7 @@ is non-nil."
                       (org-link-escape (org-link-decode uri)))))))))))
 
 
-;;;; Org Table Wrap
+;;;;; Org Table Wrap
 ;; see https://emacs.stackexchange.com/a/30871/11934
 (defun org-table-wrap-to-width (width)
   "Wrap current column to WIDTH."
@@ -743,7 +733,7 @@ is non-nil."
          (org-table-align))
     (org-table-fix-formulas "@" nil (1- (org-table-current-dline)) n)))
 
-;;;; Org Export Last Subtree
+;;;;; Org Export Last Subtree
 ;; bind f5 to keyboard macro of export-last-subtree
 (fset 'export-last-subtree
       "\C-u\C-c\C-e")
@@ -753,7 +743,7 @@ is non-nil."
      (define-key org-mode-map (kbd "<f5>") 'export-last-subtree)))
 
 
-;;;; Org Tag Selection
+;;;;; Org Tag Selection
 
 (defun lem-org-select-tags-completing-read ()
   "Select tags to add to headline."
@@ -764,7 +754,7 @@ is non-nil."
                          (-difference selected current)))
       (org-set-tags it))))
 
-;;;; Org Copy Link
+;;;;; Org Copy Link
 ;; see https://emacs.stackexchange.com/a/63038/11934
 (defun lem-org-link-copy-at-point ()
   (interactive)
@@ -776,7 +766,7 @@ is non-nil."
       (kill-new link-string)
       (message "Org link %s is copied." link-string))))
 
-;;;; Remove Org Links
+;;;;; Remove Org Links
 ;; https://emacs.stackexchange.com/a/10714/11934
 (defun lem-org-replace-link-by-link-description ()
   "Replace an org link by its description or, if empty, its address"
@@ -791,7 +781,7 @@ is non-nil."
           (apply 'delete-region remove)
           (insert description)))))
 
-;;;; Uncheck Org boxes
+;;;;; Uncheck Org boxes
 ;;see https://www.reddit.com/r/emacs/comments/r107bg/comment/hlx54vf/?utm_source=share&utm_medium=web2x&context=3
 (defun lem-copy-and-uncheck (start end)
   "copy a region of regularly repeating checkbox items forward from
@@ -800,7 +790,7 @@ one week to the next, unchecking them at the same time"
   (kill-new (replace-regexp-in-string (rx "[X]") "[ ]" (buffer-substring start end)))
   (setq deactivate-mark t))
 
-;;;; Org Archive
+;;;;; Org Archive
 (defun lem-org-archive-done-tasks ()
   (interactive)
   (org-map-entries
@@ -809,7 +799,7 @@ one week to the next, unchecking them at the same time"
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'agenda))
 
-;;;; Org Tree/Heading to New File
+;;;;; Org Tree/Heading to New File
 (defun lem-org-tree-to-new-file ()
   (interactive)
   "Move an org subtree to a new file"
@@ -818,7 +808,7 @@ one week to the next, unchecking them at the same time"
    (read-file-name "Move subtree to file:" ))
   (org-paste-subtree))
 
-;;;; Org Wrap in Block Template
+;;;;; Org Wrap in Block Template
 ;; A helpful function I found for wrapping text in a block template.
 ;; http://pragmaticemacs.com/emacs/wrap-text-in-an-org-mode-block/
 
@@ -871,7 +861,7 @@ one week to the next, unchecking them at the same time"
               (save-excursion (insert "#+end_" choice))))))))))
 
 
-;;;; Org Export Body to HTML Buffer
+;;;;; Org Export Body to HTML Buffer
 (defun lem-org-export-to-buffer-html-as-body (&optional async subtreep visible-only body-only ext-plist)
   "Export org buffer body to html"
   (interactive)

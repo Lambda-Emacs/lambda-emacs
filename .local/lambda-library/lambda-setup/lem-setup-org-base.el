@@ -87,7 +87,7 @@
   (org-pretty-entities-include-sub-superscripts t) ;; prettify sub/superscripts
   (org-read-date-prefer-future 'time) ;; Incomplete dates refer to future dates & times
   (org-startup-folded t) ;; start org in outline
-  (org-startup-indented nil) ;; don't start in indent mode
+  (org-startup-indented t) ;; start with indentation of headlines
   (org-auto-align-tags nil) ;; don't auto-align tags
   (org-tags-column 0) ;; place tags directly next to headline text
 
@@ -128,6 +128,9 @@
 
   ;; TODOS
   (org-use-fast-todo-selection 'expert) ;; don't use popup window for todos
+  ;; don't set to DONE if children aren’t DONE
+  (org-enforce-todo-dependencies t)
+  (org-enforce-todo-checkbox-dependencies t)
 
   :config
   ;; Setup further org config
@@ -135,5 +138,5 @@
   (require 'lem-setup-org-extensions))
 
 ;;; Provide Org-Setup
-  (provide 'lem-setup-org-base)
+(provide 'lem-setup-org-base)
 ;;; lem-setup-org-base.el ends here
