@@ -32,10 +32,6 @@
     (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
 
 (use-package flyspell
-  ;; :general
-  ;; (:states '(normal insert emacs) :keymaps 'flyspell-mode-map
-  ;;  "C-;" 'flyspell-auto-correct-previous-word
-  ;;  "C-:" 'flyspell-correct-wrapper)
   :config
   (setq flyspell-abbrev-p t
         flyspell-use-global-abbrev-table-p t
@@ -50,7 +46,7 @@
   :straight t
   :after flyspell
   :bind (:map flyspell-mode-map
-         ("C-;" . consult-flyspell)
+         ("C-;" . flyspell-correct-previous)
          ("C-:" . flyspell-correct-at-point))
   :custom
   (flyspell-correct-interface #'flyspell-correct-completing-read))
@@ -260,8 +256,7 @@
 (use-package reftex
   :commands turn-on-reftex
   :init
-  (progn
-    (setq reftex-plug-into-AUCTeX t)))
+  (setq reftex-plug-into-AUCTeX t))
 
 (use-package bibtex
   :defer t
@@ -338,7 +333,6 @@
   :commands (define-word define-word-at-point))
 
 (use-package osx-dictionary
-  :when sys-mac
   :straight (:type git :host github :repo "xuchunyang/osx-dictionary.el")
   :commands (osx-dictionary-search-word-at-point osx-dictionary-search-input))
 
@@ -375,6 +369,9 @@
         ((derived-mode-p 'latex-mode)
          (LaTeX-narrow-to-environment))
         (t (narrow-to-defun))))
+
+;;bind this in the narrow keymap
+(bind-key* "C-x n n" #'lem-narrow-or-widen-dwim narrow-map)
 
 ;;; Provide
 (provide 'lem-setup-writing)
