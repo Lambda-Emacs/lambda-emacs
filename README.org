@@ -82,7 +82,7 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
 - *Workspaces*: Version control, tab settings, buffer-isolation, and other
   configuration for the built-in project.el and tab-bar.el
 
-See the [[id:20220508T013721.797125][documentation]] for further details. 
+See the [[file:DOCUMENTATION.org][documentation]] (WIP) for further details.
 
 * Getting Started
 1. Clone lambda-emacs as emacs.d: =git clone
