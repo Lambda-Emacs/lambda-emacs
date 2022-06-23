@@ -61,7 +61,7 @@
 (use-package consult-notes
   :straight (:type git :host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
-             consult-notes-search-all
+             consult-notes-search-in-all-notes
              consult-notes-org-roam-find-node
              consult-notes-org-roam-find-node-relation)
   :config

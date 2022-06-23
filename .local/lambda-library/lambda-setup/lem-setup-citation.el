@@ -87,10 +87,11 @@
           (suffix . "${author editor:30}  ${=type=:12}  ${=beref=:12} ${tags keywords:*}")
           (preview . "${author editor} (${year issued date}) ${title}, ${journal journaltitle publisher container-title collection-title}.\n")
           (note . ,lem-citar-note)))
-  (setq citar-symbols
-        `((file ,(all-the-icons-octicon "file-pdf"      :face 'error) . " ")
-          (note ,(all-the-icons-octicon "file-text"     :face 'warning) . " ")
-          (link ,(all-the-icons-octicon "link-external" :face 'org-link) . " ")))
+  (when (display-graphic-p)
+    (setq citar-symbols
+          `((file ,(all-the-icons-octicon "file-pdf"      :face 'error) . " ")
+            (note ,(all-the-icons-octicon "file-text"     :face 'warning) . " ")
+            (link ,(all-the-icons-octicon "link-external" :face 'org-link) . " "))))
   ;; edit notes
   (setq citar-notes-paths `(,lem-bib-notes)))
 
