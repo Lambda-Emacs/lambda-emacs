@@ -11,7 +11,7 @@ relatedly, as providing enough commentary on configuring Emacs such that it
 might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally. Third, as
 a "starter-kit" for writing and academic work in the humanities. 
 
-* 𝛌-Emacs Structure
+* 𝛌-Emacs File-Directory Structure
 
 The configuration consists of a set of files specific to the user (all stored in
 =lambda-user=) and more general files for 𝛌-Emacs (init.el and the setup files in
@@ -42,6 +42,27 @@ is going on.
 All personal configuration by the user should go in =config.el= in the
 =lambda-user= directory. This includes setting all variables, such as theme, font,
 and bibliography and notes files. 
+
+* 𝛌-Emacs Customizable Variables
+  :PROPERTIES:
+  :ID:       20220720T151238.406634
+  :END:
+| Variable                   | Purpose                               |
+|----------------------------+---------------------------------------|
+| lem-prefix                 | Prefix for personal keybinds          |
+| lem-ui-default-font        | User default font                     |
+| lem-ui-variable-width-font | Variable width font                   |
+| lem-ui-theme               | User prefererred theme                |
+| lem-custom-themes-dir      | Directory for custom lambda-themes    |
+| lem-bib-notes              | File for reference notes              |
+| lem-bibliography           | User bibliography used in citations   |
+| lem-notes-dir              | Directory for user notes              |
+| lem-citar-note             | Template for citar notes              |
+| lem-project-dir            | Directory for user projects           |
+| lem-user-elisp-dir         | Directory for personal elisp projects |
+| lem-splash-footer          | Splash footer message                 |
+
+=lem-prefix= defaults to =C-c C-SPC= and =lem-ui-theme= defaults to =lambda-themes=. The other variables need to be set by the user in the =config.el= file in the =lem-user-dir=. 
 
 * Code Conventions
 - Where appropriate, use =custom-set-variable= rather than =setq= when dealing with

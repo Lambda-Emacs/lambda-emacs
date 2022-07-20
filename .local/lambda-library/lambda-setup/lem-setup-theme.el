@@ -147,7 +147,14 @@
   (add-hook 'ns-system-appearance-change-functions #'lem--system-apply-theme))
 
 ;;;;; Load Theme
-(cond ((eq active-theme 'light-theme)
+(defcustom lem-ui-theme nil
+  "Default user theme."
+  :group 'lambda-emacs
+  :type 'symbol)
+
+(cond ((bound-and-true-p lem-ui-theme)
+       (load-theme lem-ui-theme))
+      ((eq active-theme 'light-theme)
        (load-theme 'lambda-light t))
       ((eq active-theme 'dark-theme)
        (load-theme 'lambda-dark t))

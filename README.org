@@ -51,7 +51,7 @@ useful way for me to think about how "best" to configure Emacs.
     and tab-bar, with [[https://github.com/mclear-tools/tabspaces][buffer-isolated tab/workspaces]]
 11. A configurable splash page
 12. A writing-centric configuration with great citation support, markdown, [[https://github.com/jgm/pandoc][pandoc]],
-    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]], and org-mode 
+    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]] and notetaking (using [[https://github.com/protesilaos/denote][denote]]), and settings for org-mode 
 
 * 𝛌-Emacs Modules
 
@@ -94,5 +94,6 @@ See the [[file:DOCUMENTATION.org][documentation]] (WIP) for further details.
    even longer to do).
 3. Put whatever settings you prefer in your config file. This should include
    things like the font you prefer and whatever other variable settings you
-   might like. For some hints see my [[https://github.com/mclear-tools/dotemacs/blob/master/.local/lambda-library/lambda-user/config.el][configuration file]].
+   might like. For some hints see my [[https://github.com/mclear-tools/dotemacs/blob/master/.local/lambda-library/lambda-user/config.el][configuration file]] and the list of
+   variables in the [[id:20220720T151238.406634][docs]]. 
 
