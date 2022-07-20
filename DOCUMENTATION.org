@@ -62,7 +62,9 @@ and bibliography and notes files.
 | lem-user-elisp-dir         | Directory for personal elisp projects |
 | lem-splash-footer          | Splash footer message                 |
 
-=lem-prefix= defaults to =C-c C-SPC= and =lem-ui-theme= defaults to =lambda-themes=. The other variables need to be set by the user in the =config.el= file in the =lem-user-dir=. 
+=lem-prefix= defaults to =C-c C-SPC= and =lem-ui-theme= defaults to =lambda-themes=. The other variables need to be set by the user in the =config.el= file in the =lem-user-dir=.
+
+In any case, be sure to set these variables in your =config.el= file *before* loading any specific modules. 
 
 * Code Conventions
 - Where appropriate, use =custom-set-variable= rather than =setq= when dealing with

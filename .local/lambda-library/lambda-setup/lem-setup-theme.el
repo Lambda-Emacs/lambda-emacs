@@ -146,12 +146,13 @@
 (when sys-mac
   (add-hook 'ns-system-appearance-change-functions #'lem--system-apply-theme))
 
-;;;;; Load Theme
+;;;;; Define User Theme
 (defcustom lem-ui-theme nil
   "Default user theme."
   :group 'lambda-emacs
   :type 'symbol)
 
+;; If set, load user theme, otherwise load lambda-themes
 (cond ((bound-and-true-p lem-ui-theme)
        (load-theme lem-ui-theme))
       ((eq active-theme 'light-theme)
