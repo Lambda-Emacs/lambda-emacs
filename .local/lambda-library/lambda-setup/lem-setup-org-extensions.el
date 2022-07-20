@@ -137,6 +137,7 @@ Instead it's simpler to use bash."
 ;;;; Ox-Pandoc
 ;; Export w/pandoc
 (use-package ox-pandoc
+  :when (executable-find "pandoc")
   :straight (:type git :host github :repo "a-fent/ox-pandoc")
   :after ox)
 
