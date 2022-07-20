@@ -106,7 +106,7 @@
     (progn
       (tab-bar-new-tab)
       (tab-bar-rename-tab "Notes")
-      (lem-notebook))))
+      (find-file lem-notes-dir))))
 
 ;;;;; Terminal Workspace
 (defun lem-vterm-workspace ()

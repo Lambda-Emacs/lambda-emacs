@@ -265,6 +265,10 @@
   (interactive)
   (format-date "%A, %B %d %Y"))
 
+(defun lem-insert-time ()
+  (interactive)
+  (format-date "%H:%M:%S"))
+
 (defun lem-insert-date-and-time ()
   (interactive)
   (format-date "%m-%d-%Y %H:%M:%S"))
