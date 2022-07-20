@@ -138,14 +138,7 @@ Instead it's simpler to use bash."
 ;; Export w/pandoc
 (use-package ox-pandoc
   :straight (:type git :host github :repo "a-fent/ox-pandoc")
-  :after ox
-  :custom
-  (org-pandoc-command (expand-file-name "pandoc" homebrew))
-  (org-pandoc-options '((standalone .  t)))
-  (org-pandoc-options-for-docx '((standalone . nil)))
-  (org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex")))
-  (org-pandoc-options-for-latex-pdf '((pdf-engine . "xelatex")))
-  (org-pandoc-format-extensions '(org+smart)))
+  :after ox)
 
 ;;;; Ox-Pandoc Export Menu Options
 ;; Set pandoc export options
