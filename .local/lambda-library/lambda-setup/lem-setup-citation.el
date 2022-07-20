@@ -95,24 +95,13 @@
   ;; edit notes
   (setq citar-notes-paths `(,lem-bib-notes)))
 
-;;;; Citar-Capf
-;; Add hooks for completion at point with citar
-(defun lem--add-citation-hooks (function hooks)
-  (mapc (lambda (hook)
-          (add-hook hook function))
-        hooks))
-
-(defun lem--citar-capf-hooks ()
-  (add-hook 'completion-at-point-functions #'citar-capf -90 t)
-  (add-to-list 'completion-at-point-functions #'citar-capf))
-
-(lem--add-citation-hooks
- 'lem--citar-capf-hooks
- '(markdown-mode-hook
-   org-mode-hook
-   LaTeX-mode-hook
-   latex-mode-hook
-   tex-mode-hook))
+;;;; Capf-bibtex
+(use-package capf-bibtex
+  :straight (:type git :host github :repo "mclear-tools/capf-bibtex")
+  :hook ((org-mode markdown-mode tex-mode latex-mode reftex-mode) . capf-bibtex-mode)
+  :custom
+  (capf-bibtex-bibliography
+   `(,lem-bibliography)))
 
 
 ;;; Provide citation
