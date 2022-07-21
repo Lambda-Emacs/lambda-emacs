@@ -54,10 +54,6 @@
    ("s-M-~" . org-emphasize-with-code-dwim)
    ;; better pasting behavior in org-mode
    ("s-v" . org-yank))
-  (:map org-agenda-mode-map
-   ("j" . org-agenda-next-item)
-   ("k" . org-agenda-previous-item))
-
   :init
   ;; Org-Emphasis-Regex settings. Set regex boundaries for emphasis.
   ;; Load this before org-mode is loaded.
@@ -70,7 +66,6 @@
           "[:space:]"
           "."
           1))
-
   :custom
   ;; Aesthetics & UI
   (org-adapt-indentation 'headline-data) ;; adapt indentation only for data lines

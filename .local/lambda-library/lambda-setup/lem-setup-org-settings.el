@@ -43,6 +43,11 @@
 ;;;;; Agenda Settings
 (use-package org-agenda
   :straight nil
+  :bind
+  ;; allow vim-like movement
+  (:map org-agenda-mode-map
+   ("j" . org-agenda-next-item)
+   ("k" . org-agenda-previous-item))
   :custom
   ;; Agenda logging
   (org-agenda-start-with-log-mode t)
