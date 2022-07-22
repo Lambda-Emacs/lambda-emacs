@@ -526,7 +526,8 @@ targets."
                 '(not (org-in-src-block-p t))))
   (add-hook 'org-mode-hook #'lem-yas-org-mode-hook)
   ;; suppress warnings when expanding
-  (push '(yasnippet backquote-change) warning-suppress-types)
+  (with-eval-after-load 'warnings
+    (push '(yasnippet backquote-change) warning-suppress-types))
   (yas-global-mode 1))
 
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
