@@ -88,8 +88,7 @@
 ;;;; Consult Notes
 ;; Adapted from https://github.com/minad/consult/wiki/hrm-notes
 (use-package consult-notes
-  :straight (:local-repo "/Users/roambot/bin/lisp-projects/consult-notes")
-  ;; :straight (:type git :host github :repo "mclear-tools/consult-notes")
+  :straight (:type git :host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
              consult-notes-search-in-all-notes))
 
