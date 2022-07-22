@@ -66,22 +66,25 @@
 
 ;;;; Citar
 (use-package citar
-  :straight (:host github :repo "bdarcus/citar" :files ("*.el"))
+  :straight (:host github :repo "emacs-citar/citar")
   :commands (citar-open-beref
              citar-open-notes
              citar-insert-citation)
   :bind (:map citar-map
          ("b" .  #'citar-open-beref))
   :custom
-  (citar-bibliography `(,lem-bibliography))
+  ;; Use with org citation
   (org-cite-global-bibliography `(,lem-bibliography))
+  (citar-bibliography `(,lem-bibliography))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)
   :config
   ;; use embark with at-point
   (setq citar-at-point-function 'embark-act)
-  (setq citar-additional-fields '("doi" "url"))
+  (setq citar-default-action 'citar-open-beref)
+  ;; add beref entry for bookends
+  (setq citar-additional-fields '("doi" "url" "beref"))
   (setq citar-templates
         `((main . " ${=key= id:15} ${title:48}")
           (suffix . "${author editor:30}  ${=type=:12}  ${=beref=:12} ${tags keywords:*}")
@@ -93,17 +96,35 @@
             (note ,(all-the-icons-octicon "file-text"     :face 'warning) . " ")
             (link ,(all-the-icons-octicon "link-external" :face 'org-link) . " "))))
   ;; edit notes
-  (setq citar-notes-paths `(,lem-bib-notes)))
+  (setq citar-notes-paths `(,lem-bib-notes))
+
+  ;; Citar & Bookends
+  (defun citar-get-beref (entry)
+    (let* ((field (citar-has-a-value '(beref) entry))
+           (base-url (pcase field
+                       ('beref "bookends://sonnysoftware.com/"))))
+      (when field
+        (concat base-url (citar-get-value field entry)))))
+
+  (defun citar-open-beref (keys-entries)
+    "Open bookends link associated with the KEYS-ENTRIES in bookends.
+
+With prefix, rebuild the cache before offering candidates."
+    (interactive (list (citar-select-refs
+                        :rebuild-cache current-prefix-arg)))
+    (dolist (key-entry keys-entries)
+      (let ((link (citar-get-beref (cdr key-entry))))
+        (if link
+            (browse-url-default-browser link)
+          (message "No ref found for %s" key-entry))))))
 
 ;;;; Capf-bibtex
 (use-package capf-bibtex
-  :straight (:type git :host github :repo "mclear-tools/capf-bibtex")
+  :straight (:local-repo "/Users/roambot/bin/lisp-projects/capf-bibtex")
   :hook ((org-mode markdown-mode tex-mode latex-mode reftex-mode) . capf-bibtex-mode)
   :custom
   (capf-bibtex-bibliography
-   `(,lem-bibliography)))
+   '("/Users/roambot/Dropbox/Work/bibfile.bib")))
 
-
-;;; Provide citation
 (provide 'lem-setup-citation)
 ;;; lem-setup-citation.el ends here

@@ -63,6 +63,7 @@
 ;;;; SVG Library (For Tags/Labels/etc.)
   ;;; SVG Tag Mode
 (use-package svg-tag-mode
+  :when (image-type-available-p 'svg)
   :straight (:type git :host github :repo "rougier/svg-tag-mode")
   :hook (prog-mode . svg-tag-mode)
   :config
@@ -101,6 +102,27 @@
   :config
   (toggle-hl-line-when-idle 1 t))
 
+;;;;; LIN (Make HL Line Better)
+(use-package lin
+  :disabled
+  :straight t
+  :config
+  (setq lin-mode-hooks
+        '(dired-mode-hook
+          elfeed-search-mode-hook
+          git-rebase-mode-hook
+          grep-mode-hook
+          ibuffer-mode-hook
+          ilist-mode-hook
+          log-view-mode-hook
+          magit-log-mode-hook
+          mu4e-headers-mode
+          occur-mode-hook
+          org-agenda-mode-hook
+          proced-mode-hook
+          tabulated-list-mode-hook))
+  (lin-global-mode 1))
+
 ;;;;; Highlight Numbers & TODOS
 (use-package highlight-numbers
   :defer t
@@ -128,6 +150,16 @@
     ("p" hl-todo-previous "Previous")
     ("o" hl-todo-occur "Occur")
     ("q" nil "Quit" :color blue :exit t)))
+
+;; ;;https://github.com/erickgnavar/dotfiles/tree/master/.emacs.d#highlight-todo-fixme-etc
+;; (defun lem-highlight-todo-like-words ()
+;;   (font-lock-add-keywords
+;;    nil `(("\\<\\(FIXME\\|TODO\\|NOTE\\)"
+;;           1 font-lock-warning-face t))))
+
+
+;; (add-hook 'prog-mode-hook 'my/highlight-todo-like-words)
+
 
 ;;;;; Highlight Cursor Line with Pulse
 ;; From https://karthinks.com/software/batteries-included-with-emacs/

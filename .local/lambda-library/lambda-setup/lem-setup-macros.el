@@ -64,6 +64,29 @@
 ;;   (progn (disable-theme 'spacemacs-light)
 ;;          (load-theme 'dracula t)))
 
+;;;; Set Variables
+;; This is a useful catch-all macro for setting variables.
+;; Originally from https://oremacs.com/2015/01/17/setting-up-ediff/
+;; Revised multi-form version from https://discord.com/channels/767406463265538068/986709779995066428/986726251941212223
+
+(defmacro csetq (&rest forms)
+  "Bind each custom variable FORM to the value of its VAL.
+
+FORMS is a list of pairs of values [FORM VAL].
+
+If FORM has a custom setter, use it to set FORM to VAL.
+Otherwise, use `set-default'.
+
+\(fn [FORM VAL]...)"
+  (declare (debug (&rest sexp form))
+           (indent 1))
+  ;; Check if we have an even number of arguments
+  (when (= (mod (length forms) 2) 1)
+    (signal 'wrong-number-of-arguments (list 'csetq (1+ (length forms)))))
+  ;; Transform FORMS into a list of pairs (FORM . VALUE)
+  `(progn ,@(cl-loop for (form value) on forms by 'cddr
+                     collect `(customize-set-variable ',form ,value))))
+
 (provide 'lem-setup-macros)
 
 ;;; lem-setup-macros.el ends here

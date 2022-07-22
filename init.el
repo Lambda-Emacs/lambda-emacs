@@ -51,6 +51,7 @@ this for dependencies like servers or config files that are
 stable (i.e. it should be unlikely that you need to delete them
 if something goes wrong).")
 
+
 (defconst lem-cache-dir (concat lem-temp-dir "cache/")
   "The directory for volatile storage.
 Use this for transient files that are generated on the fly like
@@ -93,10 +94,13 @@ be cleared if there are problems.")
 ;; Set PATH properly for emacs. This should make a package like
 ;; `exec-path-from-shell' unnecessary
 
+;; Set local (i.e. current user) bin path, if it exists
+(when (file-directory-p (concat (getenv "HOME") "/bin"))
+  (defconst lem-local-bin (concat (getenv "HOME") "/bin") "Local execs."))
+
 ;; If on a mac using homebrew set path correctly
 ;; NOTE: the location of homebrew depends on whether we're on mac silicon
-(when (and sys-mac
-           (shell-command-to-string "command -v brew"))
+(when (shell-command-to-string "command -v brew")
   (defconst homebrew (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin/" "/usr/local/bin/") "Path to homebrew packages."))
 
 ;; Define the system local bins
@@ -104,8 +108,8 @@ be cleared if there are problems.")
 (defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
 
 ;; Set paths
-(setenv "PATH" (concat (when sys-mac (concat homebrew ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list (when sys-mac homebrew) usr-local-bin usr-local-sbin)))
+(setenv "PATH" (concat homebrew ":" (getenv "PATH") ":" lem-local-bin ":" usr-local-bin ":" usr-local-sbin))
+(setq exec-path (append exec-path (list homebrew lem-local-bin usr-local-bin usr-local-sbin)))
 
 ;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
@@ -181,7 +185,7 @@ be cleared if there are problems.")
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
 (use-package el-patch
-  :straight t
+  :straight (:type git :host github :repo "radian-software/el-patch")
   :custom
   (el-patch-enable-use-package-integration t))
 
@@ -330,7 +334,7 @@ emacs-version string on the kill ring."
 
                     ;; Writing modules
                     'lem-setup-writing
-                    ;; 'lem-setup-notes ;; coming soon!
+                    'lem-setup-notes
                     'lem-setup-citation
 
                     ;; Programming modules
@@ -338,12 +342,51 @@ emacs-version string on the kill ring."
                     'lem-setup-debug
                     'lem-setup-shell
 
-                    ;; Org modules (coming soon!)
-                    ;; 'lem-setup-org
-                    ;; 'lem-setup-org-extensions
+                    ;; Org modules
+                    ;; NOTE: other modules are enabled in org-base
+                    'lem-setup-org-base
 
                     ;; Productivity
                     'lem-setup-pdf))
+     (require mod))))
+
+(defun lem--default-config-modules ()
+  "Load 𝛌-Emacs with a minimal set of modules."
+  (message "*Loading 𝛌-Emacs, with minimal modules*")
+  (measure-time
+   (cl-dolist (mod (list
+                    ;; Core modules
+                    'lem-setup-libraries
+                    'lem-setup-settings
+                    'lem-setup-functions
+                    'lem-setup-server
+                    'lem-setup-scratch
+
+                    ;; UI modules
+                    'lem-setup-frames
+                    'lem-setup-windows
+                    'lem-setup-buffers
+                    'lem-setup-completion
+                    'lem-setup-keybindings
+                    'lem-setup-help
+                    'lem-setup-modeline
+                    'lem-setup-theme
+                    'lem-setup-splash
+
+                    ;; Project & Tab/Workspace modules
+                    'lem-setup-vc
+                    'lem-setup-projects
+                    'lem-setup-tabs
+                    'lem-setup-workspaces
+
+                    ;; Navigation & Search modules
+                    'lem-setup-navigation
+                    'lem-setup-dired
+                    'lem-setup-search
+
+                    ;; Programming modules
+                    'lem-setup-programming
+                    ))
      (require mod))))
 
 (defun lem--minimal-modules ()
@@ -396,85 +439,6 @@ emacs-version string on the kill ring."
        (file-exists-p lem-config-file))
   (message "*Loading 𝛌-Emacs & user config*")
   (load lem-config-file 'noerror))
- ;; Ask if user would like to create a config file.
- ((if (yes-or-no-p "Would you like to create a user configuration file? ")
-      (progn
-        (with-temp-file lem-config-file
-          (insert ";;; config.el --- summary -*- lexical-binding: t -*-\n"
-                  ";; This file is not part of GNU Emacs\n\n"
-                  ";; This program is free software: you can redistribute it and/or modify\n"
-                  ";; it under the terms of the GNU General Public License as published by\n"
-                  ";; the Free Software Foundation, either version 3 of the License, or\n"
-                  ";; (at your option) any later version.\n\n"
-                  ";; This program is distributed in the hope that it will be useful,\n"
-                  ";; but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-                  ";; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-                  ";; GNU General Public License for more details.\n\n"
-                  ";; You should have received a copy of the GNU General Public License\n"
-                  ";; along with this program.  If not, see <https://www.gnu.org/licenses/>.\n"
-                  ";;; Commentary:\n\n"
-                  ";; Personal config file\n"
-                  ";; This file contains all user-specific configuration settings for 𝛌-Emacs.\n\n"
-                  ";;; Code:\n\n"
-                  ";; Run minimal set of modules (user should configure this how they wish)\n"
-                  ";;;; Load Modules\n\n"
-                  ";; Load modules\n"
-                  "(measure-time\n"
-                  "(cl-dolist (mod (list\n\n"
-                  ";; Core modules\n"
-                  "'lem-setup-libraries\n"
-                  "'lem-setup-settings \n"
-                  "'lem-setup-functions\n"
-                  "'lem-setup-macros   \n"
-                  "'lem-setup-server   \n"
-                  "'lem-setup-scratch  \n\n"
-                  ";; UI modules       \n"
-                  "'lem-setup-frames   \n"
-                  "'lem-setup-windows  \n"
-                  "'lem-setup-buffers  \n"
-                  "'lem-setup-fonts    \n"
-                  "'lem-setup-completion \n"
-                  "'lem-setup-keybindings\n"
-                  "'lem-setup-help       \n"
-                  "'lem-setup-modeline   \n"
-                  "'lem-setup-theme      \n"
-                  "'lem-setup-splash     \n\n"
-                  ";; Navigation & Search modules\n"
-                  "'lem-setup-navigation\n"
-                  "'lem-setup-dired     \n"
-                  "'lem-setup-search    \n\n"
-                  ";; Project & Tab/Workspace modules\n"
-                  "'lem-setup-vc       \n"
-                  "'lem-setup-projects \n"
-                  "'lem-setup-tabs     \n"
-                  "'lem-setup-workspaces\n"
-                  ";; Writing modules\n"
-                  "'lem-setup-writing\n"
-                  "'lem-setup-citation\n"
-                  ";; Programming modules\n"
-                  "'lem-setup-programming))\n"
-                  "(require mod)))       \n\n"
-                  ";; MacOS settings - defer load until after init. \n"
-                  "(when sys-mac                                    \n"
-                  "  (measure-time                                  \n"
-                  "   (run-with-idle-timer 1 nil                    \n"
-                  "                        (function require)       \n"
-                  "                        'lem-setup-macos nil t)))\n\n"
-                  ";;; Provide\n"
-                  "(provide 'config)\n"
-                  ";;; config.el ends here"
-                  )
-          t)
-        (load-file lem-config-file))
-    (message "*Loading 𝛌-Emacs default configuration files.*")
-    (lem--default-modules)
-    ;; MacOS settings - defer load until after init.
-    (when sys-mac
-      (message "*Load MacOS settings...*")
-      (measure-time
-       (run-with-idle-timer 1 nil
-                            (function require)
-                            'lem-setup-macos nil t)))))
  ;; Load default modules
  (t
   (message "*Loading 𝛌-Emacs default configuration files.*")

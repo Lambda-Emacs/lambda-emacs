@@ -43,8 +43,8 @@
 ;;;;; Agenda Settings
 (use-package org-agenda
   :straight nil
+  :commands (org-agenda)
   :bind
-  ;; allow vim-like movement
   (:map org-agenda-mode-map
    ("j" . org-agenda-next-item)
    ("k" . org-agenda-previous-item))
@@ -264,7 +264,7 @@ _vr_ reset      ^^                       ^^                 ^^
   (org-export-async-debug t)
   (org-html-postamble nil) ;; dont export postamble
   (org-export-async-init-file nil)
-  (org-export-backends '(ascii beamer html icalendar latex odt md))
+  (org-export-backends '(ascii beamer html icalendar latex odt pandoc hugo md))
   ;; org v8 bundled with Emacs 24.4
   (org-odt-preferred-output-format "docx")
   :config
@@ -289,12 +289,13 @@ _vr_ reset      ^^                       ^^                 ^^
 
 
 ;;;; Org Modules
+(with-eval-after-load 'org
 ;; Load additional org modules
 (add-to-list 'org-modules 'org-habit t)
 (add-to-list 'org-modules 'org-tempo t)
 (add-to-list 'org-modules 'org-protocol t)
 (when sys-mac
-  (add-to-list 'org-modules 'org-mac-link t))
+  (add-to-list 'org-modules 'org-mac-link t)))
 
 ;;;; Org TODO Keywords
 (customize-set-variable 'org-todo-keywords
@@ -441,6 +442,14 @@ _vr_ reset      ^^                       ^^                 ^^
   "goto org-todo"
   (interactive)
   (find-file (concat org-directory "todo.org")))
+(defun lem-goto-conferences.org ()
+  "goto org-conferences"
+  (interactive)
+  (find-file (concat org-directory "conferences.org")))
+(defun lem-goto-referee-reports.org ()
+  "goto org referee reports"
+  (interactive)
+  (find-file (concat org-directory "referee-reports.org")))
 (defun lem-goto-reference.org ()
   "goto org reference notes"
   (interactive)
@@ -461,6 +470,69 @@ _vr_ reset      ^^                       ^^                 ^^
   "goto teaching file"
   (interactive)
   (find-file (concat org-directory "teaching.org")))
+
+;;;;; Export Headings as Seperate Files
+;; export headlines to separate files
+;; http://pragmaticemacs.com/emacs/export-org-mode-headlines-to-separate-files/ ; see also:
+;; http://emacs.stackexchange.com/questions/2259/how-to-export-top-level-headings-of-org-mode-buffer-to-separate-files
+
+;; FIXME: neither of these functions work right now for some reason.
+(defun lem-org-export-headlines-to-docx ()
+  "Export all subtrees that are *not* tagged with :noexport: to
+    separate docx files.
+
+    Subtrees that do not have the :EXPORT_FILE_NAME: property set
+    are exported to a filename derived from the headline text."
+  (interactive)
+  (save-buffer)
+  (let ((modifiedp (buffer-modified-p)))
+    (save-excursion
+      (goto-char (point-min))
+      (goto-char (re-search-forward "^*"))
+      (set-mark (line-beginning-position))
+      (goto-char (point-max))
+      (org-map-entries
+       (lambda ()
+         (let ((export-file (org-entry-get (point) "EXPORT_FILE_NAME")))
+           (unless export-file
+             (org-set-property
+              "EXPORT_FILE_NAME"
+              (replace-regexp-in-string " " "_" (nth 4 (org-heading-components)))))
+           (deactivate-mark)
+           (org-pandoc-export-to-docx nil t)
+           (unless export-file (org-delete-property "EXPORT_FILE_NAME"))
+           (set-buffer-modified-p modifiedp)))
+       "-noexport" 'region-start-level)))
+  (shell-command-to-string "open ~/Dropbox/Work/Comments/Referee-Reports/ref-report.docx"))
+
+(defun lem-org-export-headlines-to-pdf ()
+  "Export all subtrees that are *not* tagged with :noexport: to
+    separate pdf files.
+
+    Subtrees that do not have the :EXPORT_FILE_NAME: property set
+    are exported to a filename derived from the headline text."
+  (interactive)
+  ;; (require 'ox-pandoc)
+  (save-buffer)
+  (let ((modifiedp (buffer-modified-p)))
+    (save-excursion
+      (goto-char (point-min))
+      (goto-char (re-search-forward "^*"))
+      (set-mark (line-beginning-position))
+      (goto-char (point-max))
+      (org-map-entries
+       (lambda ()
+         (let ((export-file (org-entry-get (point) "EXPORT_FILE_NAME")))
+           (unless export-file
+             (org-set-property
+              "EXPORT_FILE_NAME"
+              (replace-regexp-in-string " " "_" (nth 4 (org-heading-components)))))
+           (deactivate-mark)
+           (org-latex-export-to-pdf nil t nil nil '(:latex-class "org-notes"))
+           ;; (org-pandoc-export-to-latex-pdf nil t)
+           (unless export-file (org-delete-property "EXPORT_FILE_NAME"))
+           (set-buffer-modified-p modifiedp)))
+       "-noexport" 'region-start-level))))
 
 ;;;;; Export Top Level Trees to File
 ;; From a useful [[https://emacs.stackexchange.com/questions/27226/how-to-export-top-level-trees-in-an-org-file-to-corresponding-files][stack exchange]] post

@@ -26,13 +26,8 @@
 
 
 ;;; Code:
-;;;; Workspace Functions
 
-;; magit function for project
-(defun project-magit-dir ()
-  "Run magit in the current project's root"
-  (interactive)
-  (magit-status))
+;;;; Workspace Functions
 
 ;;;;; Startup Workspaces
 (defun lem--workspace-setup ()
@@ -86,6 +81,7 @@
 (defun lem-open-emacsd-in-workspace ()
   "Open emacs.d in its own workspace"
   (interactive)
+  (require 'tabspaces)
   (if (member "emacs.d" (tabspaces--list-tabspaces))
       (tab-bar-switch-to-tab "emacs.d")
     (progn
@@ -101,12 +97,13 @@
 (defun lem-open-notes-in-workspace ()
   "Open notes dir in its own workspace"
   (interactive)
+  (require 'tabspaces)
   (if (member "Notes" (tabspaces--list-tabspaces))
       (tab-bar-switch-to-tab "Notes")
     (progn
       (tab-bar-new-tab)
       (tab-bar-rename-tab "Notes")
-      (find-file lem-notes-dir))))
+      (lem-notebook))))
 
 ;;;;; Terminal Workspace
 (defun lem-vterm-workspace ()
@@ -119,6 +116,7 @@
 (defun lem-open-new-terminal-and-workspace ()
   "Open an empty buffer in its own workspace"
   (interactive)
+  (require 'tabspaces)
   (if (member "Terminal" (tabspaces--list-tabspaces))
       (tab-bar-switch-to-tab "Terminal")
     (progn
@@ -131,6 +129,7 @@
 (defun lem-open-email-in-workspace ()
   "Open mu4e email in its own workspace"
   (interactive)
+  (require 'tabspaces)
   (if (member "Email" (tabspaces--list-tabspaces))
       (progn
         (tab-bar-switch-to-tab "Email")

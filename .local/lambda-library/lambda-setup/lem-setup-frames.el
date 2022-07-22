@@ -51,9 +51,6 @@
   (setq-default window-resize-pixelwise t)
   (setq-default frame-resize-pixelwise t)
 
-  ;; (Don't) Blink the cursor
-  (blink-cursor-mode 0)
-
   ;; Don't show icon in frame
   (setq-default ns-use-proxy-icon nil))
 

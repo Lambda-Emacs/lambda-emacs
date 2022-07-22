@@ -39,9 +39,8 @@
 ;;;; Settings
 ;; Sane settings for ansi-term
 ;;  Other useful shell settings
-;; TODO: Make these compatible with location of zsh on intel macs and on linux
-;; (setq-default shell-file-name "/opt/homebrew/bin/zsh")
-;; (setq explicit-shell-file-name "/opt/homebrew/bin/zsh")
+(setq-default shell-file-name "/opt/homebrew/bin/zsh")
+(setq explicit-shell-file-name "/opt/homebrew/bin/zsh")
 ;; don't add newline in long lines
 (setq-default term-suppress-hard-newline t)
 ;; kill process buffers without query
@@ -57,7 +56,11 @@
 
 ;; clickable links & no highlight of line
 (defun my-term-hook ()
-  (goto-address-mode) (hl-line-mode 0) (setq comint-buffer-maximum-size most-positive-fixnum))
+  (progn
+    (goto-address-mode)
+    (hl-line-mode 0)
+    (setq comint-buffer-maximum-size most-positive-fixnum)))
+
 (add-hook 'term-mode-hook 'my-term-hook)
 (add-hook 'vterm-mode-hook 'my-term-hook)
 
@@ -111,10 +114,7 @@
   (setq vterm-max-scrollback 100000)
   (setq ansi-color-names-vector
         ["#002833" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#657b83"])
-  (setq vterm-term-environment-variable "xterm-256color")
-  (add-hook 'vterm-mode-hook
-            (lambda ()
-              (meow-insert-mode))))
+  (setq vterm-term-environment-variable "xterm-256color"))
 
 ;; Escape to vim mode in shell
 (defun lem-vterm-escape-toggle ()

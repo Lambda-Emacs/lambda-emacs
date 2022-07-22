@@ -27,11 +27,11 @@
 
 ;;;;; Vertico
 ;; Enable vertico for vertical completion
+;; This and selectrum are great packages, but vertico is preferable if I can get feature parity with what I was using in selectrum
 (use-package vertico
   :straight (:host github :repo "minad/vertico"
              :includes (vertico-repeat vertico-directory vertico-buffer)
              :files (:defaults "extensions/vertico-directory.el" "extensions/vertico-buffer.el" "extensions/vertico-repeat.el"))
-  :hook (after-init . vertico-mode)
   :bind (:map vertico-map
          ("<escape>" . #'minibuffer-keyboard-quit)
          ("C-n"      . #'vertico-next-group      )
@@ -39,11 +39,14 @@
          ("C-j"      . #'vertico-next            )
          ("C-k"      . #'vertico-previous        )
          ("M-RET"    . #'vertico-exit))
+  :hook (after-init . vertico-mode)
   :config
   ;; Cycle through candidates
   (setq vertico-cycle t)
+
   ;; Don't resize buffer
   (setq vertico-resize nil)
+
   ;; try the `completion-category-sort-function' first
   (advice-add #'vertico--sort-function :before-until #'completion-category-sort-function)
 
@@ -116,12 +119,12 @@
                   vertico-count (- (/ (window-pixel-height win)
                                       (default-line-height)) 2))))
   :config
+  ;; put minibuffer at top -- this is the more natural place to be looking!
   (setq vertico-buffer-display-action
         '(display-buffer-in-side-window
           (window-height . 13)
           (side . top)))
   (vertico-buffer-mode 1))
-
 
 ;; Vertico repeat last command
 (use-package vertico-repeat
@@ -176,6 +179,15 @@
 (use-package embark
   :straight (embark :type git :host github :repo "oantolin/embark")
   :commands (embark-act embark-keymap-help)
+  :custom
+  ;; Use which-key
+  ;; Don't display extra embark buffer
+  (embark-indicators '(embark-which-key-indicator
+                       embark-minimal-indicator
+                       embark-highlight-indicator
+                       embark-isearch-highlight-indicator))
+  ;; Use keymap -- completing-read on C-h
+  (embark-prompter 'embark-keymap-prompter)
   :bind (("C-." . embark-act)
          ("M-." . embark-dwim)
          ("C-h B" . embark-bindings)
@@ -191,13 +203,6 @@
          ;; When using the Embark package, you can bind `marginalia-cycle' as an Embark action
          :map embark-general-map
          ("A"  . marginalia-cycle))
-  :custom
-  ;; Use which-key
-  ;; Don't display extra embark buffer
-  (embark-indicators '(embark-which-key-indicator
-                       embark-minimal-indicator
-                       embark-highlight-indicator
-                       embark-isearch-highlight-indicator))
   :init
   ;; Optionally replace the key help with a completing-read interface
   (setq prefix-help-command #'embark-prefix-help-command)
@@ -206,7 +211,58 @@
   (add-to-list 'display-buffer-alist
                '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
                  nil
-                 (window-parameters (mode-line-format . none)))))
+                 (window-parameters (mode-line-format . none))))
+
+  ;; Useful Functions
+  (define-key embark-file-map (kbd "D") 'lem-dired-here)
+  (defun lem-dired-here (file)
+    "Open dired in this directory"
+    (dired (file-name-directory file)))
+
+  (define-key embark-file-map (kbd "g") 'lem-consult-rg-here)
+  (defun lem-consult-rg-here (file)
+    "consult-ripgrep in this directory."
+    (let ((default-directory (file-name-directory file)))
+      (consult-ripgrep)))
+
+  ;; Which-key integration
+  (defun embark-which-key-indicator ()
+    "An embark indicator that displays keymaps using which-key.
+The which-key help message will show the type and value of the
+current target followed by an ellipsis if there are further
+targets."
+    (lambda (&optional keymap targets prefix)
+      (if (null keymap)
+          (which-key--hide-popup-ignore-command)
+        (which-key--show-keymap
+         (if (eq (plist-get (car targets) :type) 'embark-become)
+             "Become"
+           (format "Act on %s '%s'%s"
+                   (plist-get (car targets) :type)
+                   (embark--truncate-target (plist-get (car targets) :target))
+                   (if (cdr targets) "…" "")))
+         (if prefix
+             (pcase (lookup-key keymap prefix 'accept-default)
+               ((and (pred keymapp) km) km)
+               (_ (key-binding prefix 'accept-default)))
+           keymap)
+         nil nil t (lambda (binding)
+                     (not (string-suffix-p "-argument" (cdr binding))))))))
+
+  (setq embark-indicators
+        '(embark-which-key-indicator
+          embark-highlight-indicator
+          embark-isearch-highlight-indicator))
+
+  (defun embark-hide-which-key-indicator (fn &rest args)
+    "Hide the which-key indicator immediately when using the completing-read prompter."
+    (which-key--hide-popup-ignore-command)
+    (let ((embark-indicators
+           (remq #'embark-which-key-indicator embark-indicators)))
+      (apply fn args)))
+
+  (advice-add #'embark-completing-read-prompter
+              :around #'embark-hide-which-key-indicator))
 
 (use-package embark-consult
   :straight t
@@ -215,7 +271,7 @@
   ;; if you want to have consult previews as you move around an
   ;; auto-updating embark collect buffer
   :hook
-  (embark-collect-mode . embark-consult-preview-minor-mode))
+  (embark-collect-mode . consult-preview-at-point-mode))
 
 ;;;;; Marginalia
 ;; Enable richer annotations using the Marginalia package
@@ -255,29 +311,35 @@
   ;; relevant when you use the default completion UI. You may want to also
   ;; enable `consult-preview-at-point-mode` in Embark Collect buffers.
   :hook (completion-list-mode . consult-preview-at-point-mode)
-
-  ;; :custom-face
-  ;; (consult-file ((t (:inherit bespoke-popout))))
-  ;; (consult-line-number ((t (:inherit bespoke-faded))))
-
   :init
   ;; Optionally configure the register formatting. This improves the register
   ;; preview for `consult-register', `consult-register-load',
   ;; `consult-register-store' and the Emacs built-ins.
-  (setq register-preview-delay 0
+  (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format)
 
   ;; Optionally tweak the register preview window.
   ;; This adds thin lines, sorting and hides the mode line of the window.
   (advice-add #'register-preview :override #'consult-register-window)
 
-  ;; Optionally replace `completing-read-multiple' with an enhanced version.
-  (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+  ;; Use Consult to select xref locations with preview
+  (setq xref-show-xrefs-function #'consult-xref
+        xref-show-definitions-function #'consult-xref)
 
   ;; Replace `multi-occur' with `consult-multi-occur', which is a drop-in replacement.
   (fset 'multi-occur #'consult-multi-occur)
-
   :config
+  ;; Optionally configure preview. The default value
+  ;; is 'any, such that any key triggers the preview.
+  ;; (setq consult-preview-key 'any)
+  ;; (setq consult-preview-key (kbd "M-."))
+  ;; (setq consult-preview-key (list (kbd "<S-down>") (kbd "<S-up>")))
+  ;; For some commands and buffer sources it is useful to configure the
+  ;; :preview-key on a per-command basis using the `consult-customize' macro.
+  (consult-customize
+   consult-theme
+   :preview-key '(:debounce 0.2 any))
+
   ;; Preview is manual and immediate
   ;; https://github.com/minad/consult#live-previews
   (setq consult-preview-key (kbd "C-f"))
@@ -294,10 +356,10 @@
   ;; Make consult locate work with macos spotlight
   (setq consult-locate-args "mdfind -name")
 
-  (setq consult-async-min-input 0))
+  (setq consult-async-min-input 2))
 
 ;; Use consult-completing-read for enhanced interface.
-(advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
+;; (advice-add #'completing-read-multiple :override #'consult-completing-read-multiple)
 
 ;;;;; Consult Search At Point
 ;; Search at point with consult
@@ -326,27 +388,24 @@
   (:map corfu-map
    ("C-j"      . corfu-next)
    ("C-k"      . corfu-previous)
-   ("M-d"      . corfu-show-documentation)
    ("C-g"      . corfu-quit)
    ("M-l"      . corfu-show-location)
+   ("M-SPC" . corfu-insert-separator)
    ("<escape>" . corfu-quit)
    ("<return>" . corfu-insert)
-   ;; Or use TAB
-   ("TAB" . corfu-next)
-   ([tab] . corfu-next)
-   ("S-TAB" . corfu-previous)
-   ([backtab] . corfu-previous))
+   ("TAB" . corfu-insert)
+   ([tab] . corfu-insert))
   :custom
   ;; auto-complete
   (corfu-auto t)
   (corfu-min-width 25)
-  (corfu-max-width 80)
+  (corfu-max-width 90)
   (corfu-count 10)
   (corfu-scroll-margin 4)
   (corfu-cycle t)
   ;; TAB cycle if there are only few candidates
   (completion-cycle-threshold 3)
-  (corfu-echo-documentation nil)        ; Use corfu-doc
+  (corfu-echo-documentation nil) ;; use corfu doc
   (corfu-separator  ?_)
   (corfu-quit-no-match 'separator)
   (corfu-quit-at-boundary t)
@@ -368,54 +427,20 @@
   :bind (("M-/" . dabbrev-completion)
          ("C-M-/" . dabbrev-expand)))
 
-;;;;; Kind Icon (For Corfu)
-(use-package kind-icon
-  :straight (:type git :host github :repo "jdtsmith/kind-icon")
-  :after corfu
-  :custom
-  (kind-icon-use-icons t)
-  (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
-  (kind-icon-blend-background nil)
-
-  ;; NOTE kind-icon' depends `svg-lib' which creates a cache directory that
-  ;; defaults to the `user-emacs-directory'. Here, I change that directory to
-  ;; the cache location.
-  (svg-lib-icons-dir (concat lem-cache-dir  "svg-lib/cache/")) ; Change cache dir
-  :config
-  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter) ; Enable `kind-icon'
-
-  ;; Add hook to reset cache so the icon colors match my theme
-  ;; NOTE 2022-02-05: This is a hook which resets the cache whenever I switch
-  ;; the theme using my custom defined command for switching themes. If I don't
-  ;; do this, then the backgound color will remain the same, meaning it will not
-  ;; match the background color corresponding to the current theme. Important
-  ;; since I have a light theme and dark theme I switch between. This has no
-  ;; function unless you use something similar
-  ;;(add-hook 'after-load-theme-hook #'kind-icon-reset-cache)
-  )
-
 ;;;;; Corfu Doc
 (use-package corfu-doc
   :straight (corfu-doc :type git :host github :repo "galeo/corfu-doc")
-  :after corfu
-  ;; :hook   (corfu-mode . corfu-doc-mode)
+  :hook   (corfu-mode . corfu-doc-mode)
   :bind (:map corfu-map
-         ;; This is a manual toggle for the documentation window.
-         ([remap corfu-show-documentation] . corfu-doc-toggle) ; Remap the default doc command
+         ("C-d" . corfu-doc-toggle)
+         ;;        ;; This is a manual toggle for the documentation window.
+         ;;        ([remap corfu-show-documentation] . corfu-doc-toggle) ; Remap the default doc command
          ;; Scroll in the documentation window
-         ("M-p" . corfu-doc-scroll-up)
-         ("M-n" . corfu-doc-scroll-down))
+         ("M-k" . corfu-doc-scroll-up)
+         ("M-j" . corfu-doc-scroll-down))
   :custom
   (corfu-doc-max-width 70)
-  (corfu-doc-max-height 20)
-  :config
-  ;; NOTE 2022-02-05: This is optional. Enabling the mode means that every corfu
-  ;; popup will have corfu-doc already enabled. This isn't desirable for me
-  ;; since (i) most of the time I do not need to see the documentation and (ii)
-  ;; when scrolling through many candidates, corfu-doc makes the corfu popup
-  ;; considerably laggy when there are many candidates. Instead, I rely on
-  ;; manual toggling via `corfu-doc-toggle'.
-  (corfu-doc-mode))
+  (corfu-doc-max-height 20))
 
 ;;;;;; Corfu Extensions (Cape)
 ;; Add extensions
@@ -443,7 +468,7 @@
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  ;; (add-to-list 'completion-at-point-functions #'cape-ispell)
+  (add-to-list 'completion-at-point-functions #'cape-ispell)
   ;; (add-to-list 'completion-at-point-functions #'cape-dict)
   ;; (add-to-list 'completion-at-point-functions #'cape-line)
   ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
@@ -451,35 +476,34 @@
   )
 
 
-;;;;; Company Org Block
-;; Org block completion
-;; https://github.com/xenodium/company-org-block
-(use-package company-org-block
-  :straight (:host github :repo "xenodium/company-org-block")
-  :after org
-  :bind (:map org-mode-map
-         ("C-'" . org-block-capf))
+;;;;; Kind Icon (For Corfu)
+(use-package kind-icon
+  :straight (:type git :host github :repo "jdtsmith/kind-icon")
+  :defer 1
   :custom
-  (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
+  (kind-icon-use-icons t)
+  (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
+  (kind-icon-blend-background nil)
+  ;; NOTE kind-icon' depends on `svg-lib' which creates a cache directory that
+  ;; defaults to the `user-emacs-directory'. Here, I change that directory to
+  ;; the cache location.
+  (svg-lib-icons-dir (concat lem-cache-dir  "svg-lib/cache/")) ; Change cache dir
   :config
-  (require 'org-element)
-  (defalias 'org-block-capf (cape-interactive-capf (cape-company-to-capf 'company-org-block))))
+  (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter) ; Enable `kind-icon'
+
+  ;; NOTE 2022-02-05: Add hook to reset cache so the icon colors match the theme
+  ;; If this isn't done, then the backgound color will remain the same, meaning
+  ;; it will not match the background color corresponding to the current theme.
+  ;; This hook is already set in the `lem-setup-themes.el' file, but you could
+  ;; set it here if you prefer:
+  ;; e.g. (add-hook 'after-load-theme-hook #'kind-icon-reset-cache)
+  ;; kind-icon needs to have its cache flushed after theme change
+  (add-hook 'lambda-themes-after-load-theme-hook #'kind-icon-reset-cache)
+  )
 
 ;;;;; Yasnippet
-(defcustom lem-all-snippets-dir (concat lem-etc-dir "all-snippets/")
-  "DIR for all snippet files."
-  :group 'lambda-emacs
-  :type 'string)
-
-(defcustom lem-snippets-dir (concat lem-all-snippets-dir "lem-snippets/")
-  "DIR for lem snippet files."
-  :group 'lambda-emacs
-  :type 'string)
-
-(defcustom lem-yas-dir (concat lem-all-snippets-dir "yasnippet-snippets/")
-  "DIR for yasnippet snippet files."
-  :group 'lambda-emacs
-  :type 'string)
+(defcustom lem-all-snippets-dir (concat lem-etc-dir "all-snippets/") "DIR for all snippet files."
+  :group 'lambda-emacs)
 
 (use-package yasnippet
   :straight (:type git :host github :repo "joaotavora/yasnippet")
@@ -487,26 +511,20 @@
   :bind (:map yas-minor-mode-map
          ("C-'" . yas-expand))
   :config
-  ;; Make snippets dir if it doesn't exist
-  (dolist (dir (list lem-all-snippets-dir lem-snippets-dir lem-yas-dir))
-    (unless (file-directory-p dir)
-      (make-directory dir t)))
-
   ;; NOTE: need to specify dirs; does not look in non-snippet subdirs
-  (setq yas-snippet-dirs `(,lem-snippets-dir ; custom snippets
-                           ,lem-yas-dir ; yas snippets
+  (setq yas-snippet-dirs `(,(concat lem-all-snippets-dir "lem-snippets/") ; custom snippets
+                           ,(concat lem-all-snippets-dir "yasnippet-snippets/") ; yas snippets
                            ))
-
   (setq yas--loaddir yas-snippet-dirs)
   (setq yas-installed-snippets-dir yas-snippet-dirs)
   (setq yas--default-user-snippets-dir yas-snippet-dirs)
-
   ;; see https://emacs.stackexchange.com/a/30150/11934
   (defun lem-yas-org-mode-hook ()
     (setq-local yas-buffer-local-condition
                 '(not (org-in-src-block-p t))))
   (add-hook 'org-mode-hook #'lem-yas-org-mode-hook)
-  ;; use snippets globally
+  ;; suppress warnings when expanding
+  (add-to-list 'warning-suppress-types '(yasnippet backquote-change))
   (yas-global-mode 1))
 
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
@@ -514,7 +532,7 @@
   :straight (:type git :host github :repo "AndreaCrotti/yasnippet-snippets")
   :after (yasnippet)
   :config
-  (setq yasnippet-snippets-dir (directory-file-name lem-yas-dir)))
+  (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
 
 
 ;;;; Completion Icons
@@ -523,8 +541,8 @@
   :if (display-graphic-p)
   :hook (after-init . all-the-icons-completion-mode))
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 (provide 'lem-setup-completion)
 ;;; lem-setup-completion.el ends here

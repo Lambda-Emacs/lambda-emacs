@@ -39,10 +39,10 @@
   (:map global-map
    ("C-c a" . org-agenda))
   (:map org-mode-map
-   ("M-k" . org-metaup)
-   ("M-j" . org-metadown)
-   ("M-l" . org-metaright)
-   ("M-h" . org-metaleft)
+   ("C-M-k" . org-metaup)
+   ("C-M-j" . org-metadown)
+   ("C-M-l" . org-metaright)
+   ("C-M-h" . org-metaleft)
    ("M-J" . org-shiftdown)
    ("M-K" . org-shiftup)
    ("M-L" . org-shiftright)
@@ -54,6 +54,7 @@
    ("s-M-~" . org-emphasize-with-code-dwim)
    ;; better pasting behavior in org-mode
    ("s-v" . org-yank))
+
   :init
   ;; Org-Emphasis-Regex settings. Set regex boundaries for emphasis.
   ;; Load this before org-mode is loaded.
@@ -66,6 +67,7 @@
           "[:space:]"
           "."
           1))
+
   :custom
   ;; Aesthetics & UI
   (org-adapt-indentation 'headline-data) ;; adapt indentation only for data lines

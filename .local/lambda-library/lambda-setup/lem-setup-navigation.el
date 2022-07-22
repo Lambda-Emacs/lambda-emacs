@@ -52,19 +52,18 @@
 ;; List recent files
 (use-package recentf
   :hook (after-init . recentf-mode)
-  :config
-  (setq recentf-save-file (concat lem-cache-dir "recentf"))
-  ;; remove agenda files from list.
-  (setq recentf-exclude '(org-agenda-files
-                          "bookmarks"
-                          "elpa"
-                          ".cache"
-                          ".cask"
-                          "cache"
-                          "recentf"
-                          "url"
-                          recentf-max-saved-items 500
-                          recentf-max-menu-items 10)))
+  :custom
+  (recentf-exclude '(org-agenda-files
+                     "bookmarks"
+                     "elpa"
+                     ".cache"
+                     ".cask"
+                     "cache"
+                     "recentf"
+                     "url"))
+  (recentf-save-file (concat lem-cache-dir "recentf"))
+  (recentf-max-saved-items 500)
+  (recentf-max-menu-items 10))
 
 ;;;; Goto Address
 ;; This package allows you to click or hit a key sequence while on a

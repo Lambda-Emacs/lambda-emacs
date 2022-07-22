@@ -22,13 +22,18 @@
 (use-package org-modern
   :straight (:type git :host github :repo "minad/org-modern")
   :hook (org-mode . org-modern-mode)
+  :custom-face
+  (org-modern-label ((t (:height 1.0 :inherit ,(if lambda-themes-set-variable-pitch 'variable-pitch 'default)))))
   :custom
-  (org-modern-hide-stars nil)
+  (org-modern-hide-stars nil) ;; compatibility w/org-indent
+  ;; don't use other faces
   (org-modern-priority nil)
   (org-modern-todo nil)
-  (org-modern-tag nil)
+  (org-modern-tag t)
+  ;; Customize this per your font
+  (org-modern-label-border .25)
   ;; Note that these stars allow differentiation of levels
-  ;; Alternative stars "①" "②" "③" "④" "⑤" "⑥" "⑦"
+  ;; "①" "②" "③" "④" "⑤" "⑥" "⑦"
   (org-modern-star ["⦶" "⦷" "⦹" "⊕" "⍟" "⊛" "⏣" "❂"]))
 
 ;;;; Org Modern Indent
@@ -137,9 +142,15 @@ Instead it's simpler to use bash."
 ;;;; Ox-Pandoc
 ;; Export w/pandoc
 (use-package ox-pandoc
-  :when (executable-find "pandoc")
   :straight (:type git :host github :repo "a-fent/ox-pandoc")
-  :after ox)
+  :after ox
+  :custom
+  (org-pandoc-command (expand-file-name "pandoc" homebrew))
+  (org-pandoc-options '((standalone .  t)))
+  (org-pandoc-options-for-docx '((standalone . nil)))
+  (org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex")))
+  (org-pandoc-options-for-latex-pdf '((pdf-engine . "xelatex")))
+  (org-pandoc-format-extensions '(org+smart)))
 
 ;;;; Ox-Pandoc Export Menu Options
 ;; Set pandoc export options

@@ -223,7 +223,7 @@
     (define-key map (kbd "c") 'lem-open-emacsd-in-workspace)
     (define-key map (kbd "m") 'lem-open-email-in-workspace)
     (define-key map (kbd "n") 'lem-open-notes-in-workspace)
-    (define-key map (kbd "p") 'tabspaces-open-or-create-project-and-workspace)
+    (define-key map (kbd "p") 'lem-open-existing-project-and-workspace)
     (define-key map (kbd "q") 'splash-screen-bury)
     (define-key map (kbd "esc") 'splash-screen-bury)
     (define-key map (kbd "k") 'splash-screen-kill)
@@ -233,6 +233,7 @@
 (define-minor-mode lem-splash-mode
   "Emacs minor mode for splash screen."
   :global nil
+  :keymap lem-splash-mode-map
   :group 'lambda-emacs
   :require 'lem-setup-splash.el
 
@@ -240,7 +241,7 @@
   (whitespace-mode -1)
   (linum-mode -1)
   (setq-local buffer-read-only t)
-  (setq-local cursor-type -1)
+  (setq-local cursor-type nil)
   (setq-local hl-line-mode -1)
   (setq-local mode-line-format nil)
   (setq-local header-line-format nil)

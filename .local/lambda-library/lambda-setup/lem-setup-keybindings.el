@@ -175,6 +175,14 @@
            ("Q" . lem-kill-all-emacsen         )
            ("r" . restart-emacs                ))
 
+;;;;; Spelling Keybindings
+(bind-keys :prefix-map lem+spelling-keys
+           :prefix (concat lem-prefix " S")
+           ("b" . consult-flyspell          )
+           ("h" . hydra-spelling/body       )
+           ("n" . flyspell-correct-next     )
+           ("p" . flyspell-correct-previous ))
+
 ;;;;; Search Keybindings
 (bind-keys :prefix-map lem+search-keys
            :prefix (concat lem-prefix " s")
@@ -288,15 +296,16 @@
 ;;;;; Zettelkasten/Notes/Wiki
 (bind-keys :prefix-map lem+notes-keys
            :prefix (concat lem-prefix " n")
+           ("a"  .  consult-notes           )
            ("c"  .  org-roam-capture        )
-           ("C"  .  citar-open-notes        )
            ("i"  .  org-roam-node-insert    )
            ("f"  .  org-roam-node-find      )
            ("g"  .  org-roam-graph          )
            ("n"  .  consult-notes           )
            ("N"  .  org-roam--new-file-named)
-           ("r"  .  lem-find-note-relation  )
-           ("s"  .  consult-notes-search-all)
+           ("r"  .  citar-open-notes        )
+           ("R"  .  consult-notes-org-roam-cited)
+           ("s"  .  consult-notes-search-in-all-notes)
            ("t"  .  org-roam-buffer-toggle))
 
 ;;;; Which Key

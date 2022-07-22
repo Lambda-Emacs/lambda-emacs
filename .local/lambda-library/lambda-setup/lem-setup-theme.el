@@ -46,15 +46,6 @@
              (file-directory-p (concat basedir f)))
         (add-to-list 'custom-theme-load-path (concat basedir f)))))
 
-;;;; What Face?
-;; https://stackoverflow.com/a/66287459/6277148
-(defun what-face (pos)
-  "State the face at point POS in the minibuffer."
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
-    (if face (message "Face: %s" face) (message "No face at %d" pos))))
-
 ;;;; Disable All Custom Themes
 (defun lem-disable-all-themes ()
   "Disable all active themes & reset mode-line."
