@@ -208,7 +208,7 @@ hook after running."
 
 (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
 
-;; Check if there is a user early-config file. If not then load modus-themes as default.
+;; Check if there is a user early-config file.
 (let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
   (when (file-exists-p early-config-file)
     (load early-config-file nil 'nomessage)))
