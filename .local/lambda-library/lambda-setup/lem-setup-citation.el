@@ -120,7 +120,7 @@ With prefix, rebuild the cache before offering candidates."
 
 ;;;; Capf-bibtex
 (use-package capf-bibtex
-  :straight (:local-repo "/Users/roambot/bin/lisp-projects/capf-bibtex")
+  :straight (:type git :host github :repo "mclear-tools/capf-bibtex")
   :hook ((org-mode markdown-mode tex-mode latex-mode reftex-mode) . capf-bibtex-mode)
   :custom
   (capf-bibtex-bibliography
