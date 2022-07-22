@@ -512,6 +512,8 @@ targets."
          ("C-'" . yas-expand))
   :config
   ;; NOTE: need to specify dirs; does not look in non-snippet subdirs
+  (ignore-errors (mkdir (concat lem-all-snippets-dir "lem-snippets/")))
+  (ignore-errors (mkdir (concat lem-all-snippets-dir "yasnippet-snippets/")))
   (setq yas-snippet-dirs `(,(concat lem-all-snippets-dir "lem-snippets/") ; custom snippets
                            ,(concat lem-all-snippets-dir "yasnippet-snippets/") ; yas snippets
                            ))
