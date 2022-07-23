@@ -47,20 +47,23 @@ and bibliography and notes files.
   :PROPERTIES:
   :ID:       20220720T151238.406634
   :END:
-| Variable                   | Purpose                               |
-|----------------------------+---------------------------------------|
-| lem-prefix                 | Prefix for personal keybinds          |
-| lem-ui-default-font        | User default font                     |
-| lem-ui-variable-width-font | Variable width font                   |
-| lem-ui-theme               | User prefererred theme                |
-| lem-custom-themes-dir      | Directory for custom lambda-themes    |
-| lem-bib-notes              | File for reference notes              |
-| lem-bibliography           | User bibliography used in citations   |
-| lem-notes-dir              | Directory for user notes              |
-| lem-citar-note             | Template for citar notes              |
-| lem-project-dir            | Directory for user projects           |
-| lem-user-elisp-dir         | Directory for personal elisp projects |
-| lem-splash-footer          | Splash footer message                 |
+| Variable                   | Purpose                                                |
+|----------------------------+--------------------------------------------------------|
+| lem-prefix                 | Prefix for personal keybinds                           |
+| lem-ui-default-font        | User default font                                      |
+| lem-ui-variable-width-font | Variable width font                                    |
+| lem-persistent-scratch     | Whether to make scratch buffer persist across sessions |
+| lem-scratch-save-dir       | Where to save scratch file                             |
+| lem-scratch-default-dir    | Default dir for scratch buffer                         |
+| lem-ui-theme               | User prefererred theme                                 |
+| lem-custom-themes-dir      | Directory for custom lambda-themes                     |
+| lem-bib-notes              | File for reference notes                               |
+| lem-bibliography           | User bibliography used in citations                    |
+| lem-notes-dir              | Directory for user notes                               |
+| lem-citar-note             | Template for citar notes                               |
+| lem-project-dir            | Directory for user projects                            |
+| lem-user-elisp-dir         | Directory for personal elisp projects                  |
+| lem-splash-footer          | Splash footer message                                  |
 
 =lem-prefix= defaults to =C-c C-SPC= and =lem-ui-theme= defaults to =lambda-themes=. The other variables need to be set by the user in the =config.el= file in the =lem-user-dir=.
 
