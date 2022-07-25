@@ -2154,6 +2154,17 @@
 	       (:authors
 		("Daniel Mendler" . "mail@daniel-mendler.de"))
 	       (:commit . "5de3da1ff55b4567e9df3b234c09427aed2cbcd7"))])
+ (org-notify .
+	     [(0 1 0)
+	      ((emacs
+		(25 1)))
+	      "Notifications for Org-mode" tar
+	      ((:url . "https://github.com/p-m/org-notify")
+	       (:keywords "notification" "todo-list" "alarm" "reminder" "pop-up" "calendar")
+	       (:maintainer "Peter Münster" . "pmrb@free.fr")
+	       (:authors
+		("Peter Münster" . "pmrb@free.fr"))
+	       (:commit . "3a9c55aabdd1204f032fc02fd64ef643e0f19ae6"))])
  (org-real .
 	   [(1 0 5)
 	    ((emacs
