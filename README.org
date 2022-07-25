@@ -75,7 +75,7 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
   provides configuration for various built-in aspects of org, including the
   agenda. The latter provides a variety of useful additional packages, including
   styling with =org-modern=. Note that no capture templates, etc., are set here.
-  The interested user might want to consult my [[https://github.com/mclear-tools/dotemacs/blob/master/.local/lambda-library/lambda-user/cpm-setup-org.el][dotfiles org setup]] as well as the
+  The interested user might want to consult my [[https://github.com/mclear-tools/dotemacs/blob/master/cpm-setup-org.el][dotfiles org]] setup as well as the
   [[https://systemcrafters.cc/emacs-from-scratch/organize-your-life-with-org-mode/][System Crafters]] tutorial.
 - *Programming & Languages*: Editing and Language specific settings. 
 - *Shell*: Configuration for shell and command-line related settings. 
