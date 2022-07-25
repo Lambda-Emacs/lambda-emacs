@@ -1,11 +1,33 @@
-;; Version Control I use git for version control. Magit is a great interface for
-;;  git projects. It's much more pleasant to use than the standard git interface
-;;  on the command line. I've set up some easy keybindings to access magit and
-;;  related packages.
+;;; lem-setup-vc.el --- setup for version control -*- lexical-binding: t -*-
 
-;;; VC
-;;disable emacs vc for git; just use magit!
-;; (setq vc-handled-backends (delq 'Git vc-handled-backends))
+;; Author: Colin McLear
+;; Maintainer: Colin McLear
+
+;; This file is not part of GNU Emacs
+
+;; This program is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Version Control -- I use git for version control. Magit is a great interface
+;; for git projects. It's much more pleasant to use than the standard git
+;; interface on the command line. I've set up some easy keybindings to access
+;; magit and related packages.
+
+;;; Code:
+
+;;;; VC
 (use-package vc
   :straight (:type built-in)
   :hook (after-init . vc-mode)
@@ -24,7 +46,7 @@
   :config
   (setq vc-annotate-display-mode 'scale))
 
-;;; Magit
+;;;; Magit
 (use-package magit
   :commands
   (magit-blame-mode
@@ -104,16 +126,14 @@
   :config
   (setq magit-todos-depth 2))
 
-
-
-;;; Git Navigation
+;;;; Git Navigation
 ;; Go back in Git time
 (use-package git-timemachine :commands git-timemachine)
 
 ;; Give git projects branches the dired treatment
 (use-package gited :commands (gited-list gited-list-branches))
 
-;;; Git Gutter HL (Diff-HL)
+;;;; Git Gutter HL (Diff-HL)
 ;; Nice vc highlighting in margin/fringe
 ;; See https://www.reddit.com/r/emacs/comments/suxc9b/modern_gitgutter_in_emacs/
 ;; And https://github.com/jimeh/.emacs.d/blob/master/modules/version-control/siren-diff-hl.el
@@ -153,7 +173,7 @@
   (define-fringe-bitmap 'diff-hl-delete
     [#b00000011] nil nil '(center repeated)))
 
-;;; Diff Files with Vdiff
+;;;; Diff Files with Vdiff
 (use-package vdiff-magit
   :defer t
   :init
@@ -165,10 +185,19 @@
     (transient-suffix-put 'magit-dispatch "E" :description "vdiff")
     (transient-suffix-put 'magit-dispatch "E" :command 'vdiff-magit)))
 
-;;; Ediff
+;;;; Ediff
 ;; Don't open ediff in new frame
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;;;; Quick Commits
+;; Make a quick commit without opening magit. This is a version of a
+;; workflow I used to use in Sublime Text. Perfect for short commit messages.
+(defun lem-quick-commit ()
+  "Quickly commit the current file-visiting buffer from the mini-buffer."
+  (interactive)
+  (shell-command (concat "Git add " (buffer-file-name) " && Git commit -m '" (read-string "Enter commit message: ") "'")))
 
 ;;; End Setup VC
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-vc)
+;;; lem-setup-vc.el ends here
