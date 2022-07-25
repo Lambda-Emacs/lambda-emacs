@@ -26,6 +26,78 @@
 
 ;;; Code:
 
+;;;; lsp-mode
+(use-package lsp-mode
+  :defer t
+  :commands lsp
+  :custom
+  (lsp-keymap-prefix "C-x l")
+  (lsp-auto-guess-root nil)
+  (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+  (lsp-enable-file-watchers nil)
+  (lsp-enable-folding nil)
+  (read-process-output-max (* 1024 1024))
+  (lsp-keep-workspace-alive nil)
+  (lsp-eldoc-hook nil)
+  :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
+  :hook ((java-mode python-mode go-mode rust-mode
+          js-mode js2-mode typescript-mode web-mode
+          c-mode c++-mode objc-mode haskell-mode) . lsp-deferred)
+  :init
+    (add-to-list 'exec-path "~/.emacs.d/elixir-ls/release")
+  :config
+  (defun lsp-update-server ()
+    "Update LSP server."
+    (interactive)
+    ;; Equals to `C-u M-x lsp-install-server'
+    (lsp-install-server t)))
+
+(use-package lsp-ui
+  :after lsp-mode
+  :diminish
+  :commands lsp-ui-mode
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :bind
+  (:map lsp-ui-mode-map
+        ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+        ([remap xref-find-references] . lsp-ui-peek-find-references)
+        ("C-c u" . lsp-ui-imenu)
+        ("M-i" . lsp-ui-doc-focus-frame))
+  (:map lsp-mode-map
+        ("M-n" . forward-paragraph)
+        ("M-p" . backward-paragraph))
+  :custom
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-border (face-foreground 'default))
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions nil)
+  :config
+  ;; Use lsp-ui-doc-webkit only in GUI
+  (when (display-graphic-p)
+    (setq lsp-ui-doc-use-webkit t))
+  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+    (setq mode-line-format nil))
+  ;; `C-g'to close doc
+  (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide))
+
+(use-package dap-mode
+  :diminish
+  :bind
+  (:map dap-mode-map
+        (("<f12>" . dap-debug)
+         ("<f8>" . dap-continue)
+         ("<f9>" . dap-next)
+         ("<M-f11>" . dap-step-in)
+         ("C-M-<f11>" . dap-step-out)
+         ("<f7>" . dap-breakpoint-toggle))))
+
+
 ;;;; Show Pretty Symbols
 (use-package prog-mode
   :straight (:type built-in)
@@ -254,6 +326,65 @@ Lisp function does not specify a special indentation."
               (current-column)))
            (t $else)))))))
 
+;;;; Erlang
+(use-package erlang
+  :ensure t
+  :defer t
+  :if (executable-find "erl")
+  :config
+  (setq erlang-root-dir (expand-file-name "/usr/lib/erlang"))
+  (require 'erlang-start))
+
+;;;; Elixir
+(use-package elixir-mode
+  :ensure t
+  :init
+  (add-hook 'elixir-mode-hook
+            (lambda ()
+              (push '(">=" . ?\u2265) prettify-symbols-alist)
+              (push '("<=" . ?\u2264) prettify-symbols-alist)
+              (push '("!=" . ?\u2260) prettify-symbols-alist)
+              (push '("==" . ?\u2A75) prettify-symbols-alist)
+              (push '("=~" . ?\u2245) prettify-symbols-alist)
+              (push '("<-" . ?\u2190) prettify-symbols-alist)
+              (push '("->" . ?\u2192) prettify-symbols-alist)
+              (push '("<-" . ?\u2190) prettify-symbols-alist)
+              (push '("|>" . ?\u25B7) prettify-symbols-alist))))
+
+(use-package reformatter
+  :ensure t
+  :config
+                                        ; Adds a reformatter configuration called "+elixir-format"
+                                        ; This uses "mix format -"
+  (reformatter-define +elixir-format
+                      :program "mix"
+                      :args '("format" "-"))
+                                        ; defines a function that looks for the .formatter.exs file used by mix format
+  (defun +set-default-directory-to-mix-project-root (original-fun &rest args)
+    (if-let* ((mix-project-root (and buffer-file-name
+                                     (locate-dominating-file buffer-file-name
+                                                             ".formatter.exs"))))
+        (let ((default-directory mix-project-root))
+          (apply original-fun args))
+      (apply original-fun args)))
+                                        ; adds an advice to the generated function +elxir-format-region that sets the proper root dir
+                                        ; mix format needs to be run from the root directory otherwise it wont use the formatter configuration
+  (advice-add '+elixir-format-region :around #'+set-default-directory-to-mix-project-root)
+                                        ; Adds a hook to the major-mode that will add the generated function +elixir-format-on-save-mode
+                                        ; So, every time we save an elixir file it will try to find a .formatter.exs and then run mix format from
+                                        ; that file's directory
+  (add-hook 'elixir-mode-hook #'+elixir-format-on-save-mode))
+
+;;;; Elm
+(use-package elm-mode
+  :ensure t
+  :if (executable-find "elm")
+  :bind (:map elm-mode-map
+         ("C-c C-d" . elm-oracle-doc-at-point))
+  :config
+  (add-hook 'elm-mode-hook #'elm-oracle-setup-completion)
+  (add-to-list 'company-backends 'company-elm))
+
 ;;;;; Haskell
 (use-package haskell-mode
   :commands haskell-mode)
@@ -303,6 +434,20 @@ Lisp function does not specify a special indentation."
              (string-match-p "\\.zsh\\'" buffer-file-name))
     (sh-set-shell "zsh")))
 (add-hook 'sh-mode-hook 'spacemacs//setup-shell)
+
+;;;; AsciidocPac
+(use-package adoc-mode
+  :ensure t
+  :defer 110
+  :config
+  (add-to-list
+   'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
+  )
+
+;;;; ReStructuredText
+(require 'rst)
+(setq auto-mode-alist
+      (append '(("\\.rst$" . rst-mode)) auto-mode-alist))
 
 ;;;;; YAML
 (use-package yaml-mode
