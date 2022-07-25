@@ -326,6 +326,82 @@ Lisp function does not specify a special indentation."
               (current-column)))
            (t $else)))))))
 
+(use-package slime
+  :ensure t
+  :config
+  (load (expand-file-name "~/.roswell/helper.el"))
+  ;; $ ros config
+  ;; $ ros use sbcl dynamic-space-size=3905
+  ;; query with: (/ (- sb-vm:dynamic-space-end sb-vm:dynamic-space-start) (expt 1024 2))
+
+  ;; set memory of sbcl to your machine's RAM size for sbcl and clisp
+  ;; (but for others - I didn't used them yet)
+  (defun linux-system-ram-size ()
+    (string-to-number (shell-command-to-string "free --mega | awk 'FNR == 2 {print $2}'")))
+  ;; (linux-system-ram-size)
+
+  (setq inferior-lisp-program (concat "ros -Q dynamic-space-size=" (number-to-string (linux-system-ram-size)) " run"))
+
+  ;; and for fancier look I personally add:
+  (setq slime-contribs '(slime-fancy))
+
+  ;; ensure correct indentation e.g. of `loop` form
+  (add-to-list 'slime-contribs 'slime-cl-indent)
+
+  ;; don't use tabs
+  (setq-default indent-tabs-mode nil))
+
+;; (setq slime-lisp-implementations `(("sbcl" ("ros use sbcl && ros run --" "--dynamic-space-size"
+;;                                             ,(number-to-string (linux-system-ram-size))))
+;;                                    ("clisp" ("ros use clisp && ros run --" "-m"
+;;                                              ,(number-to-string (linux-system-ram-size))
+;;                                              "MB"))
+;;                                    ("ecl" ("ros use ecl && ros run --"))
+;;                                    ("cmucl" ("ros use cmucl && ros run --"))))
+;; -LispPac
+
+;; SchemePac
+(use-package geiser
+  :straight t
+  :config
+  (setq geiser-active-implementations '(mit guile))
+  ;; (setq geiser-chez-binary "chez")
+  (setq geiser-mit-binary "/usr/bin/mit-scheme")
+  (setq geiser-default-implementation 'mit)
+  (add-hook 'scheme-mode-hook 'geiser-mode)
+  (add-to-list 'auto-mode-alist
+			   '("\\.sls\\'" . scheme-mode)
+			   '("\\.sc\\'" . scheme-mode)))
+
+(use-package geiser-mit
+  :straight t
+  :after geiser)
+
+(defun geiser-save ()
+  "Save geiser repl contents to input ring."
+  (interactive)
+  (geiser-repl--write-input-ring))
+
+;;;; Clojure
+(use-package flycheck-clj-kondo
+  :ensure t)
+
+(use-package clojure-mode
+  :config
+  (require 'flycheck-clj-kondo))
+
+(use-package cider
+  :defer t
+  :init
+  (progn
+    (add-hook 'clojure-mode-hook 'cider-mode)
+    (add-hook 'clojurescript-mode-hook 'cider-mode)
+    (add-hook 'clojurec-mode-hook 'cider-mode)
+    (add-hook 'cider-repl-mode-hook 'cider-mode))
+  :config
+  (setq cider-repl-display-help-banner nil)
+  (setq cider-auto-mode nil))
+
 ;;;; Erlang
 (use-package erlang
   :ensure t
@@ -385,6 +461,19 @@ Lisp function does not specify a special indentation."
   (add-hook 'elm-mode-hook #'elm-oracle-setup-completion)
   (add-to-list 'company-backends 'company-elm))
 
+;;;; Go
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :custom
+  (rust-format-on-save t)
+  :bind (:map rust-mode-map ("C-c C-c" . rust-run))
+  :config
+  (use-package flycheck-rust
+    :after flycheck
+    :config
+    (with-eval-after-load 'rust-mode
+      (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))))
+
 ;;;;; Haskell
 (use-package haskell-mode
   :commands haskell-mode)
@@ -407,12 +496,306 @@ Lisp function does not specify a special indentation."
   (dolist (pattern '("\\.lua\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'lua-mode))))
 
+;;;; Ocaml
+(use-package caml :defer t
+  :config
+  ;; tuareg: Major mode for editing OCaml code
+  ;; https://github.com/ocaml/tuareg
+  (use-package tuareg
+    :mode (("\\.ml[ily]?$" . tuareg-mode)
+           ("\\.topml$" . tuareg-mode))
+    :init
+    (add-hook 'tuareg-mode-hook (lambda ()
+                                  (abbrev-mode -1)))
+
+    ;; Make OCaml-generated files invisible to filename completion
+    (dolist (ext '(".cmo" ".cmx" ".cma" ".cmxa" ".cmi" ".cmxs" ".cmt" ".cmti" ".annot"))
+      (add-to-list 'completion-ignored-extensions ext))
+
+    (with-eval-after-load 'smartparens
+      ;; don't auto-close apostrophes (type 'a = foo) and backticks (`Foo)
+      (sp-local-pair 'tuareg-mode "'" nil :actions nil)
+      (sp-local-pair 'tuareg-mode "`" nil :actions nil)))
+
+  ;; merlin: Context sensitive completion for OCaml in Vim and Emacs
+  ;; https://github.com/ocaml/merlin/tree/beta
+  (use-package merlin
+    :defer t
+    :config
+    (add-hook 'tuareg-mode-hook 'merlin-mode t)
+    (setq merlin-completion-with-doc t)
+
+    ;; Use opam switch to lookup ocamlmerlin binary
+    (setq merlin-command 'opam)
+
+    (defun my-ocaml-mode-hook()
+      (set (make-local-variable 'company-backends)
+           '((merlin-company-backend company-files :with company-yasnippet)
+             (company-dabbrev-code company-dabbrev))))
+    (add-hook 'tuareg-mode-hook #'my-ocaml-mode-hook)
+    (add-hook 'tuareg-mode-hook 'company-mode))
+
+  ;; OCaml support for Flycheck using Merlin
+  ;; https://github.com/flycheck/flycheck-ocaml
+  (use-package flycheck-ocaml
+    :config
+    (with-eval-after-load 'merlin
+      ;; Disable Merlin's own error checking
+      (setq merlin-error-after-save nil)
+
+      ;; Enable Flycheck checker
+      (flycheck-ocaml-setup))
+    (add-hook 'tuareg-mode-hook 'flycheck-mode))
+
+  ;; utop is an improved toplevel for OCaml. It can run in a terminal or in
+  ;; Emacs. It supports line editing, history, real-time and context sensitive
+  ;; completion, colors, and more.
+  ;; https://github.com/diml/utop
+  (use-package utop :defer t
+    :init
+    (autoload 'utop-minor-mode "utop" "Minor mode for utop" t)
+    (add-hook 'tuareg-mode-hook 'utop-minor-mode)
+    :config
+    (setq utop-command "opam config exec -- utop -emacs")
+    )
+
+  ;; ocp-indent: Indentation tool for OCaml, to be used from editors like Emacs
+  ;; and Vim. http://www.typerex.org/ocp-indent.html
+  ;; https://github.com/OCamlPro/ocp-indent
+  (use-package ocp-indent :defer t
+    :init
+    (add-hook 'tuareg-mode-hook 'ocp-setup-indent)))
+
+;;;; Python
+(use-package elpy
+  :init
+  (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
+  :bind (:map elpy-mode-map
+	     ("<M-left>" . nil)
+	     ("<M-right>" . nil)
+	     ("<M-S-left>" . elpy-nav-indent-shift-left)
+	     ("<M-S-right>" . elpy-nav-indent-shift-right)
+	     ("M-." . elpy-goto-definition)
+	     ("M-," . pop-tag-mark))
+  :config
+  (setq elpy-rpc-backend "jedi"))
+
+(use-package pyenv-mode
+  :init
+  (add-to-list 'exec-path "~/.pyenv/shims")
+  (setenv "WORKON_HOME" "~/.pyenv/versions/")
+  :config
+  (pyenv-mode)
+  :bind
+  ("C-x p e" . pyenv-activate-current-project))
+
+(defun pyenv-activate-current-project ()
+  "Automatically activates pyenv version if .python-version file exists."
+  (interactive)
+  (let ((python-version-directory (locate-dominating-file (buffer-file-name) ".python-version")))
+    (if python-version-directory
+        (let* ((pyenv-version-path (f-expand ".python-version" python-version-directory))
+               (pyenv-current-version (s-trim (f-read-text pyenv-version-path 'utf-8))))
+          (pyenv-mode-set pyenv-current-version)
+          (message (concat "Setting virtualenv to " pyenv-current-version))))))
+
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))  ; or lsp-deferred
+
 ;;;;; PHP
 (use-package php-mode
   :commands php-mode
   :init
   (dolist (pattern '("\\.php\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'php-mode))))
+
+;;;; R (ess)
+(defun japhir/insert-r-pipe ()
+  "Insert the pipe operator in R, |>"
+  (interactive)
+  (just-one-space 1)
+  (insert "|>")
+  (reindent-then-newline-and-indent))
+
+(use-package ess
+  ;; :load-path "/usr/share/emacs/site-lisp/ess"
+  :init (require 'ess-site)  ;; seems like this is needed to load the minor modes as well keybindings don't work without it
+  :hook (
+         ((ess-r-mode inferior-ess-r-mode) . electric-layout-mode)
+         ;; (ess-r-post-run . (lambda ()
+         ;;    (ess-load-file (make-temp-file nil nil nil
+         ;;                                "Sys.setenv(\"DISPLAY\"=\":0.0\")")))
+         )
+  :commands R
+  :bind (:map ess-r-mode-map
+         (";" . ess-insert-assign)
+         ;; RStudio equivalents
+         ("M--" . ess-insert-assign)
+         ("C-S-m" . japhir/insert-r-pipe)
+         :map inferior-ess-r-mode-map
+         (";" . ess-insert-assign)
+         ("M--" . ess-insert-assign)
+         ("C-S-m" . japhir/insert-r-pipe))
+  :config
+  (defun my-org-confirm-babel-evaluate (lang body)
+    (not (or (string= lang "R")
+             (string= lang "python")
+             (string= lang "elisp")
+             (string= lang "emacs-lisp")
+             (string= lang "julia")
+             (string= lang "latex"))))
+  :custom
+  ;; display-buffer-alist
+  ;; '(("*R Dired*"
+  ;;    (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;    (side . right)
+  ;;    (slot . -1)
+  ;;    (window-width . 0.33))
+  ;;   ("*R:"
+  ;;    (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;    (slot . 2)
+  ;;    (window-width . 0.5))
+  ;;   ("*Help*"
+  ;;    (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;    (side . right)
+  ;;    (slot . 1)
+  ;;    (window-width . 0.33)))
+  ;; ess-help-own-frame 'one
+  ;; ess-auto-width 'window
+  (org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
+  (ess-style 'RStudio)
+  (ess-use-auto-complete nil)
+  (ess-use-company t)
+  (ess-indent-with-fancy-comments nil)
+  (ess-pdf-viewer-pref 'emacsclient)
+  (inferior-R-args "--no-restore-history --no-save")
+  (ess-ask-for-ess-directory nil)
+  (ess-R-font-lock-keywords
+   (quote
+    ((ess-R-fl-keyword:modifiers)
+     (ess-R-fl-keyword:fun-defs . t)
+     (ess-R-fl-keyword:keywords . t)
+     (ess-R-fl-keyword:assign-ops . t)
+     (ess-R-fl-keyword:constants . t)
+     (ess-R-fl-keyword:fun-cals . t)
+     (ess-R-fl-keyword:numbers)
+     (ess-R-fl-keyword:operators . t)
+     (ess-R-fl-keyword:delimiters)
+     (ess-R-fl-keyword:=)
+     (ess-R-fl-keyword:F&T)))))
+
+(use-package ess-view
+  :after ess)
+
+;; Put spaces around operators such as +, -, etc.
+(use-package electric-operator
+  :hook ((R-mode ess-r-mode inferior-ess-r-mode) . electric-operator-mode)
+  :config
+  (electric-operator-add-rules-for-mode 'stan-mode
+                                        (cons "," ", ")
+                                        (cons "~" " ~ "))
+
+  (electric-operator-add-rules-for-mode 'ess-r-mode
+                                        (cons ".+" " . + ")
+                                        ;; these should never have spacing around them
+                                        (cons ":" ":") ;; for ranges, should not add space
+                                        (cons "::" "::") ;; to call a function from a package
+                                        (cons ":::" ":::") ;; to call an internal function from a package
+                                        (cons ":=" " := ") ;; walrus operator
+                                        (cons "? " "?")
+                                        (cons "){" ") {")
+                                        (cons "}else{" "} else {")
+                                        (cons "for(" "for (")
+                                        (cons "if(" "if (")
+                                        (cons "while(" "while (")
+                                        (cons "{{" " {{ ") ;; curly-curly tidyverse
+                                        (cons "}}" " }} ")
+                                        (cons "!!" " !!")
+                                        (cons "!!!" " !!!")
+                                        (cons "^" "^") ;;
+                                        (cons "|>" " |> ") ;; r 4.0 built-in pipe
+                                        )
+  :custom
+  (electric-operator-R-named-argument-style 'spaced))
+
+;; polymode for working with .Rmd files etc.
+(use-package polymode :defer t)
+(use-package poly-markdown :defer t)
+
+;;;; Ruby
+(use-package rbenv
+  :hook (after-init . global-rbenv-mode)
+  :init (setq rbenv-show-active-ruby-in-modeline nil
+              rbenv-executable "rbenv"))
+
+;; Run a Ruby process in a buffer
+(use-package inf-ruby
+  :hook ((ruby-mode . inf-ruby-minor-mode)
+         (compilation-filter . inf-ruby-auto-enter)))
+
+;; Ruby YARD comments
+(use-package yard-mode
+  :diminish
+  :hook (ruby-mode . yard-mode))
+
+;; Ruby refactoring helpers
+(use-package ruby-refactor
+  :diminish
+  :hook (ruby-mode . ruby-refactor-mode-launch))
+
+;; Yet Another RI interface for Emacs
+(use-package yari
+  :bind (:map ruby-mode-map ([f1] . yari)))
+
+;; RSpec
+(use-package rspec-mode
+  :diminish
+  :commands rspec-install-snippets
+  :hook (dired-mode . rspec-dired-mode)
+  :config (with-eval-after-load 'yasnippet
+            (rspec-install-snippets)))
+
+;; Rails
+(use-package projectile-rails
+  :diminish
+  :hook (projectile-mode . projectile-rails-global-mode))
+
+;;;; Rust
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :custom
+  (rust-format-on-save t)
+  :bind (:map rust-mode-map ("C-c C-c" . rust-run))
+  :config
+  (use-package flycheck-rust
+    :after flycheck
+    :config
+    (with-eval-after-load 'rust-mode
+      (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))))
+
+;;;; Scala
+(use-package scala-mode
+  :interpreter
+  ("scala" . scala-mode))
+
+;; Enable sbt mode for executing sbt commands
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+  ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+  (setq sbt:program-options '("-Dsbt.supershell=false"))
+  )
+
+(use-package lsp-metals)
 
 ;;;;; Shell Scripts
 (use-package sh-script
