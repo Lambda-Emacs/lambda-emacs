@@ -26,78 +26,6 @@
 
 ;;; Code:
 
-;;;; lsp-mode
-(use-package lsp-mode
-  :defer t
-  :commands lsp
-  :custom
-  (lsp-keymap-prefix "C-x l")
-  (lsp-auto-guess-root nil)
-  (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
-  (lsp-enable-file-watchers nil)
-  (lsp-enable-folding nil)
-  (read-process-output-max (* 1024 1024))
-  (lsp-keep-workspace-alive nil)
-  (lsp-eldoc-hook nil)
-  :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-  :hook ((java-mode python-mode go-mode rust-mode
-          js-mode js2-mode typescript-mode web-mode
-          c-mode c++-mode objc-mode haskell-mode) . lsp-deferred)
-  :init
-    (add-to-list 'exec-path "~/.emacs.d/elixir-ls/release")
-  :config
-  (defun lsp-update-server ()
-    "Update LSP server."
-    (interactive)
-    ;; Equals to `C-u M-x lsp-install-server'
-    (lsp-install-server t)))
-
-(use-package lsp-ui
-  :after lsp-mode
-  :diminish
-  :commands lsp-ui-mode
-  :custom-face
-  (lsp-ui-doc-background ((t (:background nil))))
-  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
-  :bind
-  (:map lsp-ui-mode-map
-        ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-        ([remap xref-find-references] . lsp-ui-peek-find-references)
-        ("C-c u" . lsp-ui-imenu)
-        ("M-i" . lsp-ui-doc-focus-frame))
-  (:map lsp-mode-map
-        ("M-n" . forward-paragraph)
-        ("M-p" . backward-paragraph))
-  :custom
-  (lsp-ui-doc-header t)
-  (lsp-ui-doc-include-signature t)
-  (lsp-ui-doc-border (face-foreground 'default))
-  (lsp-ui-sideline-enable nil)
-  (lsp-ui-sideline-ignore-duplicate t)
-  (lsp-ui-sideline-show-code-actions nil)
-  :config
-  ;; Use lsp-ui-doc-webkit only in GUI
-  (when (display-graphic-p)
-    (setq lsp-ui-doc-use-webkit t))
-  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
-  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
-  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
-    (setq mode-line-format nil))
-  ;; `C-g'to close doc
-  (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide))
-
-(use-package dap-mode
-  :diminish
-  :bind
-  (:map dap-mode-map
-        (("<f12>" . dap-debug)
-         ("<f8>" . dap-continue)
-         ("<f9>" . dap-next)
-         ("<M-f11>" . dap-step-in)
-         ("C-M-<f11>" . dap-step-out)
-         ("<f7>" . dap-breakpoint-toggle))))
-
-
 ;;;; Show Pretty Symbols
 (use-package prog-mode
   :straight (:type built-in)
@@ -155,6 +83,75 @@
   :straight (:type git :host github :repo "victorhge/iedit")
   :bind (:map lem+search-keys
          ("c" . iedit-mode)))
+
+;;;; Language Server
+(use-package lsp-mode
+  :commands lsp
+  :custom
+  (lsp-keymap-prefix "C-x l")
+  (lsp-auto-guess-root nil)
+  (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+  (lsp-enable-file-watchers nil)
+  (lsp-enable-folding nil)
+  (read-process-output-max (* 1024 1024))
+  (lsp-keep-workspace-alive nil)
+  (lsp-eldoc-hook nil)
+  :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
+  :hook ((java-mode python-mode go-mode rust-mode
+                    js-mode js2-mode typescript-mode web-mode
+                    c-mode c++-mode objc-mode haskell-mode) . lsp-deferred)
+  :init
+  (add-to-list 'exec-path "~/.emacs.d/elixir-ls/release")
+  :config
+  (defun lsp-update-server ()
+    "Update LSP server."
+    (interactive)
+    ;; Equals to `C-u M-x lsp-install-server'
+    (lsp-install-server t)))
+
+(use-package lsp-ui
+  :after lsp-mode
+  :commands lsp-ui-mode
+  :bind
+  (:map lsp-ui-mode-map
+   ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+   ([remap xref-find-references] . lsp-ui-peek-find-references)
+   ("C-c u" . lsp-ui-imenu)
+   ("M-i" . lsp-ui-doc-focus-frame))
+  (:map lsp-mode-map
+   ("M-n" . forward-paragraph)
+   ("M-p" . backward-paragraph))
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :custom
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-border (face-foreground 'default))
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions nil)
+  :config
+  ;; Use lsp-ui-doc-webkit only in GUI
+  (when (display-graphic-p)
+    (setq lsp-ui-doc-use-webkit t))
+  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+    (setq mode-line-format nil))
+  ;; `C-g'to close doc
+  (advice-add #'keyboard-quit :before #'lsp-ui-doc-hide))
+
+(use-package dap-mode
+  :bind
+  (:map dap-mode-map
+   (("<f12>" . dap-debug)
+    ("<f8>" . dap-continue)
+    ("<f9>" . dap-next)
+    ("<M-f11>" . dap-step-in)
+    ("C-M-<f11>" . dap-step-out)
+    ("<f7>" . dap-breakpoint-toggle))))
+
 
 ;;;; Languages
 ;;;;; Applescript
@@ -382,7 +379,7 @@ Lisp function does not specify a special indentation."
   (interactive)
   (geiser-repl--write-input-ring))
 
-;;;; Clojure
+;;;;; Clojure
 (use-package flycheck-clj-kondo
   :ensure t)
 
@@ -402,7 +399,7 @@ Lisp function does not specify a special indentation."
   (setq cider-repl-display-help-banner nil)
   (setq cider-auto-mode nil))
 
-;;;; Erlang
+;;;;; Erlang
 (use-package erlang
   :ensure t
   :defer t
@@ -411,7 +408,7 @@ Lisp function does not specify a special indentation."
   (setq erlang-root-dir (expand-file-name "/usr/lib/erlang"))
   (require 'erlang-start))
 
-;;;; Elixir
+;;;;; Elixir
 (use-package elixir-mode
   :ensure t
   :init
@@ -451,7 +448,7 @@ Lisp function does not specify a special indentation."
                                         ; that file's directory
   (add-hook 'elixir-mode-hook #'+elixir-format-on-save-mode))
 
-;;;; Elm
+;;;;; Elm
 (use-package elm-mode
   :ensure t
   :if (executable-find "elm")
@@ -461,7 +458,7 @@ Lisp function does not specify a special indentation."
   (add-hook 'elm-mode-hook #'elm-oracle-setup-completion)
   (add-to-list 'company-backends 'company-elm))
 
-;;;; Go
+;;;;; Go
 (use-package rust-mode
   :mode "\\.rs\\'"
   :custom
@@ -474,11 +471,11 @@ Lisp function does not specify a special indentation."
     (with-eval-after-load 'rust-mode
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))))
 
-;;;;; Haskell
+;;;;;; Haskell
 (use-package haskell-mode
   :commands haskell-mode)
 
-;;;;; HTML
+;;;;;; HTML
 (use-package web-mode
   :commands (web-mode)
   :mode ("\\.html$" . web-mode)
@@ -489,14 +486,14 @@ Lisp function does not specify a special indentation."
         web-mode-enable-auto-closing t
         web-mode-enable-auto-quoting t))
 
-;;;;; Lua
+;;;;;; Lua
 (use-package lua-mode
   :commands lua-mode
   :init
   (dolist (pattern '("\\.lua\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'lua-mode))))
 
-;;;; Ocaml
+;;;;; Ocaml
 (use-package caml :defer t
   :config
   ;; tuareg: Major mode for editing OCaml code
@@ -566,7 +563,7 @@ Lisp function does not specify a special indentation."
     :init
     (add-hook 'tuareg-mode-hook 'ocp-setup-indent)))
 
-;;;; Python
+;;;;; Python
 (use-package elpy
   :init
   (add-to-list 'auto-mode-alist '("\\.py$" . python-mode))
@@ -605,14 +602,14 @@ Lisp function does not specify a special indentation."
                          (require 'lsp-pyright)
                          (lsp))))  ; or lsp-deferred
 
-;;;;; PHP
+;;;;;; PHP
 (use-package php-mode
   :commands php-mode
   :init
   (dolist (pattern '("\\.php\\'"))
     (add-to-list 'auto-mode-alist (cons pattern 'php-mode))))
 
-;;;; R (ess)
+;;;;; R (ess)
 (defun japhir/insert-r-pipe ()
   "Insert the pipe operator in R, |>"
   (interactive)
@@ -725,7 +722,7 @@ Lisp function does not specify a special indentation."
 (use-package polymode :defer t)
 (use-package poly-markdown :defer t)
 
-;;;; Ruby
+;;;;; Ruby
 (use-package rbenv
   :hook (after-init . global-rbenv-mode)
   :init (setq rbenv-show-active-ruby-in-modeline nil
@@ -763,7 +760,7 @@ Lisp function does not specify a special indentation."
   :diminish
   :hook (projectile-mode . projectile-rails-global-mode))
 
-;;;; Rust
+;;;;; Rust
 (use-package rust-mode
   :mode "\\.rs\\'"
   :custom
@@ -776,7 +773,7 @@ Lisp function does not specify a special indentation."
     (with-eval-after-load 'rust-mode
       (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))))
 
-;;;; Scala
+;;;;; Scala
 (use-package scala-mode
   :interpreter
   ("scala" . scala-mode))
@@ -797,7 +794,7 @@ Lisp function does not specify a special indentation."
 
 (use-package lsp-metals)
 
-;;;;; Shell Scripts
+;;;;;; Shell Scripts
 (use-package sh-script
   :commands sh-script-mode
   :init
@@ -818,7 +815,7 @@ Lisp function does not specify a special indentation."
     (sh-set-shell "zsh")))
 (add-hook 'sh-mode-hook 'spacemacs//setup-shell)
 
-;;;; AsciidocPac
+;;;;; AsciidocPac
 (use-package adoc-mode
   :ensure t
   :defer 110
@@ -827,12 +824,12 @@ Lisp function does not specify a special indentation."
    'auto-mode-alist (cons "\\.adoc\\'" 'adoc-mode))
   )
 
-;;;; ReStructuredText
+;;;;; ReStructuredText
 (require 'rst)
 (setq auto-mode-alist
       (append '(("\\.rst$" . rst-mode)) auto-mode-alist))
 
-;;;;; YAML
+;;;;;; YAML
 (use-package yaml-mode
   :commands yaml-mode
   :mode (("\\.yml$" . yaml-mode)
@@ -840,13 +837,13 @@ Lisp function does not specify a special indentation."
   :config
   (add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
 
-;;;;; Plist
+;;;;;; Plist
 (use-package plist-mode
   :straight nil
   :load-path "~/bin/lisp-projects/plist-mode"
   :commands (plist-mode))
 
-;;;;; Vim
+;;;;;; Vim
 (use-package vimrc-mode
   :commands vimrc-mode)
 
