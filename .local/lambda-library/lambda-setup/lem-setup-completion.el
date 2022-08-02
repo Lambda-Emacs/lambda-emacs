@@ -479,7 +479,7 @@ targets."
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
   :straight (:type git :host github :repo "jdtsmith/kind-icon")
-  :defer 1
+  :after corfu
   :custom
   (kind-icon-use-icons t)
   (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
