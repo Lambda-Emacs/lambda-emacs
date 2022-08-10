@@ -26,7 +26,7 @@
       "
 ;; Copyright (C) " (format-time-string "%Y") "
 ;; SPDX-License-Identifier: MIT
-;; Author: Colin McLear
+;; Author:
 ;;; Commentary:
 ;; " _ "
 ;;; Code:
