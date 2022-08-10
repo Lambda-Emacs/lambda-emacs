@@ -53,14 +53,6 @@
 (use-package recentf
   :hook (after-init . recentf-mode)
   :custom
-  (recentf-exclude '(org-agenda-files
-                     "bookmarks"
-                     "elpa"
-                     ".cache"
-                     ".cask"
-                     "cache"
-                     "recentf"
-                     "url"))
   (recentf-save-file (concat lem-cache-dir "recentf"))
   (recentf-max-saved-items 500)
   (recentf-max-menu-items 10))
