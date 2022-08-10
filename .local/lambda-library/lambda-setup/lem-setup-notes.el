@@ -63,7 +63,6 @@
 
 ;; Org-capture note creation with Denote
 (with-eval-after-load 'org-capture
-  (require 'denote-org-capture)
   (add-to-list 'org-capture-templates
                '("n" "New note (with Denote)" plain
                  (file denote-last-path)
