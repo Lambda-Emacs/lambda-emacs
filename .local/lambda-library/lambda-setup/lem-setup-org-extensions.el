@@ -40,7 +40,9 @@
 ;; Make org-modern work better with org-indent
 (use-package org-modern-indent
   :straight (:type git :host github :repo "jdtsmith/org-modern-indent")
-  :hook (org-indent-mode . org-modern-indent-mode))
+  :hook (org-indent-mode . org-modern-indent-mode)
+  :custom-face
+  (org-modern-indent-line ((t (:height 1.0 :inherit lem-ui-default-font :inherit lambda-meek)))))
 
 ;;; Org Autolist (Smart Lists)
 ;; Better list behavior
@@ -143,9 +145,10 @@ Instead it's simpler to use bash."
 ;; Export w/pandoc
 (use-package ox-pandoc
   :straight (:type git :host github :repo "a-fent/ox-pandoc")
+  :if (executable-find "pandoc")
   :after ox
   :custom
-  (org-pandoc-command (expand-file-name "pandoc" homebrew))
+  (org-pandoc-command (executable-find "pandoc"))
   (org-pandoc-options '((standalone .  t)))
   (org-pandoc-options-for-docx '((standalone . nil)))
   (org-pandoc-options-for-beamer-pdf '((pdf-engine . "xelatex")))
