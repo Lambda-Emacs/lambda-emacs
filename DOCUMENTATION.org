@@ -69,6 +69,23 @@ and bibliography and notes files.
 
 In any case, be sure to set these variables in your =config.el= file *before* loading any specific modules. 
 
+
+* Package Management
+Lambda-Emacs uses [[https://github.com/radian-software/straight.el][straight.el]] to manage packages. This easily allows the user to add packages from any source (melpa, elpa, gituhub, gitlab, etc.). It is an /alternative/ to =package.el=, so the user should use it instead of the built-in Emacs package manager. To browse and temporarily install packages use =M-x straight-use-package= and type the name of the relevant package.
+
+Otherwise any packages you would like you can install yourself using straight. You "declare" these packages in your =config.el= file like so, integrating with use-package:
+
+#+begin_src emacs-lisp 
+  (use-package my-package
+    :straight (:type git :host github :repo "my-package")
+    :config
+    (setq my-package-setting))
+#+end_src
+
+Straight only loads packages that are explicitly declared in your config (and in the overall Lambda-Emacs setup). You can also "freeze" your package state, which is extremely helpful if you like to update frequently and run into problems with a package. Use =M-x straight-freeze-versions=. For further details consult the [[https://github.com/radian-software/straight.el#configuration-reproducibility][manual]]. 
+
+When updating packages use =straight-pull-all= for all packages or =straight-pull-package= to update a specific package. See the [[https://github.com/radian-software/straight.el#automatic-repository-management][manual]] for further details. Before installing a package be sure it isn't already installed and configured in =lem-setup-dir=. To see if a package is already installed use =M-x find-library= and type the package name. 
+
 * Code Conventions
 - Where appropriate, use =custom-set-variable= rather than =setq= when dealing with
   =defcustom= variables. For some discussion see [[https://emacs.stackexchange.com/questions/102/advantages-of-setting-variables-with-setq-instead-of-custom-el][this stack exchange discussion]].
