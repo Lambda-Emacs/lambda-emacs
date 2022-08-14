@@ -468,18 +468,16 @@ targets."
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  (add-to-list 'completion-at-point-functions #'cape-ispell)
-  ;; (add-to-list 'completion-at-point-functions #'cape-dict)
-  ;; (add-to-list 'completion-at-point-functions #'cape-line)
-  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
-  )
-
+  (add-to-list 'completion-at-point-functions #'cape-ispell))
+;; (add-to-list 'completion-at-point-functions #'cape-dict)
+;; (add-to-list 'completion-at-point-functions #'cape-line)
+;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
 
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
   :straight (:type git :host github :repo "jdtsmith/kind-icon")
-  :after corfu
+  :defer 1
   :custom
   (kind-icon-use-icons t)
   (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
@@ -498,8 +496,7 @@ targets."
   ;; set it here if you prefer:
   ;; e.g. (add-hook 'after-load-theme-hook #'kind-icon-reset-cache)
   ;; kind-icon needs to have its cache flushed after theme change
-  (add-hook 'lambda-themes-after-load-theme-hook #'kind-icon-reset-cache)
-  )
+  (add-hook 'lambda-themes-after-load-theme-hook #'kind-icon-reset-cache))
 
 ;;;;; Yasnippet
 (defcustom lem-all-snippets-dir (concat lem-etc-dir "all-snippets/") "DIR for all snippet files."
