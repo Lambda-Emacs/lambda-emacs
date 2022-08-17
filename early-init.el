@@ -71,16 +71,14 @@
 ;; https://emacs.stackexchange.com/a/70478/11934
 
 ;; See if native-comp is available
-(when (not (and (fboundp 'native-comp-available-p)
-                (native-comp-available-p)))
-  (message "Native complation is *not* available"))
-
-;; Put eln-cache dir in cache directory
-;; NOTE the method for setting the eln-cache dir depends on the emacs version
-(when (fboundp 'startup-redirect-eln-cache)
-  (if (version< emacs-version "29")
-      (add-to-list 'native-comp-eln-load-path (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))
-    (startup-redirect-eln-cache (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))))
+(cond ((not (and (fboundp 'native-comp-available-p)
+                 (native-comp-available-p)))
+       (message "Native complation is *not* available"))
+      ;; Put eln-cache dir in cache directory
+      ;; NOTE the method for setting the eln-cache dir depends on the emacs version
+      ((version< emacs-version "29")
+       (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))
+      ((startup-redirect-eln-cache (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))))
 
 ;; Silence nativecomp warnings popping up
 (customize-set-variable 'native-comp-async-report-warnings-errors nil)
@@ -186,7 +184,7 @@
 
 ;; Use this variable for checking what the active them setting is vis-a-vis the
 ;; system light or dark mode.
-(defconst active-theme nil "Variable for holding light/dark value of theme appearance.")
+(defvar active-theme nil "Variable for holding light/dark value of theme appearance.")
 
 (defun lem--apply-default-background (appearance)
   "If no other theme is set, load default background color.
