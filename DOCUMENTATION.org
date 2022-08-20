@@ -14,16 +14,20 @@ a "starter-kit" for writing and academic work in the humanities.
 * 𝛌-Emacs File-Directory Structure
 
 The configuration consists of a set of files specific to the user (all stored in
-=lambda-user=) and more general files for 𝛌-Emacs (init.el and the setup files in
-=lambda-setup=). The structure is as follows:
+the value of =lem-user-dir= ("lambda-user" by default)) and more general files for
+𝛌-Emacs (init.el and the setup files in the value of =lem-setup-dir=
+("lambda-setup" by default)). The structure is as follows:
 
 - Directory Structure:
-   + User Emacs directory (.emacs.d)
+   + Emacs directory (.emacs.d)
       - Local directory (.local)
          + Library directory (lambda-library)
-            - Setup files (lambda-setup)
+            - Lambda-Emacs setup files (lambda-setup)
             - External packages (straight)
          + User directory (lambda-user)
+            - user =config.el= file
+            - lambda-user setup-files
+            - user custom themes directory
          + Temp directory (temp)
             - Volatile storage (cache)
             - Non-volatile storage (etc)
@@ -71,7 +75,7 @@ In any case, be sure to set these variables in your =config.el= file *before* lo
 
 
 * Package Management
-Lambda-Emacs uses [[https://github.com/radian-software/straight.el][straight.el]] to manage packages. This easily allows the user to add packages from any source (melpa, elpa, gituhub, gitlab, etc.). It is an /alternative/ to =package.el=, so the user should use it instead of the built-in Emacs package manager. To browse and temporarily install packages use =M-x straight-use-package= and type the name of the relevant package.
+Lambda-Emacs uses [[https://github.com/radian-software/straight.el][straight.el]] to manage "[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html][packages]]" (i.e. lisp libraries that enhance and extend Emacs' functionality). This easily allows the user to add packages from any source (melpa, elpa, gituhub, gitlab, etc.). It is an /alternative/ to =package.el=, so the user should use it instead of the built-in Emacs package manager. To browse and temporarily install packages use =M-x straight-use-package= and type the name of the relevant package.
 
 Otherwise any packages you would like you can install yourself using straight. You "declare" these packages in your =config.el= file like so, integrating with use-package:
 
@@ -85,6 +89,11 @@ Otherwise any packages you would like you can install yourself using straight. Y
 Straight only loads packages that are explicitly declared in your config (and in the overall Lambda-Emacs setup). You can also "freeze" your package state, which is extremely helpful if you like to update frequently and run into problems with a package. Use =M-x straight-freeze-versions=. For further details consult the [[https://github.com/radian-software/straight.el#configuration-reproducibility][manual]]. 
 
 When updating packages use =straight-pull-all= for all packages or =straight-pull-package= to update a specific package. See the [[https://github.com/radian-software/straight.el#automatic-repository-management][manual]] for further details. Before installing a package be sure it isn't already installed and configured in =lem-setup-dir=. To see if a package is already installed use =M-x find-library= and type the package name. 
+
+* Modules
+Lambda-Emacs provides a series of "modules" for allowing the user to get up and running with using Emacs productively. Each module configures a package (or set of packages) and provides some reasonable defaults. The modules should be thought of as a starting point for scaffolding the user's configuration. A module only provides such configuration if it is loaded, either in the user's =config.el= file or by default if there is no such file. 
+
+The user can override a module in one of two ways. They can load it and change settings in the user =config.el= file. This is perhaps the best way to make small tweaks to any setting in an =lem-setup-*= file. Alternatively, if the user wants to make more elaborate changes, the best thing to do is copy over any desired setup from the original module to a new user module (which the user creates in the =lem-user-dir=) and to load that module instead. This allows the user to easily keep track of any upstream changes to the Lambda-Emacs setup files while also providing whatever custom configuration the user wants. 
 
 * Code Conventions
 - Where appropriate, use =custom-set-variable= rather than =setq= when dealing with
