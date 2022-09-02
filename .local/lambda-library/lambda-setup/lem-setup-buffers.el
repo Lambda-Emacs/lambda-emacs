@@ -217,8 +217,8 @@
 (use-package popper
   :straight (:type git :host github :repo "karthink/popper")
   :hook (after-init . popper-mode)
-  :bind (("C-`"   . popper-toggle-latest)
-         ("M-`"   . popper-cycle)
+  :bind (("M-`"   . popper-toggle-latest)
+         ("C-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
   :custom
   (popper-window-height 20)
