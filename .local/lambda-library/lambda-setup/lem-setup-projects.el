@@ -98,7 +98,7 @@ to directory DIR."
   (interactive)
   (cl-assert (string-match-p "^\\(http\\|https\\|ssh\\)://" (current-kill 0)) nil "No URL in clipboard")
   (let* ((url (current-kill 0))
-         (download-dir (expand-file-name "~/Downloads/"))
+         (download-dir lem-user-elisp-dir)
          (project-dir (concat (file-name-as-directory download-dir)
                               (file-name-base url)))
          (default-directory download-dir)
