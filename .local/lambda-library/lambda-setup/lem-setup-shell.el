@@ -5,7 +5,8 @@
 ;; Author: Colin McLear <mclear@unl.edu>
 ;; Keywords: tools, lisp, terminals
 
-;; Shell
+;; Shell & General terminal settings
+
 ;;; Compilation
 (use-package compile
   :straight (:type built-in)
