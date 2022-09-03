@@ -43,8 +43,6 @@
   ;; Use only with GUI emacs
   :if (display-graphic-p)
   :if (< (length command-line-args) 2)
-  :custom-face
-  (dashboard-heading ((t (:inherit font-lock-variable-name-face))))
   :custom
   ;; Set info & center
   (dashboard-set-init-info t)
