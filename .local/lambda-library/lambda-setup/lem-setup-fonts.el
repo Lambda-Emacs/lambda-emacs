@@ -97,10 +97,9 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 ;;;;; Scale Text
 ;; When using `text-scale-increase', this sets each 'step' to about one point size.
 (setq text-scale-mode-step 1.08)
-(global-set-key (kbd "s-=") 'text-scale-increase)
-(global-set-key (kbd "s--") 'text-scale-decrease)
-(global-set-key (kbd "s-0") 'text-scale-adjust)
-(global-set-key (kbd "s-=") 'text-scale-adjust)
+(bind-key* "s-=" #'text-scale-increase)
+(bind-key* "s--" #'text-scale-decrease)
+(bind-key* "s-0" #'text-scale-adjust)
 
 ;;;;; Icons
 (use-package all-the-icons
