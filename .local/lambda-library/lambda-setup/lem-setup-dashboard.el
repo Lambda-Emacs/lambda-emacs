@@ -48,7 +48,10 @@
   (dashboard-set-init-info t)
   (dashboard-center-content t)
   ;; Header
-  (dashboard-startup-banner (concat lem-library-dir "lambda-logo.png"))
+  (dashboard-startup-banner (concat lem-library-dir (if (eq active-theme 'dark-theme)
+                                                        "lambda-logo-inv.png"
+                                                      "lambda-logo.png")))
+
   (dashboard-banner-logo-title "Welcome to Lambda-Emacs")
   (dashboard-image-banner-max-width 200)
   (dashboard-image-banner-max-height 200)
@@ -57,7 +60,7 @@
   (dashboard-footer-icon (all-the-icons-fileicon "emacs"
                                                  :height 1
                                                  :v-adjust -0.15
-                                                 :face 'font-lock-string-face))
+                                                 :face 'font-lock-constant-face))
   ;; Set project backend
   (dashboard-projects-backend 'project-el)
   ;; Add icons
