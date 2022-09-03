@@ -74,14 +74,12 @@
            ("R" . crux-rename-buffer-and-file        )
            ("s" . consult-buffer-other-window        )
            ("S" . hydra-spelling/body                )
-           ("t" . lem-open-dir-in-iterm              )
+           ("t" . tab-bar-new-tab                    )
            ("[" . lem-previous-user-buffer           )
            ("]" . lem-next-user-buffer               )
            ("{" . tab-bar-switch-to-prev-tab         )
            ("}" . tab-bar-switch-to-next-tab         )
-           ("<backtab>" . crux-switch-to-previous-buffer)
-           ("TAB" . lem-tab-bar-select-tab-dwim      )
-           ("C-M-t" . tab-bar-new-tab                ))
+           ("<backtab>" . crux-switch-to-previous-buffer))
 
 ;;;;; Comment Keybindings
 (bind-keys :prefix-map lem+comment-wrap-keys
@@ -98,18 +96,16 @@
 (bind-keys :prefix-map lem+config-keys
            :prefix (concat lem-prefix " C")
            ("a" . lem-setup-kill-and-archive-region     )
-           ("c" . goto-custom.el                        )
-           ("d" . goto-dotfiles.org                     )
-           ("D" . goto-emacs-dir                        )
-           ("e" . goto-early-init.el                    )
+           ("c" . lem-goto-custom.el                    )
+           ("d" . lem-goto-emacs-dir                    )
+           ("e" . lem-goto-early-init.el                )
            ("f" . lem-find-lambda-file                  )
            ("k" . lem-byte-compile-dotemacs             )
            ("K" . lem-delete-byte-compiled-files        )
-           ("l" . load-config                           )
-           ("i" . goto-init.el                          )
+           ("l" . lem-load-config                       )
+           ("i" . lem-goto-init.el                      )
            ("I" . lem-load-init-file                    )
-           ("o" . goto-org-files                        )
-           ("p" . goto-pandoc-config                    )
+           ("o" . lem-goto-org-files                    )
            ("s" . lem-search-lambda-files               ))
 
 ;;;;; Compile Keybindings
@@ -323,7 +319,8 @@
   (setq which-key-idle-secondary-delay 0.05)
   ;; use widow
   (setq which-key-popup-type 'side-window)
-  (setq which-key-allow-imprecise-window-fit t)
+  (setq which-key-side-window-max-height 0.5)
+  (setq which-key-allow-imprecise-window-fit nil)
   (setq which-key-side-window-location 'top)
   ;; use minibuffer
   ;; (which-key-setup-minibuffer)

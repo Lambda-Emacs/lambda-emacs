@@ -138,7 +138,6 @@
 ;;;; Backups / Auto-Save
 (use-package files
   :straight (:type built-in)
-  :hook (after-init . auto-save-mode)
   :init
   ;; backups
   (let ((backup-dir (concat lem-cache-dir "backup")))
@@ -165,7 +164,7 @@
    delete-auto-save-files t
    create-lockfiles nil)
   :config
-  (setq  make-backup-files t                ; backup of a file the first time it is saved.
+  (setq  make-backup-files t               ; backup of a file the first time it is saved.
          backup-by-copying t               ; don't clobber symlinks
          version-control t                 ; version numbers for backup files
          delete-old-versions t             ; delete excess backup files silently

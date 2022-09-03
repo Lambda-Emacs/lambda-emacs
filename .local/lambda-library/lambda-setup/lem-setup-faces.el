@@ -99,6 +99,7 @@
   ;; (hl-line-inhibit-highlighting-for-modes '(dired-mode))
   ;; (hl-line-overlay-priority -100) ;; sadly, seems not observed by diredfl
   (hl-line-when-idle-interval 5)
+  (hl-line-inhibit-highlighting-for-modes '(eshell-mode))
   :config
   (toggle-hl-line-when-idle 1 t))
 

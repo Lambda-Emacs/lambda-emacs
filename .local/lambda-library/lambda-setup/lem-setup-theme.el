@@ -93,7 +93,6 @@
   (shell-command "dark-mode on"))
 
 ;;;; Theme & menubar toggle
-;; (setq active-theme 'light-theme)
 (defun toggle-dark-light-theme ()
   "Coordinate setting of theme with os theme and toggle."
   (interactive)
