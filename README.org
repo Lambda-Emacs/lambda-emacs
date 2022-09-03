@@ -74,7 +74,8 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
   The interested user might want to consult my [[https://github.com/mclear-tools/dotemacs/blob/master/cpm-setup-org.el][dotfiles org]] setup as well as the
   [[https://systemcrafters.cc/emacs-from-scratch/organize-your-life-with-org-mode/][System Crafters]] tutorial.
 - *Programming & Languages*: Editing and Language specific settings. 
-- *Shell*: Configuration for shell and command-line related settings. 
+- *Shell*: Configuration for compilation, shell, and terminal (vterm).
+- *Eshell*: Configuration for the Emacs eshell  
 - *Workspaces*: Version control, tab settings, buffer-isolation, and other
   configuration for the built-in project.el and tab-bar.el
 
