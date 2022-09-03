@@ -87,6 +87,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 ;;;;; Font Lock
 (use-package font-lock
   :straight (:type built-in)
+  :defer 1
   :custom
   ;; Max font lock decoration (set nil for less)
   (font-lock-maximum-decoration t)
@@ -99,11 +100,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 (global-set-key (kbd "s-=") 'text-scale-increase)
 (global-set-key (kbd "s--") 'text-scale-decrease)
 (global-set-key (kbd "s-0") 'text-scale-adjust)
-
-;;;;; Bidirectional Text
-;; Disable bidirectional text support. Why?
-;; .. slight performance improvement.
-(setq bidi-display-reordering nil)
+(global-set-key (kbd "s-=") 'text-scale-adjust)
 
 ;;;;; Icons
 (use-package all-the-icons
@@ -120,8 +117,12 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-;; No ugly button for checkboxes
-(setq widget-image-enable nil)
+(use-package wid-edit
+  :straight (:type built-in)
+  :defer 1
+  :custom
+  ;; No ugly button for checkboxes
+  (widget-image-enable nil))
 
 (provide 'lem-setup-fonts)
 ;;; lem-setup-fonts.el ends here
