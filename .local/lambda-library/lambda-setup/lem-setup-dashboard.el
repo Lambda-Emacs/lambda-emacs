@@ -49,6 +49,11 @@
   ;; Set info & center
   (dashboard-set-init-info t)
   (dashboard-center-content t)
+  ;; Header
+  (dashboard-startup-banner (concat lem-library-dir "lambda-logo.png"))
+  (dashboard-banner-logo-title "Welcome to Lambda-Emacs")
+  (dashboard-image-banner-max-width 200)
+  (dashboard-image-banner-max-height 200)
   ;; Footer
   (dashboard-set-footer t)
   (dashboard-footer-icon (all-the-icons-fileicon "emacs"
@@ -63,30 +68,20 @@
   (dashboard-items '((bookmarks . 5)
                      (recents  . 8)
                      (projects . 5)))
-  :config/el-patch
-  ;; Don't use imagemagick to create banner as it is notably worse in image quality
-  (defun dashboard-insert-image-banner (banner)
-    "Display an image BANNER."
-    (when (file-exists-p banner)
-      (let* ((title dashboard-banner-logo-title)
-             (spec
-              (create-image banner))
-             (size (image-size spec))
-             (width (car size))
-             (left-margin (max 0 (floor (- dashboard-banner-length width) 2))))
-        (goto-char (point-min))
-        (insert "\n")
-        (insert (make-string left-margin ?\ ))
-        (insert-image spec)
-        (insert "\n\n")
-        (when title
-          (insert (make-string (max 0 (floor (/ (- dashboard-banner-length
-                                                   (+ (length title) 1)) 2))) ?\ ))
-          (insert (format "%s\n\n" (propertize title 'face 'dashboard-banner-logo-title)))))))
   :config
-  (dashboard-setup-startup-hook))
+  (dashboard-setup-startup-hook)
+  (add-hook 'dashboard-mode-hook #'lem-dashboard-hide-modeline))
 
 ;;;; Dashboard Functions
+;; Hide modeline
+(defun lem-dashboard-hide-modeline ()
+  "Hide modeline in the dashboard buffer."
+  (let* ((dash-buffer (get-buffer "*dashboard*")))
+    (with-current-buffer dash-buffer
+      (setq-local hl-line-mode -1)
+      (setq-local mode-line-format nil)
+      (setq-local header-line-format nil))))
+
 ;; Functions to call dashboard when it kas been killed or not loaded
 (defun lem-dashboard ()
   "Load dashboard and swith to buffer."
