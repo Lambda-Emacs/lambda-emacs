@@ -22,7 +22,6 @@
 ;; All packages related to core narrowing and completion functions
 
 ;;; Code:
-
 ;;;; Narrowing Completion
 
 ;;;;; Vertico

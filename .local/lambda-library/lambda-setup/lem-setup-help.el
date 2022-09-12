@@ -87,11 +87,13 @@
 
 (use-package helpful
   :defer t
-  :bind (("C-h f"   . #'helpful-function)
-         ("C-h k"   . #'helpful-key)
-         ("C-h o"   . #'helpful-symbol)
-         ("C-h v"   . #'helpful-variable)
-         ("C-h C-." . #'helpful-at-point)
+  :bind (;; Remap standard commands.
+         ([remap display-local-help] . helpful-at-point)
+         ([remap describe-function]  . helpful-callable)
+         ([remap describe-variable]  . helpful-variable)
+         ([remap describe-symbol]    . helpful-symbol)
+         ([remap describe-key]       . helpful-key)
+         ([remap describe-command]   . helpful-command)
          ("C-h C-l" . #'find-library))
   :init
   ;; HACK: - see https://github.com/hlissner/doom-emacs/issues/6063

@@ -103,6 +103,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 
 ;;;;; Icons
 (use-package all-the-icons
+  :if (display-graphic-p)
   :defer t)
 
 (use-package font-lock+

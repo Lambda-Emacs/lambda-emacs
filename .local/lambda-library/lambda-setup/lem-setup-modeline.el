@@ -39,8 +39,11 @@
   (lambda-line-space-top +.50)
   (lambda-line-space-bottom -.50)
   (lambda-line-symbol-position 0.1)
+  :custom-face
+  (lambda-line-visual-bell ((t (:background "red3"))))
   :config
   (lambda-line-mode)
+  (lambda-line-visual-bell-config)
   ;; set divider line in footer
   (when (eq lambda-line-position 'top)
     (setq-default mode-line-format (list "%_"))
