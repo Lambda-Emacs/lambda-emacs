@@ -137,7 +137,7 @@
 
 ;;; Virtualenvwrapper
 (use-package virtualenvwrapper
-  :after (:any eshell sane-term ansi-term)
+  :after (:any eshell ansi-term)
   :config
   (venv-initialize-interactive-shells) ;; if you want interactive shell support
   (venv-initialize-eshell) ;; if you want eshell support
