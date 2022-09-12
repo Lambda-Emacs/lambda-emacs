@@ -43,7 +43,7 @@
 
 (use-package denote
   :straight (:type git :host github :repo "protesilaos/denote")
-  :commands (denote denote-create-note)
+  :commands (denote denote-create-note denote-link-ol-store)
   :custom
   (denote-file-type nil) ;; use org
   (denote-allow-multi-word-keywords nil) ;; single word keywords only
