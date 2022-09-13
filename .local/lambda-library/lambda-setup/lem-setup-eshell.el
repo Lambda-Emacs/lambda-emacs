@@ -25,7 +25,7 @@
   :straight (:type built-in)
   :after eshell
   :custom
-  (eshell-list-files-after-cd t)
+  (eshell-list-files-after-cd nil)
   (eshell-last-dir-ring-file-name (concat lem-etc-dir "eshell/lastdir")))
 
 (use-package em-ls
@@ -337,7 +337,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
   ;; Enable in all Eshell buffers.
   (eshell-syntax-highlighting-global-mode +1))
 
-;;;; Prettier File Listing (ls)
+;;;; Better File Listing (ls)
 ;; https://github.com/mnewt/dotemacs/blob/master/init.el
 ;; Make files and dirs clickable as well as prettyfied w/icons and suffixes
 
@@ -382,7 +382,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
   :group 'all-the-icons
   :type 'boolean)
 
-(defun lem-eshell-prettify (file)
+(defun lem-eshell-better-ls (file)
   "Add features to listings in `eshell/ls' output.
 The features are:
 1. Add decoration like 'ls -F':
@@ -419,7 +419,7 @@ This function is meant to be used as advice around
      (cdr file)
      )))
 
-(advice-add #'eshell-ls-annotate :filter-return #'lem-eshell-prettify)
+(advice-add #'eshell-ls-annotate :filter-return #'lem-eshell-better-ls)
 
 ;;;; Useful Functions
 
@@ -566,13 +566,13 @@ So if we're connected with sudo to 'remotehost'
   ;; Text wrapping
   (visual-line-mode +1)
   (set-display-table-slot standard-display-table 0 ?\ ))
-
 (add-hook 'eshell-mode-hook #'lem-setup-eshell)
 
-;; (defun lem-eshell-list-files-on-cd ()
-;;   (eshell-))
-
-;; (add-hook 'eshell-directory-change-hook #'lem-eshell-list-files-on-cd)
+;; ls files on cd
+(defun lem-eshell-list-files-on-cd ()
+  "Use ls to show files w/directories first."
+  (eshell/ls "-X"))
+(add-hook 'eshell-directory-change-hook #'lem-eshell-list-files-on-cd)
 
 ;;; End Shell
 ;;; Provide Eshell
