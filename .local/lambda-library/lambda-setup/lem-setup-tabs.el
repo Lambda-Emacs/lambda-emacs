@@ -39,8 +39,9 @@
              tab-bar-switch-to-prev-tab)
   :custom
   (tab-bar-show 1)
-  ;; Unless another file/buffer is designated, start from scratch buffer
-  (tab-bar-new-tab-choice "*scratch*")
+  (tab-bar-tab-hints t) ;; show numbers in tabs
+  ;; Unless another file/buffer is designated, start from workspace scratch buffer
+  (tab-bar-new-tab-choice (concat "*scratch-" (tabspaces--name-tab-by-project-or-default) "*"))
   (tab-bar-select-tab-modifiers '(super))
   (tab-bar-close-tab-select 'recent)
   (tab-bar-new-tab-to 'rightmost)
@@ -53,6 +54,39 @@
                     lem--tab-bar-suffix
                     tab-bar-format-add-tab))
   :config
+  ;; Tab bar numbers
+  ;; https://christiantietze.de/posts/2022/02/emacs-tab-bar-numbered-tabs/
+  (defvar lem-tab-bar--circle-numbers-alist
+    '((0 . "⓪")
+      (1 . "①")
+      (2 . "②")
+      (3 . "③")
+      (4 . "④")
+      (5 . "⑤")
+      (6 . "⑥")
+      (7 . "⑦")
+      (8 . "⑧")
+      (9 . "⑨"))
+    "Alist of integers to strings of circled unicode numbers.")
+
+  (defun lem--tab-bar-tab-name-format (tab i)
+    (let ((current-p (eq (car tab) 'current-tab))
+          (tab-num (if (and tab-bar-tab-hints (< i 10))
+                       (alist-get i lem-tab-bar--circle-numbers-alist) "")))
+      (propertize
+       (concat
+        " "
+        tab-num
+        (propertize " " 'display '(space :width (4)))
+        (alist-get 'name tab)
+        (or (and tab-bar-close-button-show
+                 (not (eq tab-bar-close-button-show
+                          (if current-p 'non-selected 'selected)))
+                 tab-bar-close-button)
+            "")
+        (propertize " " 'display '(space :width (4))))
+       'face (funcall tab-bar-tab-face-function tab))))
+
   ;; See https://github.com/rougier/nano-modeline/issues/33
   (defun lem--tab-bar-suffix ()
     "Add empty space.
@@ -60,20 +94,6 @@ This ensures that the last tab's face does not extend to the end
 of the tab bar."
     " ")
 
-  (defun lem--tab-bar-tab-name-format (tab i)
-    (let ((current-p (eq (car tab) 'current-tab)))
-      (propertize
-       (concat
-        (propertize " " 'display '(space :width (8)))
-        (if tab-bar-tab-hints (format "%d " i) "")
-        (alist-get 'name tab)
-        (or (and tab-bar-close-button-show
-                 (not (eq tab-bar-close-button-show
-                          (if current-p 'non-selected 'selected)))
-                 tab-bar-close-button)
-            "")
-        (propertize " " 'display '(space :width (8))))
-       'face (funcall tab-bar-tab-face-function tab))))
 
   ;; https://protesilaos.com/codelog/2020-08-03-emacs-custom-functions-galore/
   (defun lem-tab-bar-select-tab-dwim ()
