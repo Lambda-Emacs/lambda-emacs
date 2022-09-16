@@ -23,28 +23,37 @@
 
 ;;; Code:
 
-;;;; Scrolling
-(measure-time
- (message "*Load scrolling settings...*")
- ;; Reduce cursor lag by a tiny bit by not auto-adjusting `window-vscroll'
- ;; for tall lines.
- (setq auto-window-vscroll nil)
- ;; Settings for better cursor
- ;; see https://two-wrongs.com/centered-cursor-mode-in-vanilla-emacs
- ;;  (NOTE: A number of 101+ disables re-centering.)
- ;; Smooth scrolling
- (setq-default mouse-wheel-scroll-amount '(1 ((shift) . 1))
-               mouse-wheel-progressive-speed t
-               mouse-wheel-follow-mouse t
-               scroll-conservatively 10000
-               scroll-step 1
-               scroll-margin 1
-               scroll-preserve-screen-position 1))
+;;;; Hooks
+;; See https://github.com/doomemacs/doomemacs/blob/master/lisp/doom-ui.el
+(defvar lem-switch-buffer-hook nil
+  "A list of hooks run after changing the current buffer.")
 
- ;; (setq scroll-preserve-screen-position t
- ;;       scroll-conservatively 101
- ;;       maximum-scroll-margin 0.5
- ;;       scroll-margin 15))
+(defun lem-run-switch-buffer-hooks-h (&optional _)
+  (let ((gc-cons-threshold most-positive-fixnum)
+        (inhibit-redisplay t))
+    (run-hooks 'lem-switch-buffer-hook)))
+
+;; Initialize `lem-switch-buffer-hook'
+(add-hook 'window-buffer-change-functions #'lem-run-switch-buffer-hooks-h)
+;; `window-buffer-change-functions' doesn't trigger for files visited via the server.
+(add-hook 'server-visit-hook #'lem-run-switch-buffer-hooks-h)
+
+;;;; Scrolling
+(use-package emacs
+  :straight (:type built-in)
+  :config
+  (message "*Loading scrolling settings...*")
+  ;; Reduce cursor lag by a tiny bit by not auto-adjusting `window-vscroll'
+  ;; for tall lines.
+  (setq auto-window-vscroll nil)
+  ;; Settings for better cursor
+  ;; see https://two-wrongs.com/centered-cursor-mode-in-vanilla-emacs
+  ;;  (NOTE: A number of 101+ disables re-centering.)
+  ;; Smooth scrolling
+  (setq-default scroll-conservatively 10000
+                scroll-step 1
+                scroll-margin 1
+                scroll-preserve-screen-position 1))
 
 (use-package pixel-scroll
   :straight (:type built-in)
@@ -52,8 +61,7 @@
   (pixel-scroll-precision-mode t)
   (pixel-scroll-precision-interpolate-page t)
   :config
-  (pixel-scroll-mode 1)
-  )
+  (pixel-scroll-mode 1))
 
 (use-package mwheel
   :straight (:type built-in)
