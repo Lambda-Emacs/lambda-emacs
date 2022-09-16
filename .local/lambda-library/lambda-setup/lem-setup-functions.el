@@ -22,6 +22,7 @@
 
 ;;; Code:
 ;;;; 𝛌-Emacs Configuration Functions
+
 ;;;;; Call an emacs instance
 ;; Call an emacs instance for testing
 

@@ -300,7 +300,7 @@ emacs-version string on the kill ring."
   "Load a default configuration for 𝛌-Emacs."
   (message "
 ;; ======================================================
-;; "*Loading default setup of 𝛌-Emacs Modules*"
+;; *Loading default setup of 𝛌-Emacs Modules*
 ;; ======================================================")
   (measure-time
    (cl-dolist (mod (list
