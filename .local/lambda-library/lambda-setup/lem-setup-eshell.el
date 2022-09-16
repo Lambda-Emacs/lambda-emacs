@@ -267,7 +267,6 @@ PWD is not in a git repo (or the git command is not found)."
     ("e" "find-file $1")
     ("ec" "find-file $1")
     ("ed" (eshell/cd "~/.emacs.d"))
-    ("emacs" "find-file $1")
     ("ff" "find-file $1")
     ("fo" "find-file-other-window $1")
     ("fr" (consult-recent-file))
@@ -422,6 +421,14 @@ This function is meant to be used as advice around
 (advice-add #'eshell-ls-annotate :filter-return #'lem-eshell-better-ls)
 
 ;;;; Useful Functions
+
+;;;;; Eshell in Home Directory
+(defun lem-eshell-home ()
+  "Open eshell in home dir."
+  (interactive)
+  (let ((default-directory "~/"))
+    (require 'eshell)
+    (eshell)))
 
 ;;;;; Clear Eshell
 ;; Make eshell act like a standard unix terminal.
