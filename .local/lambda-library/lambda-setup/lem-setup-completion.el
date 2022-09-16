@@ -142,7 +142,7 @@
 
 ;; A few more useful configurations...
 (measure-time
- (message "*Loading further completion settings...*")
+ (message "*Loading further vertico completion settings...*")
  ;; Add prompt indicator to `completing-read-multiple'.
  (defun crm-indicator (args)
    (cons (concat "[CRM] " (car args)) (cdr args)))
