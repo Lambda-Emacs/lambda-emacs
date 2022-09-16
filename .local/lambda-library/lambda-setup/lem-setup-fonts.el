@@ -16,10 +16,19 @@
   ;; Set this to nil to set symbols entirely separately
   (use-default-font-for-symbols t)
   :config
-  ;; Use symbola for proper symbol glyphs
-  (when (member "Symbola" (font-family-list))
-    (set-fontset-font
-     t 'symbol "Symbola" nil))
+  ;; Use symbola for proper symbol glyphs, but have some fallbacks
+  (cond ((member "Symbola" (font-family-list))
+         (set-fontset-font
+          t 'symbol "Symbola" nil))
+        ((member "Apple Symbols" (font-family-list))
+         (set-fontset-font
+          t 'symbol "Apple Symbols" nil))
+        ((member "Symbol" (font-family-list))
+         (set-fontset-font
+          t 'symbol "Symbol" nil))
+        ((member "Segoe UI Symbol" (font-family-list))
+         (set-fontset-font
+          t 'symbol "Segoe UI Symbol" nil)))
   ;; Use Apple emoji
   ;; NOTE that emoji here must be set to unicode to get color emoji
   (when (and (>= emacs-major-version 28)
@@ -102,9 +111,26 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 (bind-key* "s-0" #'text-scale-adjust)
 
 ;;;;; Icons
+(defun lem-init-all-the-icons-fonts ()
+  (when (fboundp 'set-fontset-font)
+    (dolist (font (list "Weather Icons"
+                        "github-octicons"
+                        "FontAwesome"
+                        "all-the-icons"
+                        "file-icons"
+                        "Material Icons"))
+      (set-fontset-font t 'unicode font nil 'prepend))))
+
 (use-package all-the-icons
   :if (display-graphic-p)
-  :defer t)
+  :commands (all-the-icons-octicon
+             all-the-icons-faicon
+             all-the-icons-fileicon
+             all-the-icons-wicon
+             all-the-icons-material
+             all-the-icons-alltheicon)
+  :preface
+  (add-hook 'after-setting-font-hook #'lem-init-all-the-icons-fonts))
 
 (use-package font-lock+
   :defer 1)
