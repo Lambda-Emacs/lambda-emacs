@@ -105,6 +105,21 @@
       (tab-bar-rename-tab "Notes")
       (lem-notebook))))
 
+;;;;; Eshell Workspace
+(defun lem-open-new-eshell-and-workspace ()
+  "Open an eshell buffer in its own workspace"
+  (interactive)
+  (let ((popper--reference-modes '(vterm-mode term-mode shell-mode compilation-mode help-mode))
+        (popper--reference-names '("^\\*vterm.*\\*$" "^\\*term.*\\*$" "^\\*shell.*\\*$" "\\*Async Shell Command\\*" "Output\\*$" "\\*Messages\\*")))
+    (if (member "Eshell" (tabspaces--list-tabspaces))
+        (tab-bar-switch-to-tab "Eshell")
+      (progn
+        (tab-bar-new-tab)
+        (tab-bar-rename-tab "Eshell")
+        (lem-eshell-home)
+        (rename-buffer "eshell-workspace")
+        (delete-other-windows)))))
+
 ;;;;; Terminal Workspace
 (defun lem-vterm-workspace ()
   "Open vterm in home dir in its own workspace"
