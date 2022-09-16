@@ -37,7 +37,7 @@
 ;;;; Save place
 ;; Everyone remember where we parked.
 (use-package saveplace
-  :hook (after-init . save-place-mode)
+  :hook (emacs-startup . save-place-mode)
   :config
   (setq save-place-file (concat lem-cache-dir "saved-places"))
   (setq save-place-forget-unreadable-files nil))
@@ -51,7 +51,7 @@
 ;;;; Recent files
 ;; List recent files
 (use-package recentf
-  :hook (after-init . recentf-mode)
+  :hook (emacs-startup . recentf-mode)
   :custom
   (recentf-save-file (concat lem-cache-dir "recentf"))
   (recentf-max-saved-items 500)

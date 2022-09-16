@@ -285,7 +285,11 @@ emacs-version string on the kill ring."
   "Measure the time it takes to evaluate BODY."
   `(let ((time (current-time)))
      ,@body
-     (message "*Elapsed time: %.06f*" (float-time (time-since time)))))
+     (message "
+;; ======================================================
+;; *Elapsed time: %.06f*
+;; ======================================================"
+              (float-time (time-since time)))))
 
 ;;;;; Load Configuration Modules
 ;; Lambda-Emacs loads a series of lisp-libraries or 'modules'. Which modules are
@@ -294,7 +298,10 @@ emacs-version string on the kill ring."
 
 (defun lem--default-modules ()
   "Load a default configuration for 𝛌-Emacs."
-  (message "*Loading default setup of 𝛌-Emacs Modules*")
+  (message "
+;; ======================================================
+;; "*Loading default setup of 𝛌-Emacs Modules*"
+;; ======================================================")
   (measure-time
    (cl-dolist (mod (list
                     ;; Core modules
@@ -348,7 +355,10 @@ emacs-version string on the kill ring."
 
 (defun lem--minimal-modules ()
   "Load 𝛌-Emacs with a minimal set of modules."
-  (message "*Loading 𝛌-Emacs, with minimal modules*")
+  (message "
+;; ======================================================
+;; *Loading 𝛌-Emacs, with minimal modules*
+;; ======================================================")
   (measure-time
    (cl-dolist (mod (list
                     ;; Core modules

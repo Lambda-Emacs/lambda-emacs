@@ -38,7 +38,7 @@
          ("C-j"      . #'vertico-next            )
          ("C-k"      . #'vertico-previous        )
          ("M-RET"    . #'vertico-exit))
-  :hook (after-init . vertico-mode)
+  :hook (emacs-startup . vertico-mode)
   :config
   ;; Cycle through candidates
   (setq vertico-cycle t)
@@ -374,7 +374,7 @@ targets."
 (use-package corfu
   :straight (:type git :host github :repo "minad/corfu")
   :hook
-  (after-init . global-corfu-mode)
+  (emacs-startup . global-corfu-mode)
   :bind
   (:map corfu-map
    ("C-j"      . corfu-next)
@@ -468,7 +468,7 @@ targets."
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
   :straight (:type git :host github :repo "jdtsmith/kind-icon")
-  :defer 1
+  :after corfu
   :custom
   (kind-icon-use-icons t)
   (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background

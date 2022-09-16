@@ -171,7 +171,7 @@
 (defun display-startup-echo-area-message ()
   (message ""))
 
-;;;; Default Theme & Custom Settings
+;;;; Custom Settings & Default Theme
 ;; Ordinarily we might leave theme loading until later in the init process, but
 ;; this leads to the initial frame flashing either light or dark color,
 ;; depending on the system settings. Let's avoid that by loading a default theme
@@ -206,9 +206,12 @@ hook after running."
 
 (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
 
-;; Check if there is a user early-config file.
+;; Check if there is a user early-config file. If not load default theme.
 (let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
-  (when (file-exists-p early-config-file)
-    (load early-config-file nil 'nomessage)))
+  (if (file-exists-p early-config-file)
+      (load early-config-file nil 'nomessage))
+  (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background))
+
+
 
 ;;; early-init.el ends here

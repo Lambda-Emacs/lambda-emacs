@@ -41,7 +41,7 @@
   (tab-bar-show 1)
   (tab-bar-tab-hints t) ;; show numbers in tabs
   ;; Unless another file/buffer is designated, start from workspace scratch buffer
-  (tab-bar-new-tab-choice (concat "*scratch-" (tabspaces--name-tab-by-project-or-default) "*"))
+  (tab-bar-new-tab-choice "*scratch*")
   (tab-bar-select-tab-modifiers '(super))
   (tab-bar-close-tab-select 'recent)
   (tab-bar-new-tab-to 'rightmost)
@@ -66,12 +66,19 @@
       (6 . "⑥")
       (7 . "⑦")
       (8 . "⑧")
-      (9 . "⑨"))
+      (9 . "⑨")
+      (10 . "⑩")
+      (11 . "⑪")
+      (12 . "⑫")
+      (13 . "⑬")
+      (14 . "⑭")
+      (15 . "⑮"))
+
     "Alist of integers to strings of circled unicode numbers.")
 
   (defun lem--tab-bar-tab-name-format (tab i)
     (let ((current-p (eq (car tab) 'current-tab))
-          (tab-num (if (and tab-bar-tab-hints (< i 10))
+          (tab-num (if (and tab-bar-tab-hints (< i 16))
                        (alist-get i lem-tab-bar--circle-numbers-alist) "")))
       (propertize
        (concat
@@ -125,11 +132,12 @@ questions.  Otherwise use completion to select the tab."
 ;;;; Tab Workspaces
 
 (use-package tabspaces
-  :straight (:type git :host github :repo "mclear-tools/tabspaces")
-  :hook (after-init . tabspaces-mode)
+  ;; :straight (:type git :host github :repo "mclear-tools/tabspaces")
+  :straight (:local-repo "~/bin/lisp-projects/tabspaces/")
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
          ("p" . tabspaces-open-or-create-project-and-workspace))
+  :hook (emacs-startup . tabspaces-mode)
   :custom
   (tabspaces-use-filtered-buffers-as-default t)
   (tabspaces-default-tab "Home")
