@@ -30,7 +30,7 @@
          (set-fontset-font
           t 'symbol "Segoe UI Symbol" nil)))
   ;; Use Apple emoji
-  ;; NOTE that emoji here must be set to unicode to get color emoji
+  ;; NOTE that emoji here may need to be set to unicode to get color emoji
   (when (and (>= emacs-major-version 28)
              (member "Apple Color Emoji" (font-family-list)))
     (set-fontset-font t 'emoji
@@ -119,7 +119,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
                         "all-the-icons"
                         "file-icons"
                         "Material Icons"))
-      (set-fontset-font t 'unicode font nil 'prepend))))
+      (set-fontset-font t 'unicode font nil 'append))))
 
 (use-package all-the-icons
   :if (display-graphic-p)

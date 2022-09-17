@@ -145,8 +145,6 @@
 ;; If set, load user theme, otherwise load lambda-themes
 (cond ((bound-and-true-p lem-ui-theme)
        (load-theme lem-ui-theme))
-      ((eq active-theme 'light-theme)
-       (load-theme 'lambda-light t))
       ((eq active-theme 'dark-theme)
        (load-theme 'lambda-dark t))
       (t
