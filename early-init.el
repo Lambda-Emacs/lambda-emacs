@@ -138,7 +138,7 @@
 ;; Resizing the Emacs frame can be an expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
 ;; larger than the system default.
-(setq-default frame-inhibit-implied-resize t)
+(setq-default frame-inhibit-implied-resize nil)
 ;; HACK: Don't show size info (or anything else) in frame title
 (setq-default frame-title-format "\n")
 ;; Disable start-up screen
@@ -171,6 +171,8 @@
 (defun display-startup-echo-area-message ()
   (message ""))
 
+
+
 ;;;; Custom Settings & Default Theme
 ;; Ordinarily we might leave theme loading until later in the init process, but
 ;; this leads to the initial frame flashing either light or dark color,
@@ -185,6 +187,8 @@
 ;; Use this variable for checking what the active them setting is vis-a-vis the
 ;; system light or dark mode.
 (defvar active-theme nil "Variable for holding light/dark value of theme appearance.")
+(defvar light-theme nil "Variable for holding light value of theme appearance.")
+(defvar dark-theme nil "Variable for holding dark value of theme appearance.")
 
 (defun lem--apply-default-background (appearance)
   "If no other theme is set, load default background color.
@@ -204,14 +208,11 @@ hook after running."
                 (set-foreground-color "#eceff1")
                 (set-background-color "#282b35"))))))
 
-(add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
-
 ;; Check if there is a user early-config file. If not load default theme.
 (let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
   (if (file-exists-p early-config-file)
-      (load early-config-file nil 'nomessage))
-  (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background))
-
+      (load early-config-file nil 'nomessage)
+    (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)))
 
 
 ;;; early-init.el ends here
