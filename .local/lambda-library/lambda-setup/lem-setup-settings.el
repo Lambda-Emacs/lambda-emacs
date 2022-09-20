@@ -61,9 +61,8 @@
   ;; Follow symlinks
   (setq find-file-visit-truename t))
 
-(use-package paragraphs
+(use-package emacs
   :straight (:type built-in)
-  :defer 1
   :custom
   ;; Single space between sentences is more widespread than double
   (sentence-end-double-space nil))
