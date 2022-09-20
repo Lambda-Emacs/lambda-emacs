@@ -275,7 +275,7 @@
   (when (get-buffer "*splash*")
     (kill-buffer)))
 
-;;; Define Minor Mode
+;;;;; Define Minor Mode
 ;; Custom splash screen
 (defvar lem-splash-mode-map
   (let ((map (make-sparse-keymap)))
@@ -318,7 +318,9 @@
         truncate-lines nil
         inhibit-startup-message t
         inhibit-startup-echo-area-message t)
-  (goto-char (point-min)))
+  (goto-char (point-min))
+  (forward-button 1)
+  (end-of-line))
 
 ;; Install hook after frame parameters have been applied and only if
 ;; no option on the command line
@@ -326,11 +328,15 @@
          (not (member "--file"      command-line-args))
          (not (member "--insert"    command-line-args))
          (not (member "--find-file" command-line-args)))
-    (progn
-      (add-hook 'emacs-startup-hook #'lem-splash-screen)
-      (add-hook 'window-state-change-hook #'lem-splash-refresh)
-      (add-hook 'window-configuration-change-hook  #'lem-splash-refresh)
-      (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh)))
+    (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks))
+
+(defun lem-splash--setup-splash-hooks ()
+  "Initialize splash and setup hooks."
+  (progn
+    (lem-splash-screen)
+    (add-hook 'window-state-change-hook #'lem-splash-refresh)
+    (add-hook 'window-configuration-change-hook  #'lem-splash-refresh)
+    (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh)))
 
 (defun lem-splash-refresh ()
   "Refresh & recenter splash after window switch."
