@@ -138,7 +138,7 @@
 ;; Resizing the Emacs frame can be an expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
 ;; larger than the system default.
-(setq-default frame-inhibit-implied-resize nil)
+(setq-default frame-inhibit-implied-resize t)
 ;; HACK: Don't show size info (or anything else) in frame title
 (setq-default frame-title-format "\n")
 ;; Disable start-up screen
