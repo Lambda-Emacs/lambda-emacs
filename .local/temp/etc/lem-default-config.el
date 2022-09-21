@@ -40,7 +40,7 @@
 ;; Set fonts
 (custom-set-variables
  '(lem-ui-default-font
-   '(:font "Menlo" :height 120)))
+   '(:font "Courier" :height 120)))
 
 (custom-set-variables
  '(lem-ui-variable-width-font
