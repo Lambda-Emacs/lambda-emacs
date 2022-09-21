@@ -152,10 +152,14 @@
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
 ;; Disable tool and scrollbars. These are just clutter (the scrollbar
 ;; also impacts performance).
-(push '(tool-bar-lines . 0)   default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-;; no titlebar (disable if not using a WM)
-(push '(undecorated . t) default-frame-alist)
+(setq-default initial-frame-alist
+              (append (list
+                       '(fullscreen . maximized)
+                       '(internal-border-width . 18)
+                       '(tool-bar-lines . 0)
+                       '(vertical-scroll-bars . nil)
+                       '(horizontal-scroll-bars . nil)
+                       '(undecorated . t))))
 
 ;; And set these to nil so users don't have to toggle the modes twice to
 ;; reactivate them.
@@ -170,8 +174,6 @@
 ;; https://emacs.stackexchange.com/a/437/11934
 (defun display-startup-echo-area-message ()
   (message ""))
-
-
 
 ;;;; Custom Settings & Default Theme
 ;; Ordinarily we might leave theme loading until later in the init process, but
