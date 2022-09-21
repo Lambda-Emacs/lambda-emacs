@@ -55,7 +55,7 @@
   "Face for splash image."
   :group 'faces)
 
-;;; Splash Variables
+;;;; Splash Variables
 
 ;; Init info
 ;; See https://github.com/emacs-dashboard/emacs-dashboard/blob/master/dashboard-widgets.el
@@ -127,7 +127,7 @@
 (defvar ksep "   "
   "Separator for title and key.")
 
-;;; Define Splash
+;;;; Define Splash
 
 (defun lem-splash--erase ()
   ;; check if splash exists and switch if so
@@ -275,7 +275,7 @@
   (when (get-buffer "*splash*")
     (kill-buffer)))
 
-;;;;; Define Minor Mode
+;;;; Define Minor Mode
 ;; Custom splash screen
 (defvar lem-splash-mode-map
   (let ((map (make-sparse-keymap)))
@@ -296,7 +296,6 @@
   :keymap lem-splash-mode-map
   :group 'lambda-emacs
   :require 'lem-setup-splash.el
-  
   (buffer-disable-undo)
   (whitespace-mode -1)
   (linum-mode -1)
@@ -313,7 +312,6 @@
 
   (when (>= emacs-major-version 26)
     (display-line-numbers-mode -1))
-  
   (setq inhibit-startup-screen t
         truncate-lines nil
         inhibit-startup-message t
@@ -322,13 +320,15 @@
   (forward-button 1)
   (end-of-line))
 
-;; Install hook after frame parameters have been applied and only if
-;; no option on the command line
-(if (and (not (member "--no-splash" command-line-args))
-         (not (member "--file"      command-line-args))
-         (not (member "--insert"    command-line-args))
-         (not (member "--find-file" command-line-args)))
-    (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks))
+;;;; Splash Setup & Refresh Functions 
+(defun lem-splash-refresh ()
+  "Refresh & recenter splash after window switch."
+  (interactive)
+  (when (string= (buffer-name) "*splash*")
+    (progn
+      (ignore-errors
+        (lem-splash-screen-kill)
+        (lem-splash-screen)))))
 
 (defun lem-splash--setup-splash-hooks ()
   "Initialize splash and setup hooks."
@@ -338,14 +338,13 @@
     (add-hook 'window-configuration-change-hook  #'lem-splash-refresh)
     (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh)))
 
-(defun lem-splash-refresh ()
-  "Refresh & recenter splash after window switch."
-  (interactive)
-  (when (string= (buffer-name) "*splash*")
-    (progn
-      (ignore-errors
-        (lem-splash-screen-kill)
-        (lem-splash-screen)))))
+;; Install hook after frame parameters have been applied and only if
+;; no option on the command line
+(when (and (not (member "--no-splash" command-line-args))
+           (not (member "--file"      command-line-args))
+           (not (member "--insert"    command-line-args))
+           (not (member "--find-file" command-line-args)))
+  (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks))
 
 (provide 'lem-setup-splash)
 
