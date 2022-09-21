@@ -37,14 +37,14 @@
 ;;;; User Vars
 
 ;;;;; Set Fonts
-;; Uncomment and set fonts
-;; (custom-set-variables
-;;  '(lem-ui-default-font
-;;    '(:font "" :height 130)))
+;; Set fonts
+(custom-set-variables
+ '(lem-ui-default-font
+   '(:font "Menlo" :height 120)))
 
-;; (custom-set-variables
-;;  '(lem-ui-variable-width-font
-;;    '(:font "" :height 140)))
+(custom-set-variables
+ '(lem-ui-variable-width-font
+   '(:font "" :height 120)))
 
 
 ;;;;; Org Directories
