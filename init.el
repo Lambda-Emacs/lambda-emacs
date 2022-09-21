@@ -57,6 +57,9 @@ Use this for transient files that are generated on the fly like
 caches and ephemeral/temporary files. Anything that may need to
 be cleared if there are problems.")
 
+(defconst lem-default-config-file (concat lem-etc-dir "lem-default-config.el")
+  "A sample default configuration of the personal config file to get the user started.")
+
 ;;;;; User Configuration Variables
 ;; Find the user configuration file
 (defconst lem-config-file (expand-file-name "config.el" lem-user-dir)
@@ -412,7 +415,7 @@ emacs-version string on the kill ring."
 
  ;; Load default config
  ((lem--emacs-switches "-default")
-  (message "*Loading 𝛌-Emacs default configuration files.*")
+  (message "*Loading 𝛌-Emacs default modules")
   (lem--default-modules)
   ;; MacOS settings - defer load until after init.
   (when sys-mac
@@ -424,73 +427,11 @@ emacs-version string on the kill ring."
 
  ;; Ask if user would like to create a config file.
  ((when (not (file-exists-p lem-config-file))
-    (if (yes-or-no-p "Would you like to create a user configuration file? ")
-        (progn
-          (with-temp-file lem-config-file
-            (insert ";;; config.el --- summary -*- lexical-binding: t -*-\n"
-                    ";; This file is not part of GNU Emacs\n\n"
-                    ";; This program is free software: you can redistribute it and/or modify\n"
-                    ";; it under the terms of the GNU General Public License as published by\n"
-                    ";; the Free Software Foundation, either version 3 of the License, or\n"
-                    ";; (at your option) any later version.\n\n"
-                    ";; This program is distributed in the hope that it will be useful,\n"
-                    ";; but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
-                    ";; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
-                    ";; GNU General Public License for more details.\n\n"
-                    ";; You should have received a copy of the GNU General Public License\n"
-                    ";; along with this program.  If not, see <https://www.gnu.org/licenses/>.\n"
-                    ";;; Commentary:\n\n"
-                    ";; Personal config file\n"
-                    ";; This file contains all user-specific configuration settings for 𝛌-Emacs.\n\n"
-                    ";;; Code:\n\n"
-                    ";; Run minimal set of modules (user should configure this how they wish)\n"
-                    ";;;; Load Modules\n\n"
-                    ";; Load modules\n"
-                    "(measure-time\n"
-                    "(cl-dolist (mod (list\n\n"
-                    ";; Core modules\n"
-                    "'lem-setup-libraries\n"
-                    "'lem-setup-settings \n"
-                    "'lem-setup-functions\n"
-                    "'lem-setup-macros   \n"
-                    "'lem-setup-server   \n"
-                    "'lem-setup-scratch  \n\n"
-                    ";; UI modules       \n"
-                    "'lem-setup-frames   \n"
-                    "'lem-setup-windows  \n"
-                    "'lem-setup-buffers  \n"
-                    "'lem-setup-fonts    \n"
-                    "'lem-setup-completion \n"
-                    "'lem-setup-keybindings\n"
-                    "'lem-setup-help       \n"
-                    "'lem-setup-modeline   \n"
-                    "'lem-setup-theme      \n"
-                    "'lem-setup-splash     \n\n"
-                    ";; Navigation & Search modules\n"
-                    "'lem-setup-navigation\n"
-                    "'lem-setup-dired     \n"
-                    "'lem-setup-search    \n\n"
-                    ";; Project & Tab/Workspace modules\n"
-                    "'lem-setup-vc       \n"
-                    "'lem-setup-projects \n"
-                    "'lem-setup-tabs     \n"
-                    "'lem-setup-workspaces\n"
-                    ";; Writing modules\n"
-                    "'lem-setup-writing\n"
-                    "'lem-setup-citation\n"
-                    ";; Programming modules\n"
-                    "'lem-setup-programming))\n"
-                    "(require mod)))       \n\n"
-                    ";; MacOS settings - defer load until after init. \n"
-                    "(when sys-mac                                    \n"
-                    "  (measure-time                                  \n"
-                    "   (run-with-idle-timer 1 nil                    \n"
-                    "                        (function require)       \n"
-                    "                        'lem-setup-macos nil t)))\n\n"
-                    ";;; Provide\n"
-                    "(provide 'config)\n"
-                    ";;; config.el ends here")
-            (load-file lem-config-file))))))
+    (yes-or-no-p "Would you like to create a user configuration file? ")
+    (progn
+      (with-temp-file lem-config-file
+        (insert-file lem-default-config-file))
+      (load-file lem-config-file))))
  ;; Load default modules
  (t
   (message "*Loading 𝛌-Emacs default configuration files.*")
