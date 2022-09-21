@@ -127,10 +127,27 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
         (t
          (message "Please install fonts."))))
 
+(defun lem-font--init-all-the-icons-fonts ()
+  (when (fboundp 'set-fontset-font)
+    (dolist (font (list "Weather Icons"
+                        "github-octicons"
+                        "FontAwesome"
+                        "all-the-icons"
+                        "file-icons"
+                        "Material Icons"))
+      (set-fontset-font t 'unicode font nil 'prepend))))
+
 (use-package all-the-icons
-  :defer t
-  :config
-  (lem-font--icon-check))
+  :if (display-graphic-p)
+  :commands (all-the-icons-octicon
+             all-the-icons-faicon
+             all-the-icons-fileicon
+             all-the-icons-wicon
+             all-the-icons-material
+             all-the-icons-alltheicon)
+  :preface
+  (add-hook 'after-setting-font-hook #'lem-font--icon-check)
+  (add-hook 'after-setting-font-hook #'lem-font--init-all-the-icons-fonts))
 
 (use-package font-lock+
   :defer 1)
