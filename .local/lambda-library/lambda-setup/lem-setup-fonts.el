@@ -13,7 +13,8 @@
   :straight (:type built-in)
   :custom
   ;; Set this to nil to set symbols entirely separately
-  (use-default-font-for-symbols nil)
+  ;; Need it set to `t` in order to display org-modern-indent faces properly
+  (use-default-font-for-symbols t)
   :config
   ;; Use symbola for proper symbol glyphs, but have some fallbacks
   (cond ((lem-font-available-p "Symbola")
