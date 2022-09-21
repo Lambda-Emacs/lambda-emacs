@@ -38,13 +38,13 @@
 
 ;;;;; Set Fonts
 ;; Set fonts
-(custom-set-variables
- '(lem-ui-default-font
-   '(:font "Courier" :height 120)))
+;; (custom-set-variables
+;;  '(lem-ui-default-font
+;;    '(:font "" :height 120)))
 
-(custom-set-variables
- '(lem-ui-variable-width-font
-   '(:font "" :height 120)))
+;; (custom-set-variables
+;;  '(lem-ui-variable-width-font
+;;    '(:font "" :height 120)))
 
 
 ;;;;; Org Directories
