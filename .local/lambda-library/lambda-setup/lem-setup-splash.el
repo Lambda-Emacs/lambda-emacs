@@ -344,7 +344,7 @@
            (not (member "--file"      command-line-args))
            (not (member "--insert"    command-line-args))
            (not (member "--find-file" command-line-args)))
-  (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks))
+  (add-hook 'emacs-startup-hook #'lem-splash--setup-splash-hooks))
 
 (provide 'lem-setup-splash)
 
