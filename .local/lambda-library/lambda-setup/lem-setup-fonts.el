@@ -11,28 +11,27 @@
 
 (use-package fontset
   :straight (:type built-in)
-  :defer 1
   :custom
   ;; Set this to nil to set symbols entirely separately
-  (use-default-font-for-symbols t)
+  (use-default-font-for-symbols nil)
   :config
   ;; Use symbola for proper symbol glyphs, but have some fallbacks
-  (cond ((member "Symbola" (font-family-list))
+  (cond ((lem-font-available-p "Symbola")
          (set-fontset-font
           t 'symbol "Symbola" nil))
-        ((member "Apple Symbols" (font-family-list))
+        ((lem-font-available-p "Apple Symbols")
          (set-fontset-font
           t 'symbol "Apple Symbols" nil))
-        ((member "Symbol" (font-family-list))
+        ((lem-font-available-p "Symbol")
          (set-fontset-font
           t 'symbol "Symbol" nil))
-        ((member "Segoe UI Symbol" (font-family-list))
+        ((lem-font-available-p "Segoe UI Symbol")
          (set-fontset-font
           t 'symbol "Segoe UI Symbol" nil)))
   ;; Use Apple emoji
   ;; NOTE that emoji here may need to be set to unicode to get color emoji
   (when (and (>= emacs-major-version 28)
-             (member "Apple Color Emoji" (font-family-list)))
+             (lem-font-available-p "Apple Color Emoji"))
     (set-fontset-font t 'emoji
                       '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
   ;; Fall back font for missing glyph
@@ -111,26 +110,27 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 (bind-key* "s-0" #'text-scale-adjust)
 
 ;;;;; Icons
-(defun lem-init-all-the-icons-fonts ()
-  (when (fboundp 'set-fontset-font)
-    (dolist (font (list "Weather Icons"
-                        "github-octicons"
-                        "FontAwesome"
-                        "all-the-icons"
-                        "file-icons"
-                        "Material Icons"))
-      (set-fontset-font t 'unicode font nil 'append))))
+;; Check for icons FIXME: this should be less verbose but haven't been able to
+;; get a `dolist` function working ¯\_(ツ)_/¯
+(defun lem-font--icon-check ()
+  (cond ((and (lem-font-available-p "Weather Icons")
+              (lem-font-available-p "github-octicons")
+              (lem-font-available-p "FontAwesome")
+              (lem-font-available-p "all-the-icons")
+              (lem-font-available-p "file-icons")
+              (lem-font-available-p "Material Icons"))
+         (message "Icon fonts already installed!"))
+        ((and (not (member unicode-fonts (font-family-list)))
+              (not sys-win))
+         (message "Installing necessary fonts")
+         (all-the-icons-install-fonts 'yes))
+        (t
+         (message "Please install fonts."))))
 
 (use-package all-the-icons
-  :if (display-graphic-p)
-  :commands (all-the-icons-octicon
-             all-the-icons-faicon
-             all-the-icons-fileicon
-             all-the-icons-wicon
-             all-the-icons-material
-             all-the-icons-alltheicon)
-  :preface
-  (add-hook 'after-setting-font-hook #'lem-init-all-the-icons-fonts))
+  :defer t
+  :config
+  (lem-font--icon-check))
 
 (use-package font-lock+
   :defer 1)
