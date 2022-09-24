@@ -84,7 +84,6 @@
 ;; Highlight lines. You can toggle this off
 (use-package hl-line+
   :straight t
-  :defer 1
   :hook
   ;; https://tech.toryanderson.com/2021/09/24/replacing-beacon.el-with-hl-line-flash/
   (window-scroll-functions . hl-line-flash)
@@ -99,7 +98,7 @@
   ;; (hl-line-inhibit-highlighting-for-modes '(dired-mode))
   ;; (hl-line-overlay-priority -100) ;; sadly, seems not observed by diredfl
   (hl-line-when-idle-interval 5)
-  (hl-line-inhibit-highlighting-for-modes '(eshell-mode))
+  (hl-line-inhibit-highlighting-for-modes '(eshell-mode lem-splash-mode))
   :config
   (toggle-hl-line-when-idle 1 t))
 
