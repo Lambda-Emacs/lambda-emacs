@@ -77,8 +77,10 @@
       ;; Put eln-cache dir in cache directory
       ;; NOTE the method for setting the eln-cache dir depends on the emacs version
       ((version< emacs-version "29")
-       (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))
-      ((startup-redirect-eln-cache (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))))
+       (setcar native-comp-eln-load-path
+               (expand-file-name (convert-standard-filename ".local/temp/cache/eln-cache/") user-emacs-directory)))
+      (t
+       (startup-redirect-eln-cache (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))))
 
 ;; Silence nativecomp warnings popping up
 (customize-set-variable 'native-comp-async-report-warnings-errors nil)
