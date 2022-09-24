@@ -78,7 +78,7 @@ Contents are subject to change. Used by `lem-etc-dir' and
   caches and ephemeral/temporary files. Anything that may need to
   be cleared if there are problems.")
 
-(defconst lem-default-config-file (concat lem-etc-dir "lem-default-config.el")
+(defconst lem-default-config-file (concat lem-library-dir "lem-default-config.el")
   "A sample default configuration of the personal config file to get the user started.")
 
 ;;;;; User Configuration Variables
