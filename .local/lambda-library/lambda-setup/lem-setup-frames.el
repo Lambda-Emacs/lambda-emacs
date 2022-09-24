@@ -29,14 +29,14 @@
   :straight (:type built-in)
   :config
   ;; Make a clean & minimalist frame
+  ;; To modify initial frame set `initial-frame-alist`
   (setq-default default-frame-alist
                 (append (list
                          '(frame-title-format . nil)
                          '(internal-border-width . 18)
                          '(tool-bar-lines . 0)
                          '(vertical-scroll-bars . nil)
-                         '(horizontal-scroll-bars . nil)
-                         )))
+                         '(horizontal-scroll-bars . nil))))
   ;; Resize pixel-wise to avoid gaps
   (setq-default window-resize-pixelwise t)
   (setq-default frame-resize-pixelwise t)
@@ -54,8 +54,8 @@ If FRAME is omitted or nil, use currently selected frame."
     (modify-frame-parameters
      frame '((user-position . t) (top . 0.5) (left . 0.5)))))
 
-;; Add this hook if you want frames recentered
-;; (add-hook 'after-make-frame-functions #'lem-frame-recenter)
+;; un/comment this hook if you want frames recentered
+(add-hook 'after-make-frame-functions #'lem-frame-recenter)
 
 
 ;;;; Fix titlebar titling colors
