@@ -13,6 +13,8 @@ a "starter-kit" for writing and academic work in the humanities.
 
 * 𝛌-Emacs File-Directory Structure
 
+-- *NOTE*: The directory structure has changed in the most recent version, so please be careful updating! --  
+
 The configuration consists of a set of files specific to the user (all stored in
 the value of =lem-user-dir= ("lambda-user" by default)) and more general files for
 𝛌-Emacs (init.el and the setup files in the value of =lem-setup-dir=
