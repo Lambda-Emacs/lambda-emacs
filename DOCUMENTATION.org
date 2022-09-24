@@ -20,17 +20,16 @@ the value of =lem-user-dir= ("lambda-user" by default)) and more general files f
 
 - Directory Structure:
    + Emacs directory (.emacs.d)
-      - Local directory (.local)
-         + Library directory (lambda-library)
-            - Lambda-Emacs setup files (lambda-setup)
-            - External packages (straight)
-         + User directory (lambda-user)
-            - user =config.el= file
-            - lambda-user setup-files
-            - user custom themes directory
-         + Temp directory (temp)
-            - Volatile storage (cache)
-            - Non-volatile storage (etc)
+      * Library directory (lambda-library)
+         - Lambda-Emacs setup files (lambda-setup)
+         - User directory (lambda-user)
+            + user =config.el= file
+            + lambda-/user/ setup-files
+            + user custom themes directory
+      * "Variable" directory (var) – contains files that are often changed by the system
+         - Volatile storage (cache)
+         - Non-volatile storage (etc)
+         - External packages (straight)
 - File structure:
    + early-init.el
    + early-config.el (in lambda-user, supplied by user, if any)
@@ -39,7 +38,7 @@ the value of =lem-user-dir= ("lambda-user" by default)) and more general files f
 
 Ideally the user will not need to do anything to the files =early-init.el=,
 =init.el=, and those in =lambda-setup=, though they should read the code to get a
-sense of what each file does. I have tried to annotate the code sufficiently so
+sense of what each file/module does. I have tried to annotate the code sufficiently so
 that it does not assume familiarity with elisp to understand the basics of what
 is going on.
 
