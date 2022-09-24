@@ -150,16 +150,13 @@
 (setq-default initial-scratch-message nil)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-;; Disable tool and scrollbars. These are just clutter (the scrollbar
-;; also impacts performance).
-(setq-default initial-frame-alist
-              (append (list
-                       '(fullscreen . maximized)
-                       '(internal-border-width . 18)
-                       '(tool-bar-lines . 0)
-                       '(vertical-scroll-bars . nil)
-                       '(horizontal-scroll-bars . nil)
-                       '(undecorated . t))))
+;; Disable tool and scrollbars. These are just clutter (the scrollbar also
+;; impacts performance).
+(push '(tool-bar-lines . 0)   default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+;; Set a minimum size for frame so that splash can easily display
+(push '(width . 175) default-frame-alist)
+(push '(height . 60) default-frame-alist)
 
 ;; And set these to nil so users don't have to toggle the modes twice to
 ;; reactivate them.
@@ -210,11 +207,15 @@ hook after running."
                 (set-foreground-color "#eceff1")
                 (set-background-color "#282b35"))))))
 
-;; Check if there is a user early-config file. If not load default theme.
+;; Apply hook if on MacOS
+(when (eq system-type 'darwin)
+  (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background))
+
+;; Check if there is a user early-config file & load. If it doesn't exist, print
+;; a message saying so.
 (let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
   (if (file-exists-p early-config-file)
       (load early-config-file nil 'nomessage)
-    (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)))
-
+    (message "No user early-config file exists.")))
 
 ;;; early-init.el ends here
