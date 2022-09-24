@@ -169,7 +169,7 @@
   :init
   ;; backups
   (let ((backup-dir (concat lem-cache-dir "backup")))
-    ;; Move backup file to `~/.emacs.d/.local/cache/backup'
+    ;; Move backup file to `~/.emacs.d/temp/cache/backup'
     (setq backup-directory-alist `(("." . ,backup-dir)))
     ;; Makesure backup directory exist
     (when (not (file-exists-p backup-dir))

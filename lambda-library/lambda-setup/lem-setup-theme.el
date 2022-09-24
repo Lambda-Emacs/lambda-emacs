@@ -145,10 +145,10 @@
 ;; If set, load user theme, otherwise load lambda-themes
 (cond ((bound-and-true-p lem-ui-theme)
        (load-theme lem-ui-theme))
-      ((eq active-theme 'dark-theme)
-       (load-theme 'lambda-dark t))
+      ((eq active-theme 'light-theme)
+       (load-theme 'lambda-light t))
       (t
-       (load-theme 'lambda-light t)))
+       (load-theme 'lambda-dark t)))
 
 ;; kind-icon needs to have its cache flushed after theme change
 (with-eval-after-load 'kind-icon

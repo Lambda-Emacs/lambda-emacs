@@ -23,14 +23,15 @@
 (defconst lem-emacs-dir (expand-file-name user-emacs-directory)
   "The path to the emacs.d directory.")
 
-(defconst lem-local-dir (concat lem-emacs-dir ".local/")
-  "The root directory for local Emacs files.
-This contains all elisp libraries as well as non-essential and/or
-ephemeral files. There are two main directories --
-lem-library-dir, which contains all libraries and packages, and
-lem-temp-dir, which contains non-essential files and emphemera.")
+;; (defconst lem-local-dir (concat lem-emacs-dir ".local/")
+;;   "The root directory for local Emacs files.
+;; This contains all elisp libraries as well as non-essential and/or
+;; ephemeral files. There are two main directories --
+;; lem-library-dir, which contains all libraries and packages, and
+;; lem-var-dir, which contains non-essential files and emphemera.")
 
-(defconst lem-library-dir (concat lem-local-dir "lambda-library/")
+
+(defconst lem-library-dir (concat lem-emacs-dir "lambda-library/")
   "The directory for 𝛌-Emacs Lisp libraries.
 This will house all setup libraries and external libraries or packages.")
 
@@ -40,22 +41,23 @@ This will house all setup libraries and external libraries or packages.")
 (defconst lem-setup-dir (concat lem-library-dir "lambda-setup/")
   "The storage location of the setup-init files.")
 
-(defconst lem-temp-dir (concat lem-local-dir "temp/")
+(defconst lem-var-dir (concat lem-emacs-dir "var/")
   "The directory for non-essential file storage.
-Used by `lem-etc-dir' and `lem-cache-dir'.")
+Contents are subject to change. Used by `lem-etc-dir' and
+`lem-cache-dir'.")
 
-(defconst lem-etc-dir (concat lem-temp-dir "etc/")
+(defconst lem-etc-dir (concat lem-var-dir "etc/")
   "The directory for non-volatile storage.
-These are not deleted or tampered with by emacs functions. Use
-this for dependencies like servers or config files that are
-stable (i.e. it should be unlikely that you need to delete them
-if something goes wrong).")
+  These are not deleted or tampered with by emacs functions. Use
+  this for dependencies like servers or config files that are
+  stable (i.e. it should be unlikely that you need to delete them
+               if something goes wrong).")
 
-(defconst lem-cache-dir (concat lem-temp-dir "cache/")
+(defconst lem-cache-dir (concat lem-var-dir "cache/")
   "The directory for volatile storage.
-Use this for transient files that are generated on the fly like
-caches and ephemeral/temporary files. Anything that may need to
-be cleared if there are problems.")
+  Use this for transient files that are generated on the fly like
+  caches and ephemeral/temporary files. Anything that may need to
+  be cleared if there are problems.")
 
 (defconst lem-default-config-file (concat lem-etc-dir "lem-default-config.el")
   "A sample default configuration of the personal config file to get the user started.")
@@ -81,7 +83,7 @@ be cleared if there are problems.")
 
 ;;;;; Path Settings
 ;; Directory paths
-(dolist (dir (list lem-local-dir lem-library-dir lem-etc-dir lem-cache-dir lem-user-dir lem-setup-dir))
+(dolist (dir (list lem-library-dir lem-var-dir lem-etc-dir lem-cache-dir lem-user-dir lem-setup-dir))
   (unless (file-directory-p dir)
     (make-directory dir t)))
 
@@ -126,7 +128,7 @@ be cleared if there are problems.")
 ;; Set branch
 (customize-set-variable 'straight-repository-branch "develop")
 ;; Set dir
-(customize-set-variable 'straight-base-dir lem-library-dir)
+(customize-set-variable 'straight-base-dir lem-var-dir)
 ;; Use use-package
 (customize-set-variable 'straight-use-package-by-default t)
 ;; Check updates manually
@@ -228,9 +230,9 @@ be cleared if there are problems.")
     "core"
     "test")
   "Custom switches for conditional loading from command line.
-`clean' loads only the `init.el' file w/no personal config; `core'
-loads the set of modules set in `lem-core-modules'; `test' loads
-only a `lem-setup-test.el' file for easy testing.")
+  `clean' loads only the `init.el' file w/no personal config; `core'
+  loads the set of modules set in `lem-core-modules'; `test' loads
+  only a `lem-setup-test.el' file for easy testing.")
 
 (defun lem--emacs-switches (switch)
   "Depending on command line argument SWITCH, load Emacs with minimal settings & no modules; useful for testing."

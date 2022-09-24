@@ -100,7 +100,7 @@
   :defer 2
   :config
   ;; (add-hook 'text-mode-hook #'abbrev-mode)
-  (setq abbrev-file-name (concat lem-temp-dir "abbrev/.abbrev_defs")
+  (setq abbrev-file-name (concat lem-var-dir "abbrev/.abbrev_defs")
         save-abbrevs 'nil)
   (if (file-exists-p abbrev-file-name)
       (quietly-read-abbrev-file)))

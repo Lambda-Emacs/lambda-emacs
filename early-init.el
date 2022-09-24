@@ -78,9 +78,9 @@
       ;; NOTE the method for setting the eln-cache dir depends on the emacs version
       ((version< emacs-version "29")
        (setcar native-comp-eln-load-path
-               (expand-file-name (convert-standard-filename ".local/temp/cache/eln-cache/") user-emacs-directory)))
+               (expand-file-name (convert-standard-filename "var/cache/eln-cache/") user-emacs-directory)))
       (t
-       (startup-redirect-eln-cache (convert-standard-filename (expand-file-name ".local/temp/cache/eln-cache/" user-emacs-directory)))))
+       (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/cache/eln-cache/" user-emacs-directory)))))
 
 ;; Silence nativecomp warnings popping up
 (customize-set-variable 'native-comp-async-report-warnings-errors nil)
@@ -215,7 +215,7 @@ hook after running."
 
 ;; Check if there is a user early-config file & load. If it doesn't exist, print
 ;; a message saying so.
-(let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/.local/lambda-library/lambda-user/")))
+(let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/lambda-library/lambda-user/")))
   (if (file-exists-p early-config-file)
       (load early-config-file nil 'nomessage)
     (message "No user early-config file exists.")))
