@@ -147,8 +147,10 @@
        (load-theme lem-ui-theme))
       ((eq active-theme 'light-theme)
        (load-theme 'lambda-light t))
+      ((eq active-theme 'dark-theme)
+       (load-theme 'lambda-dark t))
       (t
-       (load-theme 'lambda-dark t)))
+       (load-theme 'lambda-light t)))
 
 ;; kind-icon needs to have its cache flushed after theme change
 (with-eval-after-load 'kind-icon
