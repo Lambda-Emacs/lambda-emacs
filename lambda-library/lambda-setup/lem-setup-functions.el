@@ -84,8 +84,10 @@
   (require 'consult)
   (let ((consult-ripgrep-args
          "rg --null --line-buffered --max-columns=1000 --path-separator /\
-   --smart-case --no-heading --line-number --hidden --glob=!straight --glob=!temp --glob=!.git/ ."))
-    (consult-ripgrep lem-emacs-dir)))
+   --smart-case --no-heading --line-number --hidden --glob=!straight --glob=!var --glob=!.git/ ."))
+    (if (executable-find "rg")
+        (consult-ripgrep lem-emacs-dir)
+      (message "Please install `rg' first."))))
 
 ;; Load init file
 (defun lem-load-init-file ()
