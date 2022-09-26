@@ -121,15 +121,16 @@ Contents are subject to change. Used by `lem-etc-dir' and
 ;; NOTE: the location of homebrew depends on whether we're on mac silicon
 (when (and sys-mac
            (shell-command-to-string "command -v brew"))
-  (defconst homebrew (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin/" "/usr/local/bin/") "Path to homebrew packages."))
+  (defconst homebrew-bin (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin" "/usr/local/bin") "Path to homebrew bin packages.")
+  (defconst homebrew-sbin (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/sbin" "/usr/local/sbin") "Path to homebrew sbin packages."))
 
 ;; Define the system local bins
 (defconst usr-local-bin "/usr/local/bin" "System bin.")
 (defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
 
 ;; Set paths
-(setenv "PATH" (concat (when sys-mac (concat homebrew ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list (when sys-mac homebrew) usr-local-bin usr-local-sbin)))
+(setenv "PATH" (concat (when sys-mac (concat homebrew-bin ":" homebrew-sbin ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
+(setq exec-path (append exec-path (list (when sys-mac homebrew-bin homebrew-sbin) usr-local-bin usr-local-sbin)))
 
 ;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
