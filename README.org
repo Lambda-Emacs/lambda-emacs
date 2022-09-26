@@ -81,5 +81,5 @@ See the [[file:DOCUMENTATION.org][documentation]] (WIP) for further details.
 3. Put whatever settings you prefer in your config file. This should include
    things like the font you prefer and whatever other variable settings you
    might like. For some hints see my [[https://github.com/mclear-tools/dotemacs/blob/master/config.el][configuration file]] and the list of
-   variables in the [[id:20220720T151238.406634][docs]]. 
+   variables in the [[id:20220720T151238.406634][docs]]. Or ask a question on the [[https://discord.gg/NtYcrRtTxg][Lambda-Emacs discord]].
 
