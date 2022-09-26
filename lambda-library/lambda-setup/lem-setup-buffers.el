@@ -234,6 +234,8 @@
   (popper-display-control t)
   ;; set display to top -- if user prefers they can set this to `bottom'
   (popper-display-function #'popper-select-popup-at-top)
+  ;; group by project.el project root, with fall back to default-directory
+  (popper-group-function #'popper-group-by-directory)
   ;; Set popper buffers
   (popper-reference-buffers
    '("\\*Messages\\*"
