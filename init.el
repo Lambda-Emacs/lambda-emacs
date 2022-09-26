@@ -130,7 +130,7 @@ Contents are subject to change. Used by `lem-etc-dir' and
 
 ;; Set paths
 (setenv "PATH" (concat (when sys-mac (concat homebrew-bin ":" homebrew-sbin ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list (when sys-mac homebrew-bin homebrew-sbin) usr-local-bin usr-local-sbin)))
+(setq exec-path (append exec-path (list (when sys-mac homebrew-bin) (when sys-mac homebrew-sbin)) usr-local-bin usr-local-sbin))
 
 ;;;;; Package Settings
 ;; Use straight to manage package installation and use-package to manage
