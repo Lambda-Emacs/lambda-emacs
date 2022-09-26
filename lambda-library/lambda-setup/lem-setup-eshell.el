@@ -422,13 +422,24 @@ This function is meant to be used as advice around
 
 ;;;; Useful Functions
 
-;;;;; Eshell in Home Directory
+;;;;; Call Eshell
+;; Open eshell in $HOME
 (defun lem-eshell-home ()
   "Open eshell in home dir."
   (interactive)
   (let ((default-directory "~/"))
     (require 'eshell)
-    (eshell)))
+    (eshell 'N)))
+
+;; Open an eshell in current dir, with project as name.
+;; If called with universal arg, open in home dir.
+(defun lem-call-eshell (&optional arg)
+  "Open `eshell' in current dir, with project as name.
+If called with universal arg, open in home dir."
+  (interactive "P")
+  (if arg
+      (lem-eshell-home)
+    (eshell 'N)))
 
 ;;;;; Clear Eshell
 ;; Make eshell act like a standard unix terminal.
