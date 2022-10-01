@@ -22,8 +22,6 @@
 (use-package org-modern
   :straight (:type git :host github :repo "minad/org-modern")
   :hook (org-mode . org-modern-mode)
-  :custom-face
-  (org-modern-label ((t (:height 1.0 :inherit ,(if lambda-themes-set-variable-pitch 'variable-pitch 'default)))))
   :custom
   (org-modern-hide-stars nil) ;; compatibility w/org-indent
   ;; don't use other faces
