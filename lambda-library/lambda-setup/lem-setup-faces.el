@@ -9,8 +9,7 @@
 ;; Make outline faces look better
 (use-package outline-minor-faces
   :after outline
-  :config (add-hook 'outline-minor-mode-hook
-                    #'outline-minor-faces-mode))
+  :hook ((emacs-lisp-mode lisp-interaction-mode lisp-mode) . outline-minor-faces-mode))
 
 ;;;; What Face?
 ;; https://stackoverflow.com/a/66287459/6277148
