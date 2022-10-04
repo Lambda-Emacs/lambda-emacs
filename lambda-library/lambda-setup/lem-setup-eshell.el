@@ -429,7 +429,7 @@ This function is meant to be used as advice around
   (interactive)
   (let ((default-directory "~/"))
     (require 'eshell)
-    (eshell 'N)))
+    (eshell)))
 
 ;; Open an eshell in current dir, with project as name.
 ;; If called with universal arg, open in home dir.
@@ -439,7 +439,7 @@ If called with universal arg, open in home dir."
   (interactive "P")
   (if arg
       (lem-eshell-home)
-    (eshell 'N)))
+    (eshell)))
 
 ;;;;; Clear Eshell
 ;; Make eshell act like a standard unix terminal.
