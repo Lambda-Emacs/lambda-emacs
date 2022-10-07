@@ -146,8 +146,9 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
              all-the-icons-wicon
              all-the-icons-material
              all-the-icons-alltheicon)
-  :preface
+  :init
   (add-hook 'after-setting-font-hook #'lem-font--icon-check)
+  :config
   (add-hook 'after-setting-font-hook #'lem-font--init-all-the-icons-fonts))
 
 (use-package font-lock+
