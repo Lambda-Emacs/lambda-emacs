@@ -120,20 +120,9 @@ questions.  Otherwise use completion to select the tab."
              (tab-bar-switch-to-tab
               (completing-read "Select tab: " tabs nil t)))))))
 
-;;;; Tab Bookmark
-;; Bookmark window configurations in a tab
-;; NOTE: would be good to get this working with tabspaces
-(use-package tab-bookmark
-  :straight (:type git :host github :repo "minad/tab-bookmark")
-  :commands (tab-bookmark tab-bookmark-open)
-  :bind (:map project-prefix-map
-         ("m" . tab-bookmark)))
-
 ;;;; Tab Workspaces
-
 (use-package tabspaces
-  ;; :straight (:type git :host github :repo "mclear-tools/tabspaces")
-  :straight (:local-repo "~/bin/lisp-projects/tabspaces/")
+  :straight (:type git :host github :repo "mclear-tools/tabspaces")
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
          ("p" . tabspaces-open-or-create-project-and-workspace))
