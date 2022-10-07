@@ -26,6 +26,13 @@
 
 ;;; Code:
 
+;; Define customization group for Crafted Emacs.
+(defgroup lambda-emacs '()
+  "An Emacs distribution with sane defaults, pre-configured packages, and useful functions, aimed at writing and academic work in the humanities."
+  :tag "Lambda-Emacs"
+  :link '(url-link "https://github.com/Lambda-Emacs/lambda-emacs")
+  :group 'emacs)
+
 ;;;; Startup
 ;;;;; System Variables
 ;; Check the system used
@@ -42,14 +49,6 @@
 (defconst lem-emacs-dir (expand-file-name user-emacs-directory)
   "The path to the emacs.d directory.")
 
-;; (defconst lem-local-dir (concat lem-emacs-dir ".local/")
-;;   "The root directory for local Emacs files.
-;; This contains all elisp libraries as well as non-essential and/or
-;; ephemeral files. There are two main directories --
-;; lem-library-dir, which contains all libraries and packages, and
-;; lem-var-dir, which contains non-essential files and emphemera.")
-
-
 (defconst lem-library-dir (concat lem-emacs-dir "lambda-library/")
   "The directory for 𝛌-Emacs Lisp libraries.
 This will house all setup libraries and external libraries or packages.")
@@ -62,8 +61,8 @@ This will house all setup libraries and external libraries or packages.")
 
 (defconst lem-var-dir (concat lem-emacs-dir "var/")
   "The directory for non-essential file storage.
-Contents are subject to change. Used by `lem-etc-dir' and
-`lem-cache-dir'.")
+Contents are subject to change. Used for package storage (elpa or
+straight) and by `lem-etc-dir' and `lem-cache-dir'.")
 
 (defconst lem-etc-dir (concat lem-var-dir "etc/")
   "The directory for non-volatile storage.
@@ -96,7 +95,8 @@ Contents are subject to change. Used by `lem-etc-dir' and
 
 ;; Set user elisp project dir
 (defcustom lem-user-elisp-dir nil
-  "Directory for personal elisp projects."
+  "Directory for personal elisp projects.
+Any customized libraries not available via standard package repos like elpa or melpa should go here."
   :group 'lambda-emacs
   :type 'string)
 
@@ -138,59 +138,18 @@ Contents are subject to change. Used by `lem-etc-dir' and
 ;; after-init-hook or after some number of seconds of idle. This should produce
 ;; shorter startup times, which helps especially when doing, e.g., a quick
 ;; restart-and-check of something in emacs.
-
-;;;;; Straight
-;;;;;; Straight settings
-;; Use straight.el to install all packages
-;; https://github.com/raxod502/straight.el
-;; Don't check packages on startup
-(customize-set-variable 'straight-check-for-modifications '(check-on-save find-when-checking))
-;; Set branch
-(customize-set-variable 'straight-repository-branch "develop")
-;; Set dir
-(customize-set-variable 'straight-base-dir lem-var-dir)
-;; Use use-package
-(customize-set-variable 'straight-use-package-by-default t)
-;; Check updates manually
-(customize-set-variable 'straight-vc-git-auto-fast-forward nil)
-;; Avoid problems with straight building with native-comp
-;; See https://github.com/raxod502/straight.el/issues/757
-(customize-set-variable 'native-comp-deferred-compilation-deny-list nil)
-;; Tell straight.el about the profiles we are going to be using.
-(customize-set-variable 'straight-profiles
-                        '((nil . "default.el")
-                          ;; Packages which are pinned to a specific commit.
-                          (pinned . "pinned.el")))
-
-;;;;;; Bootstrap straight
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" straight-base-dir))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-;;;;;; Straight-X
-;; Use experimental straight commands
-(require 'straight-x)
-;; https://github.com/raxod502/straight.el#how-do-i-pin-package-versions-or-use-only-tagged-releases
-(autoload #'straight-x-freeze-versions "straight-x")
-;; package updates
-;; use this workflow?
-;; https://github.com/raxod502/straight.el/issues/354#issuecomment-465305063
-(autoload #'straight-x-pull-all "straight-x")
-;; async fetch
-(autoload #'straight-x-fetch-all "straight-x")
+(when (eq lem-package-system 'package)
+  (lem-package-initialize))
 
 ;;;;; Use-Package
 ;; Install use package
-(straight-use-package 'use-package)
+(cond ((eq lem-package-system 'package)
+       (unless (package-installed-p 'use-package)
+         (package-refresh-contents)
+         (package-install 'use-package)))
+      ((eq lem-package-system 'straight)
+       (straight-use-package 'use-package)))
+
 ;; Settings
 (use-package use-package
   :custom
@@ -201,12 +160,11 @@ Contents are subject to change. Used by `lem-etc-dir' and
   (use-package-enable-imenu-support t)
   (use-package-expand-minimally nil)
   ;; Let straight handle package install
-  (use-package-always-ensure nil))
+  (use-package-always-ensure t))
 
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
 (use-package el-patch
-  :straight t
   :custom
   (el-patch-enable-use-package-integration t))
 
@@ -214,7 +172,6 @@ Contents are subject to change. Used by `lem-etc-dir' and
 ;; Properly verify outgoing ssl connections.
 ;; See https://glyph.twistedmatrix.com/2015/11/editor-malware.html
 (use-package gnutls
-  :straight nil
   :defer 1
   :custom
   (gnutls-verify-error t)
@@ -279,7 +236,6 @@ emacs-version string on the kill ring."
 ;; Navigate elisp files easily. Outline is a built-in library and we can easily
 ;; configure it to treat elisp comments as headings.
 (use-package outline
-  :straight (:type built-in)
   :hook (prog-mode . outline-minor-mode)
   :bind (:map outline-minor-mode-map
          ("<tab>"   . outline-cycle)

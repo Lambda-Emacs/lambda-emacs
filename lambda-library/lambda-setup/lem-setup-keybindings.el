@@ -31,8 +31,7 @@
 ;;;; Bind Key
 ;; Note that bind-key comes with use-package
 (use-package bind-key
-  :straight t
-  :config
+:config
   (setq bind-key-describe-special-forms t))
 
 ;;;; Personal Keybindings Prefix
@@ -306,8 +305,7 @@
 
 ;;;; Which Key
 (use-package which-key
-  ;; :after general
-  :defer 1
+:defer 1
   :diminish ""
   :config
   ;; Allow C-h to trigger which-key before it is done automatically

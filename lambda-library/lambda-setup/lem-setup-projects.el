@@ -4,7 +4,6 @@
 ;;; Project
 ;; Use project to switch to, and search in, projects (replaces projectile)
 (use-package project
-  :straight (:type built-in)
   :commands (project-find-file
              project-switch-to-buffer
              project-switch-project
@@ -69,15 +68,10 @@ to directory DIR."
 
 ;;; Bookmarks
 (use-package bookmark
-  :straight (:type built-in)
+  :ensure nil
   :defer 2
   :config
   (setq bookmark-default-file (concat lem-cache-dir "bookmarks")))
-
-(use-package bookmark+
-  :commands (bmkp-switch-bookmark-file-create bmkp-set-desktop-bookmark)
-  :config
-  (setq bmkp-last-as-first-bookmark-file (concat lem-cache-dir "bookmarks")))
 
 ;;; New Git Project
 (defun lem-git-new-project ()
@@ -94,7 +88,8 @@ to directory DIR."
 ;;; Clone a Git Repo from Clipboard
 ;; http://xenodium.com/emacs-clone-git-repo-from-clipboard/
 (defun lem-git-clone-clipboard-url ()
-  "Clone git URL in clipboard asynchronously and open in dired when finished."
+  "Clone git URL in clipboard asynchronously and open in dired when finishe.
+Git repo is cloned to directory set by `lem-user-elisp-dir'."
   (interactive)
   (cl-assert (string-match-p "^\\(http\\|https\\|ssh\\)://" (current-kill 0)) nil "No URL in clipboard")
   (let* ((url (current-kill 0))

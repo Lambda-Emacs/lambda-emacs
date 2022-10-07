@@ -112,7 +112,7 @@
 ;;;; Lambda Themes
 ;; Set a default theme
 (use-package lambda-themes
-  :straight (:type git :host github :repo "lambda-emacs/lambda-themes")
+  :load-path (lambda () (concat lem-custom-themes-dir "lambda-themes"))
   :custom
   ;; Custom settings. To turn any of these off just set to `nil'.
   (lambda-themes-set-variable-pitch t)

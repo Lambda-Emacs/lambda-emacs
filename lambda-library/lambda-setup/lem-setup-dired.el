@@ -26,7 +26,7 @@
 
 ;;;; Dired Settings
 (use-package dired
-  :straight nil
+  :ensure nil
   :commands (dired dired-jump dired-jump-other-window)
   :bind (:map dired-mode-map
          ("l" . dired-find-alternate-file)
@@ -78,7 +78,6 @@
 
 ;;;; Dired Colors
 (use-package diredfl
-  :straight t
   :hook (dired-mode . diredfl-global-mode))
 
 ;;;; Peep Dired

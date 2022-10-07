@@ -104,6 +104,7 @@
 ;; personal choice and can be removed if you would like to see any and all byte
 ;; compiler warnings.
 (customize-set-variable 'byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local obsolete))
+
 ;;;; Check Errors
 ;; Don't produce backtraces when errors occur.
 ;; This can be set to `t' interactively when debugging.
@@ -126,13 +127,15 @@
 (customize-set-variable 'max-specpdl-size 13000)
 
 ;;;; Package settings
-;; We use straight not package.el for all package loading.
-;; So we don't need package.el loaded at startup (or at all).
-(customize-set-variable 'package-enable-at-startup nil)
-(advice-add #'package--ensure-init-file :override #'ignore)
+;; Load the package-system.  If needed, the user could customize the
+;; system to use in `early-config.el'.
+(defvar lem-bootstrap-directory (expand-file-name "lambda-bootstrap/" user-emacs-directory)
+  "Package system bootstrap configuration.")
 
-;; Do not allow loading from the package cache (same reason).
-(customize-set-variable 'package-quickstart nil)
+(load (expand-file-name "lem-package.el" lem-bootstrap-directory))
+;; The default package system is 'package
+(setq lem-package-system 'package)
+(lem-package-bootstrap lem-package-system)
 
 ;;;; Clean View
 ;; UI - Disable visual cruft

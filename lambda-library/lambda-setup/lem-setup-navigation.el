@@ -37,6 +37,7 @@
 ;;;; Save place
 ;; Everyone remember where we parked.
 (use-package saveplace
+  :ensure nil
   :hook (emacs-startup . save-place-mode)
   :config
   (setq save-place-file (concat lem-cache-dir "saved-places"))
@@ -45,12 +46,12 @@
 ;;;; Go To Change
 ;; Easily go to last change
 (use-package goto-last-change
-  :straight (:type git :host github :repo "camdez/goto-last-change.el")
   :bind (("C-\"" . #'goto-last-change)))
 
 ;;;; Recent files
 ;; List recent files
 (use-package recentf
+  :ensure nil
   :hook (emacs-startup . recentf-mode)
   :custom
   (recentf-save-file (concat lem-cache-dir "recentf"))
@@ -63,6 +64,7 @@
 ;; your choice using the browse-url package, or if it's an e-mail
 ;; address, to send an e-mail to that address.
 (use-package goto-addr
+  :ensure nil
   :hook ((compilation-mode . goto-address-mode)
          (prog-mode . goto-address-prog-mode)
          (eshell-mode . goto-address-mode)

@@ -10,7 +10,7 @@
 ;;;; Fonts
 
 (use-package fontset
-  :straight (:type built-in)
+  :ensure nil
   :custom
   ;; Set this to nil to set symbols entirely separately
   ;; Need it set to `t` in order to display org-modern-indent faces properly
@@ -43,48 +43,6 @@
   (set-display-table-slot standard-display-table 'wrap
                           (make-glyph-code ?↩ 'fallback)))
 
-;;;; Set Default & Variable Pitch Fonts
-(defun lem-ui--set-default-font (spec)
-  "Set the default font based on SPEC.
-SPEC is expected to be a plist with the same key names
-as accepted by `set-face-attribute'."
-  (when spec
-    (apply 'set-face-attribute 'default nil spec)))
-
-(defun lem-ui--set-variable-width-font (spec)
-  "Set the default font based on SPEC.
-SPEC is expected to be a plist with the same key names
-as accepted by `set-face-attribute'."
-  (when spec
-    (apply 'set-face-attribute 'variable-pitch nil spec)))
-
-(defcustom lem-ui-default-font nil
-  "The configuration of the `default' face.
-Use a plist with the same key names as accepted by `set-face-attribute'."
-  :group 'lambda-emacs
-  :type '(plist :key-type: symbol)
-  :tag "Lambda-Emacs Default font"
-  :set (lambda (sym val)
-         (let ((prev-val (if (boundp 'lem-ui-default-font)
-                             lem-ui-default-font
-                           nil)))
-           (set-default sym val)
-           (when (and val (not (eq val prev-val)))
-             (lem-ui--set-default-font val)))))
-
-(defcustom lem-ui-variable-width-font nil
-  "The configuration of the `default' face.
-Use a plist with the same key names as accepted by `set-face-attribute'."
-  :group 'lambda-emacs
-  :type '(plist :key-type: symbol)
-  :tag "Lambda-Emacs Variable width font"
-  :set (lambda (sym val)
-         (let ((prev-val (if (boundp 'lem-ui-variable-width-font)
-                             lem-ui-variable-width-font
-                           nil)))
-           (set-default sym val)
-           (when (and val (not (eq val prev-val)))
-             (lem-ui--set-variable-width-font val)))))
 
 ;; Set default line spacing. If the value is an integer, it indicates
 ;; the number of pixels below each line. A decimal number is a scaling factor
@@ -95,7 +53,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 
 ;;;;; Font Lock
 (use-package font-lock
-  :straight (:type built-in)
+  :ensure nil
   :defer 1
   :custom
   ;; Max font lock decoration (set nil for less)
@@ -151,9 +109,6 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
   :config
   (add-hook 'after-setting-font-hook #'lem-font--init-all-the-icons-fonts))
 
-(use-package font-lock+
-  :defer 1)
-
 ;; icons for dired
 (use-package all-the-icons-dired
   :if (display-graphic-p)
@@ -163,7 +118,7 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
 (use-package wid-edit
-  :straight (:type built-in)
+  :ensure nil
   :defer 1
   :custom
   ;; No ugly button for checkboxes

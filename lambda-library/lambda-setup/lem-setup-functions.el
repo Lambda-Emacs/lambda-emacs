@@ -119,7 +119,6 @@
 ;; bunch of utility commands that are just very useful to have (e.g.
 ;; crux-open-with and crux-reopen-as-root). Originally part of Emacs Prelude.
 (use-package crux
-  :straight (:type git :host github :repo "bbatsov/crux")
   :defer 1
   :bind
   ("C-k"   . crux-smart-kill-line)

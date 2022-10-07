@@ -29,19 +29,19 @@
 
 ;;;; VC
 (use-package vc
-  :straight (:type built-in)
+  :ensure nil
   :hook (after-init . vc-mode)
   :custom (vc-follow-symlinks t))
 
 (use-package vc-git
-  :straight (:type built-in)
+  :ensure nil
   :defer
   :config
   (setq vc-git-diff-switches "--patch-with-stat")
   (setq vc-git-print-log-follow t))
 
 (use-package vc-annotate
-  :straight (:type built-in)
+  :ensure nil
   :defer
   :config
   (setq vc-annotate-display-mode 'scale))
@@ -139,6 +139,7 @@
 ;; And https://github.com/jimeh/.emacs.d/blob/master/modules/version-control/siren-diff-hl.el
 
 (use-package diff-hl
+  :ensure t
   :hook
   ((prog-mode . diff-hl-mode)
    (text-mode . diff-hl-mode)

@@ -12,7 +12,7 @@
 
 ;;;; Eshell Settings
 (use-package esh-mode
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-directory-name (concat lem-etc-dir "eshell/"))
@@ -22,47 +22,47 @@
   (eshell-scroll-to-bottom-on-output 'all))
 
 (use-package em-dirs
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-list-files-after-cd nil)
   (eshell-last-dir-ring-file-name (concat lem-etc-dir "eshell/lastdir")))
 
 (use-package em-ls
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-ls-use-colorls t)
   (eshell-ls-use-in-dired nil))
 
 (use-package em-cmpl
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-cmpl-ignore-case t)
   (eshell-cmpl-cycle-completions t))
 
 (use-package em-prompt
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-highlight-prompt t)
   (eshell-prompt-regexp "^[^λ]+ λ "))
 
 (use-package em-term
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-destroy-buffer-when-process-dies t))
 
 (use-package em-banner
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-banner-message ""))
 
 (use-package em-hist
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-history-file-name (concat lem-etc-dir "eshell/history"))
@@ -70,14 +70,14 @@
   (eshell-hist-ignoredups t))
 
 (use-package em-glob
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-glob-case-insensitive t)
   (eshell-error-if-no-glob t))
 
 (use-package em-term
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :config
   ;; Visual commands
@@ -90,32 +90,26 @@
 ;;;; Eshell Pcomplete
 
 (use-package pcmpl-homebrew
-  :after eshell
-  :straight t)
+  :after eshell)
 
 (use-package pcmpl-git
-  :after eshell
-  :straight t)
+  :after eshell)
 
 (use-package pcmpl-args
-  :after eshell
-  :straight t)
+  :after eshell)
 
 (use-package pcomplete-extension
-  :after eshell
-  :straight t)
+  :after eshell)
 
 ;; Provide help support -- see also the info function below
 (use-package esh-help
   :after eshell
-  :straight t
   :config
   ;; Eldoc support.
   (setup-esh-help-eldoc))
 
 ;; Dir navigation -- see also dir jumping below
 (use-package eshell-up
-  :straight t
   :commands (eshell-up)
   :config
   (defalias 'eshell/up #'eshell-up))
@@ -317,7 +311,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
         (setq eshell-command-aliases-list lem-eshell-aliases)))))
 
 (use-package em-alias
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-aliases-file (concat lem-etc-dir "eshell/alias"))
@@ -331,7 +325,6 @@ ALIASES is a flat list of alias -> command pairs. e.g.
 ;;;; Syntax Highlighting
 (use-package eshell-syntax-highlighting
   :after eshell
-  :straight t
   :config
   ;; Enable in all Eshell buffers.
   (eshell-syntax-highlighting-global-mode +1))

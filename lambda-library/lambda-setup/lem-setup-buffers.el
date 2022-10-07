@@ -40,7 +40,7 @@
 
 ;;;; Scrolling
 (use-package emacs
-  :straight (:type built-in)
+  :ensure nil
   :config
   (message "*Loading scrolling settings...*")
   ;; Reduce cursor lag by a tiny bit by not auto-adjusting `window-vscroll'
@@ -61,7 +61,7 @@
   (setq hscroll-margin 1))
 
 (use-package mwheel
-  :straight (:type built-in)
+  :ensure nil
   :config
   ;; Optimize mouse wheel scrolling for smooth-scrolling trackpad use.
   ;; Trackpads send a lot more scroll events than regular mouse wheels,
@@ -80,7 +80,7 @@
 
 ;; Don't use pixel-scroll by default -- it causes janky behavior on MacOS
 (use-package pixel-scroll
-  :straight (:type built-in)
+  :ensure nil
   :config
   (pixel-scroll-mode -1))
 
@@ -89,7 +89,7 @@
 ;; Don't be afraid of the mouse!
 ;; For ideas see https://ruzkuku.com/texts/emacs-mouse.html
 (use-package mouse
-  :straight (:type built-in)
+  :ensure nil
   :config
   ;; Focus follows mouse
   (setq mouse-autoselect-window t
@@ -109,7 +109,7 @@
 
 ;;;; Unique buffers
 (use-package uniquify
-  :straight (:type built-in)
+  :ensure nil
   :defer 3
   :config
   (setq uniquify-buffer-name-style 'reverse
@@ -128,7 +128,7 @@
 
 ;;;; Autorevert
 (use-package autorevert
-  :straight (:type built-in)
+  :ensure nil
   :hook (after-init . global-auto-revert-mode)
   :custom
   (auto-revert-verbose nil)
@@ -141,13 +141,12 @@
 
 ;;;; Revert All Buffers
 (use-package revert-buffer-all
-  :straight (:type git :host gitlab :repo "ideasman42/emacs-revert-buffer-all")
   :commands (revert-buffer-all))
 
 ;;;; iBuffer
 ;; A better list of buffers
 (use-package ibuffer
-  :straight (:type built-in)
+  :ensure nil
   :commands (ibuffer)
   :custom
   (ibuffer-default-sorting-mode 'major-mode)
@@ -193,7 +192,6 @@
        name))))
 
 (use-package ibuffer-vc
-  :straight (:host github :repo "purcell/ibuffer-vc")
   :defer 2
   :config
   ;; To include vc status info in the ibuffer list, add either
@@ -228,7 +226,6 @@
 
 ;;;; Popper (Pop-up Buffers)
 (use-package popper
-  :straight (:type git :host github :repo "karthink/popper")
   :hook (after-init . popper-mode)
   :bind (("M-`"   . popper-toggle-latest)
          ("C-`"   . popper-cycle)
@@ -268,7 +265,7 @@
 
 ;;;; Xwidget Browser
 (use-package xwidget
-  :straight (:type built-in)
+  :ensure nil
   :defer 1
   :config
   ;; No query on kill
@@ -278,7 +275,7 @@
     1.0))
 
 (use-package xwwp-follow-link
-  :straight (:host github :repo "canatella/xwwp")
+  :ensure nil
   :custom
   (xwwp-follow-link-completion-system 'default)
   :bind (:map xwidget-webkit-mode-map
@@ -286,7 +283,7 @@
 
 ;;;; Fringe
 (use-package fringe
-  :straight (:type built-in)
+  :ensure nil
   :custom
   ;; allow fringe indicators
   (fringe-mode '(1 . 0)))

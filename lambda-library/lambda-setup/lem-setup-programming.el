@@ -28,7 +28,8 @@
 
 ;;;; Show Pretty Symbols
 (use-package prog-mode
-  :straight (:type built-in)
+  :ensure nil
+  ;; :straight (:type built-in)
   :defer t
   :custom
   ;; Show markup at point
@@ -58,8 +59,8 @@
 ;;;;; Surround & Change Delimiters
 
 (use-package embrace
-  :straight (:type git :host github :repo "cute-jumper/embrace.el")
-  :bind (("C-M-s-#" . embrace-commander))
+  ;; :straight (:type git :host github :repo "cute-jumper/embrace.el")
+    :bind (("C-M-s-#" . embrace-commander))
   :config
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
   (defun embrace-markdown-mode-hook ()
@@ -73,14 +74,14 @@
 ;;;;; Edit & Traverse Delimiters
 
 (use-package puni
-  :straight (:type git :host github :repo "AmaiKinono/puni")
+  ;; :straight (:type git :host github :repo "AmaiKinono/puni")
   :hook ((prog-mode tex-mode org-mode markdown-mode
                     eval-expression-minibuffer-setup) . puni-mode))
 
 
 ;;;; Multiple Cursors
 (use-package iedit
-  :straight (:type git :host github :repo "victorhge/iedit")
+  ;; :straight (:type git :host github :repo "victorhge/iedit")
   :bind (:map lem+search-keys
          ("c" . iedit-mode)))
 
@@ -94,17 +95,19 @@
 ;;;;; Elisp
 ;;;;;; Lisp Packages
 (use-package lisp-mode
-  :straight (:type built-in)
-  :commands lisp-mode
-  :straight nil)
+  :ensure nil
+  ;; :straight (:type built-in)
+  :commands lisp-mode)
 
 (use-package emacs-lisp-mode
-  :straight (:type built-in)
+  ;; :straight (:type built-in)
+  :ensure nil
   :mode (("\\.el$" . emacs-lisp-mode))
   :interpreter (("emacs" . emacs-lisp-mode)))
 
 (use-package eldoc
-  :straight (:type built-in)
+  ;; :straight (:type built-in)
+  :ensure nil
   :commands eldoc-mode
   :hook (emacs-lisp-mode . turn-on-eldoc-mode)
   :diminish eldoc-mode
@@ -314,7 +317,7 @@ Lisp function does not specify a special indentation."
 
 ;;;;; Plist
 (use-package plist-mode
-  :straight nil
+  ;; :straight nil
   :load-path "~/bin/lisp-projects/plist-mode"
   :commands (plist-mode))
 
@@ -368,7 +371,8 @@ Lisp function does not specify a special indentation."
 ;; Both Flycheck and Flymake are good linters, but let's stick with the built-in Flymake
 
 (use-package flymake
-  :straight (:type built-in)
+  ;; :straight (:type built-in)
+  :ensure nil
   :hook (prog-mode . flymake-mode)
   :custom
   (flymake-fringe-indicator-position 'left-fringe)
@@ -384,7 +388,7 @@ Lisp function does not specify a special indentation."
 
 ;; Linting for emacs package libraries
 (use-package package-lint
-  :straight (:type git :host github :repo "purcell/package-lint")
+  ;; :straight (:type git :host github :repo "purcell/package-lint")
   :commands (package-lint-batch-and-exit
              package-lint-current-buffer
              package-lint-buffer)
@@ -397,13 +401,13 @@ Lisp function does not specify a special indentation."
 
 ;; A collection of flymake backends
 (use-package flymake-collection
-  :straight t
+  ;; :straight t
   :hook (after-init . flymake-collection-hook-setup))
 
 ;; Use Consult with Flymake
 (use-package consult-flymake
-  :disabled
-  :straight (:type git :host github :repo "minad/consult-flymake")
+  ;; :straight (:type git :host github :repo "minad/consult-flymake")
+  :ensure nil
   :bind (:map lem+flymake-keys
          ("c" . consult-flymake)))
 

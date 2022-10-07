@@ -28,9 +28,9 @@
 ;; Enable vertico for vertical completion
 ;; This and selectrum are great packages, but vertico is preferable if I can get feature parity with what I was using in selectrum
 (use-package vertico
-  :straight (:host github :repo "minad/vertico"
-             :includes (vertico-repeat vertico-directory vertico-buffer)
-             :files (:defaults "extensions/vertico-directory.el" "extensions/vertico-buffer.el" "extensions/vertico-repeat.el"))
+  ;; :straight (:host github :repo "minad/vertico"
+  ;;            :includes (vertico-repeat vertico-directory vertico-buffer)
+  ;;            :files (:defaults "extensions/vertico-directory.el" "extensions/vertico-buffer.el" "extensions/vertico-repeat.el"))
   :bind (:map vertico-map
          ("<escape>" . #'minibuffer-keyboard-quit)
          ("C-n"      . #'vertico-next-group      )
@@ -67,6 +67,7 @@
 ;;;;; Vertico Packages
 ;; Use vertico in buffer
 (use-package vertico-buffer
+  :ensure nil
   :after vertico
   :custom
   (vertico-buffer-hide-prompt t)
@@ -127,11 +128,13 @@
 
 ;; Vertico repeat last command
 (use-package vertico-repeat
+  :ensure nil
   :hook (minibuffer-setup . vertico-repeat-save)
   :commands (vertico-repeat-last))
 
 ;; Configure directory extension
 (use-package vertico-directory
+  :ensure nil
   :after vertico
   ;; More convenient directory navigation commands
   :bind (:map vertico-map
@@ -176,7 +179,6 @@
 ;;;;; Embark
 ;; Actions on narrowed candidates
 (use-package embark
-  :straight (embark :type git :host github :repo "oantolin/embark")
   :commands (embark-act embark-keymap-help)
   :custom
   ;; Use which-key
@@ -264,7 +266,6 @@ targets."
               :around #'embark-hide-which-key-indicator))
 
 (use-package embark-consult
-  :straight t
   :after (embark consult)
   :demand t ; only necessary if you have the hook below
   ;; if you want to have consult previews as you move around an
@@ -276,7 +277,6 @@ targets."
 ;; Enable richer annotations using the Marginalia package
 ;; Info about candidates pulled from metadata
 (use-package marginalia
-  :straight (marginalia :type git :host github :repo "minad/marginalia")
   :bind (:map minibuffer-local-map
          ("C-M-a" . marginalia-cycle))
   :init
@@ -289,7 +289,6 @@ targets."
 ;; Useful functions; a drop-in replacement for ivy/swiper
 
 (use-package consult
-  :straight (consult :type git :host github :repo "minad/consult" :includes consult-org)
   :commands (consult-line
              consult-line-multi
              consult-buffer
@@ -361,7 +360,6 @@ targets."
 ;;;;; Consult Dir
 ;; Consult-dir allows you to easily select and switch between “active” directories.
 (use-package consult-dir
-  :straight (:host github :repo "karthink/consult-dir")
   :commands (consult-dir
              consult-dir-jump-file)
   :bind (("C-x C-d" . consult-dir)
@@ -372,7 +370,6 @@ targets."
 ;;;; In-Buffer Completion
 ;;;;; Corfu
 (use-package corfu
-  :straight (:type git :host github :repo "minad/corfu")
   :hook
   (emacs-startup . global-corfu-mode)
   :bind
@@ -420,7 +417,6 @@ targets."
 
 ;;;;; Corfu Doc
 (use-package corfu-doc
-  :straight (corfu-doc :type git :host github :repo "galeo/corfu-doc")
   :hook   (corfu-mode . corfu-doc-mode)
   :bind (:map corfu-map
          ("C-d" . corfu-doc-toggle)
@@ -436,7 +432,6 @@ targets."
 ;;;;;; Corfu Extensions (Cape)
 ;; Add extensions
 (use-package cape
-  :straight (:type git :host github :repo "minad/cape")
   ;; Bind dedicated completion commands
   :bind (("C-c p p" . completion-at-point) ;; capf
          ("C-c p t" . complete-tag)        ;; etags
@@ -467,7 +462,6 @@ targets."
 
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
-  :straight (:type git :host github :repo "jdtsmith/kind-icon")
   :after corfu
   :custom
   (kind-icon-use-icons t)
@@ -494,7 +488,6 @@ targets."
   :group 'lambda-emacs)
 
 (use-package yasnippet
-  :straight (:type git :host github :repo "joaotavora/yasnippet")
   :defer 1
   :bind (:map yas-minor-mode-map
          ("C-'" . yas-expand))
@@ -521,7 +514,6 @@ targets."
 
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
 (use-package yasnippet-snippets
-  :straight (:type git :host github :repo "AndreaCrotti/yasnippet-snippets")
   :after (yasnippet)
   :config
   (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
@@ -529,7 +521,6 @@ targets."
 
 ;;;; Completion Icons
 (use-package all-the-icons-completion
-  :straight (:host github :repo "iyefrat/all-the-icons-completion")
   :if (display-graphic-p)
   :hook (after-init . all-the-icons-completion-mode))
 

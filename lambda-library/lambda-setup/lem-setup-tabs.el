@@ -31,7 +31,6 @@
 ;;;; Tab Bar
 ;; Use tab-bar for window grouping and configuration within a project (replaces eyebrowse)
 (use-package tab-bar
-  :straight (:type built-in)
   :after (project)
   :commands (tab-bar-new-tab
              tab-bar-switch-to-tab
@@ -122,7 +121,6 @@ questions.  Otherwise use completion to select the tab."
 
 ;;;; Tab Workspaces
 (use-package tabspaces
-  :straight (:type git :host github :repo "mclear-tools/tabspaces")
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
          ("p" . tabspaces-open-or-create-project-and-workspace))

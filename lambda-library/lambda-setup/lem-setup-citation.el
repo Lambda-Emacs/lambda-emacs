@@ -38,7 +38,8 @@
 ;;;; Org-Cite
 ;; Eventually this should be a full replacement for org-ref
 (use-package oc
-  :straight nil
+  :ensure nil
+  ;; :straight nil
   :after org
   :config
   (setq org-cite-global-bibliography `(,lem-bibliography))
@@ -49,7 +50,8 @@
 
 ;; Use csl
 (use-package oc-csl
-  :straight nil
+  ;; :straight nil
+  :ensure nil
   :after oc
   :init
   ;; make sure to download csl
@@ -61,12 +63,12 @@
 
 ;;;; Citeproc
 (use-package citeproc
-  :straight (:host github :repo "andras-simonyi/citeproc-el")
+  ;; :straight (:host github :repo "andras-simonyi/citeproc-el")
   :after (oc oc-csl))
 
 ;;;; Citar
 (use-package citar
-  :straight (:host github :repo "emacs-citar/citar")
+  ;; :straight (:host github :repo "emacs-citar/citar")
   :commands (citar-open-beref
              citar-open-notes
              citar-insert-citation)
@@ -117,14 +119,6 @@ With prefix, rebuild the cache before offering candidates."
         (if link
             (browse-url-default-browser link)
           (message "No ref found for %s" key-entry))))))
-
-;;;; Capf-bibtex
-(use-package capf-bibtex
-  :straight (:type git :host github :repo "mclear-tools/capf-bibtex")
-  :hook ((org-mode markdown-mode tex-mode latex-mode reftex-mode) . capf-bibtex-mode)
-  :custom
-  (capf-bibtex-bibliography
-   '("/Users/roambot/Dropbox/Work/bibfile.bib")))
 
 (provide 'lem-setup-citation)
 ;;; lem-setup-citation.el ends here

@@ -24,6 +24,7 @@
 ;;; Code:
 ;;;; Spelling
 (use-package ispell
+  :ensure nil
   :commands (ispell-word ispell-region ispell-buffer)
   :config
   (when (executable-find "aspell")
@@ -32,6 +33,7 @@
     (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
 
 (use-package flyspell
+  :ensure nil
   :config
   (setq flyspell-abbrev-p t
         flyspell-use-global-abbrev-table-p t
@@ -43,7 +45,6 @@
 
 ;; completion of spellings
 (use-package flyspell-correct
-  :straight t
   :after flyspell
   :bind (:map flyspell-mode-map
          ("C-;" . flyspell-correct-previous)
@@ -73,9 +74,9 @@
 
 ;; Completion of misspelled words in buffer
 (use-package consult-flyspell
-  :straight (consult-flyspell :type git :host gitlab
-                              :repo "OlMon/consult-flyspell"
-                              :branch "master")
+  ;; :straight (consult-flyspell :type git :host gitlab
+  ;;                             :repo "OlMon/consult-flyspell"
+  ;;                             :branch "master")
   :after flyspell
   :config
   (setq consult-flyspell-set-point-after-word t
@@ -96,7 +97,8 @@
 
 ;;;; Abbrev
 (use-package abbrev
-  :straight (:type built-in)
+  :ensure nil
+  ;; :straight (:type built-in)
   :defer 2
   :config
   ;; (add-hook 'text-mode-hook #'abbrev-mode)
@@ -206,10 +208,6 @@
   (setq writeroom-mode-line t)
   (setq writeroom-bottom-divider-width 0))
 
-;;;; Interleave (Notes)
-(use-package interleave
-  :commands interleave-mode)
-
 ;;;; Lorem Ipsum
 (use-package lorem-ipsum
   :commands (Lorem-ipsum-insert-sentences Lorem-ipsum-insert-list Lorem-ipsum-insert-paragraphs)
@@ -245,7 +243,7 @@
     (setq-default TeX-master nil)))
 
 (use-package preview
-  :straight nil
+  :ensure nil
   :after auctex
   :commands LaTeX-preview-setup
   :init
@@ -322,24 +320,13 @@
       (substring fname-or-url 7)
     fname-or-url))
 
-;;;; Word Repetition Finder
-;; Via https://irreal.org/blog/?p=10235
-(use-package repetition_error_finder
-  :straight (:type git :host github :repo "ioah86/repetition_error_finder")
-  :commands (find-reperr-whole-buffer find-reperr-from-point))
-
 ;;;; Dictionary
 (use-package define-word
   :commands (define-word define-word-at-point))
 
 (use-package osx-dictionary
-  :straight (:type git :host github :repo "xuchunyang/osx-dictionary.el")
+  ;; :straight (:type git :host github :repo "xuchunyang/osx-dictionary.el")
   :commands (osx-dictionary-search-word-at-point osx-dictionary-search-input))
-
-(use-package sdcv-mode
-  :straight (:type git :host github :repo "gucong/emacs-sdcv")
-  :bind (:map lem+search-keys
-         ("w" . sdcv-search)))
 
 ;;;; Narrow/Widen
 (defun lem-narrow-or-widen-dwim (p)

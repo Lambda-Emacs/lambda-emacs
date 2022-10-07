@@ -25,7 +25,6 @@
 
 ;;;; Dim inactive windows
 (use-package dimmer
-  :straight (:host github :repo "gonewest818/dimmer.el")
   :hook (after-init . dimmer-mode)
   :custom
   (dimmer-prevent-dimming-predicates '(window-minibuffer-p))
@@ -53,7 +52,7 @@
 ;;;; Reveal Mode
 ;; Toggle uncloaking of invisible text near point, including folded org headlines (Reveal mode).
 (use-package reveal
-  :straight (:type built-in)
+  :ensure nil
   :defer 1
   :config
   (setq reveal-auto-hide nil)
@@ -63,7 +62,6 @@
   ;;; SVG Tag Mode
 (use-package svg-tag-mode
   :when (image-type-available-p 'svg)
-  :straight (:type git :host github :repo "rougier/svg-tag-mode")
   :hook (prog-mode . svg-tag-mode)
   :config
   (setq svg-tag-tags
@@ -79,32 +77,10 @@
 
 
 ;;;; Highlight
-;;;;; Highlight Lines
-;; Highlight lines. You can toggle this off
-(use-package hl-line+
-  :straight t
-  :hook
-  ;; https://tech.toryanderson.com/2021/09/24/replacing-beacon.el-with-hl-line-flash/
-  (window-scroll-functions . hl-line-flash)
-  (focus-in . hl-line-flash)
-  (post-command . hl-line-flash)
-  :custom-face
-  ;; subtle highlighting
-  (hl-line ((t (:inherit highlight))))
-  :custom
-  (global-hl-line-mode nil)
-  (hl-line-flash-show-period 0.5)
-  ;; (hl-line-inhibit-highlighting-for-modes '(dired-mode))
-  ;; (hl-line-overlay-priority -100) ;; sadly, seems not observed by diredfl
-  (hl-line-when-idle-interval 5)
-  (hl-line-inhibit-highlighting-for-modes '(eshell-mode lem-splash-mode))
-  :config
-  (toggle-hl-line-when-idle 1 t))
 
 ;;;;; LIN (Make HL Line Better)
 (use-package lin
   :disabled
-  :straight t
   :config
   (setq lin-mode-hooks
         '(dired-mode-hook
@@ -165,7 +141,7 @@
 ;; Replace external package with internal command
 
 (use-package pulse
-  :straight (:type built-in)
+  :ensure nil
   :defer 1
   :bind
   ("C-<return>" . pulse-line)
@@ -189,37 +165,10 @@
   :config
   (setq-default goggles-pulse t)) ;; set to nil to disable pulsing
 
-;;;;; Crosshair Highlighting
-;; Highlight cursor vertically and horizontally
-(use-package crosshairs
-  :straight t
-  :commands (crosshairs-highlight
-             crosshairs-mode
-             flash-crosshairs)
-  :bind (:map lem+toggle-keys
-         ("c" . crosshairs-mode))
-  :custom-face
-  (col-highlight ((t (:inherit hl-line))))
-  :config
-  ;; same colors for both hlines
-  (setq col-highlight-vline-face-flag t))
-
 ;;;; Empty Lines
 ;; Don't show empty lines.
 ;; .. Allows you to tell if there are blank lines at the end of the file.
 (setq-default indicate-empty-lines nil)
-
-;;;; Pulsing Cursor
-(use-package pulsing-cursor
-  :straight (:type git :host github :repo "jasonjckn/pulsing-cursor")
-  :defer 1
-  :custom-face
-  (pulsing-cursor-overlay-face1 ((t (:inherit match))))
-  :custom
-  (pulsing-cursor-delay 1.0)
-  (pulsing-cursor-interval .5)
-  (pulsing-cursor-blinks 5)
-  :config (pulsing-cursor-mode +1))
 
 
 (provide 'lem-setup-faces)

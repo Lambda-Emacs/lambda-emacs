@@ -71,7 +71,7 @@
 ;;;; Xref
 ;; Built-in library for cross-referencing
 (use-package xref
-  :straight (:type built-in)
+  :ensure nil
   :defer 1)
 
 ;;; Provide

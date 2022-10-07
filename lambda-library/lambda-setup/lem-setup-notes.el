@@ -42,7 +42,7 @@
 ;; See also https://systemcrafters.net/live-streams/july-15-2022/
 
 (use-package denote
-  :straight (:type git :host github :repo "protesilaos/denote")
+  ;; :straight (:type git :host github :repo "protesilaos/denote")
   :commands (denote denote-create-note denote-link-ol-store)
   :custom
   (denote-file-type nil) ;; use org
@@ -87,7 +87,7 @@
 ;;;; Consult Notes
 ;; Adapted from https://github.com/minad/consult/wiki/hrm-notes
 (use-package consult-notes
-  :straight (:type git :host github :repo "mclear-tools/consult-notes")
+  ;; :straight (:type git :host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
              consult-notes-search-in-all-notes))
 

@@ -9,7 +9,8 @@
 
 ;;; Compilation
 (use-package compile
-  :straight (:type built-in)
+  ;; :straight (:type built-in)
+  :ensure nil
   :defer 2
   ;; Add recompile to project map
   :bind (:map project-prefix-map
@@ -191,7 +192,8 @@ shell exits, the buffer is killed."
 ;;; Tramp
 ;; An easy way to ssh
 (use-package tramp
-  :straight nil
+  ;; :straight nil
+  :ensure nil
   :defer 1
   :config
   (setq tramp-persistency-file-name (concat lem-cache-dir "tramp")
