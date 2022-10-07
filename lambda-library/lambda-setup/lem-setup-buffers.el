@@ -46,22 +46,19 @@
   ;; Reduce cursor lag by a tiny bit by not auto-adjusting `window-vscroll'
   ;; for tall lines.
   (setq auto-window-vscroll nil)
-  ;; Settings for better cursor
+  ;; For centered cursor scrolling
   ;; see https://two-wrongs.com/centered-cursor-mode-in-vanilla-emacs
-  ;;  (NOTE: A number of 101+ disables re-centering.)
-  ;; Smooth scrolling
-  (setq-default scroll-conservatively 10000
-                scroll-step 1
-                scroll-margin 1
-                scroll-preserve-screen-position 1))
-
-(use-package pixel-scroll
-  :straight (:type built-in)
-  :custom
-  (pixel-scroll-precision-mode t)
-  (pixel-scroll-precision-interpolate-page t)
-  :config
-  (pixel-scroll-mode 1))
+  ;; Smooth Vertical Scroll
+  (setq scroll-step 1)
+  (setq scroll-margin 3)
+  (setq scroll-conservatively 101)
+  (setq scroll-up-aggressively 0.01)
+  (setq scroll-down-aggressively 0.01)
+  (setq auto-window-vscroll nil)
+  (setq fast-but-imprecise-scrolling nil)
+  ;; Horizontal Scroll
+  (setq hscroll-step 1)
+  (setq hscroll-margin 1))
 
 (use-package mwheel
   :straight (:type built-in)
@@ -76,10 +73,17 @@
    ;; Completely disable mouse wheel acceleration to avoid speeding away.
    mouse-wheel-progressive-speed nil
    mwheel-coalesce-scroll-events t
-   ;; The most important setting of all! Make each scroll-event move 2 lines at
-   ;; a time (instead of 5 at default). Simply hold down shift to move twice as
-   ;; fast, or hold down control to move 3x as fast. Perfect for trackpads.
-   mouse-wheel-scroll-amount '(2 ((shift) . 4) ((control) . 6))))
+   ;; The most important setting of all! Make each scroll-event move 1 line at a
+   ;; time (instead of 5 at default). Simply hold down shift to move twice as
+   ;; fast. Perfect for trackpads.
+   mouse-wheel-scroll-amount '(1 ((shift) . 2))))
+
+;; Don't use pixel-scroll by default -- it causes janky behavior on MacOS
+(use-package pixel-scroll
+  :straight (:type built-in)
+  :config
+  (pixel-scroll-mode -1))
+
 
 ;;;; Mouse
 ;; Don't be afraid of the mouse!
