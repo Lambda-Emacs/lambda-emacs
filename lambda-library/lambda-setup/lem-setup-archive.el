@@ -173,25 +173,33 @@
 ;;    "ll"  "exa -a -l --group-directories-first --git --icons --color=always"
 ;;    "lsa" "exa -a --group-directories-first --icons --color=always        "
 ;;    "lsd" "exa -D -a -l --git --icons --color=always                      "))
-  :init
-  (when (version= emacs-version "29")
-    ;; HACK: - see https://github.com/hlissner/doom-emacs/issues/6063
-    (defvar read-symbol-positions-list nil)
-    :config/el-patch
-    (defun helpful--autoloaded-p (sym buf)
-      "Return non-nil if function SYM is autoloaded."
-      (-when-let (file-name (buffer-file-name buf))
-        (setq file-name (s-chop-suffix ".gz" file-name))
-        (help-fns--autoloaded-p sym)))
+:init
+(when (version= emacs-version "29")
+  ;; HACK: - see https://github.com/hlissner/doom-emacs/issues/6063
+  (defvar read-symbol-positions-list nil)
+  :config/el-patch
+  (defun helpful--autoloaded-p (sym buf)
+    "Return non-nil if function SYM is autoloaded."
+    (-when-let (file-name (buffer-file-name buf))
+      (setq file-name (s-chop-suffix ".gz" file-name))
+      (help-fns--autoloaded-p sym)))
 
-    (defun helpful--skip-advice (docstring)
-      "Remove mentions of advice from DOCSTRING."
-      (let* ((lines (s-lines docstring))
-             (relevant-lines
-              (--take-while
-               (not (or (s-starts-with-p ":around advice:" it)
-                        (s-starts-with-p "This function has :around advice:" it)))
-               lines)))
-        (s-trim (s-join "\n" relevant-lines))))))
+  (defun helpful--skip-advice (docstring)
+    "Remove mentions of advice from DOCSTRING."
+    (let* ((lines (s-lines docstring))
+           (relevant-lines
+            (--take-while
+             (not (or (s-starts-with-p ":around advice:" it)
+                      (s-starts-with-p "This function has :around advice:" it)))
+             lines)))
+      (s-trim (s-join "\n" relevant-lines))))))
 ;; NOTE: emacs 29 has a breaking change so using el-patch to keep helpful working
 ;; see https://github.com/Wilfred/helpful/pull/283
+;;;; Tab Bookmark
+;; Bookmark window configurations in a tab
+;; NOTE: would be good to get this working with tabspaces
+(use-package tab-bookmark
+  :straight (:type git :host github :repo "minad/tab-bookmark")
+  :commands (tab-bookmark tab-bookmark-open)
+  :bind (:map project-prefix-map
+         ("m" . tab-bookmark)))
