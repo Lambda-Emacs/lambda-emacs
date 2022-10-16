@@ -371,7 +371,7 @@ targets."
 ;;;;; Corfu
 (use-package corfu
   :hook
-  (emacs-startup . global-corfu-mode)
+  (window-setup . global-corfu-mode)
   :bind
   (:map corfu-map
    ("C-j"      . corfu-next)
@@ -393,12 +393,13 @@ targets."
   (corfu-cycle t)
   ;; TAB cycle if there are only few candidates
   (completion-cycle-threshold 3)
-  (corfu-echo-documentation nil) ;; use corfu doc
-  (corfu-separator  ?_)
+  (corfu-echo-documentation nil) ;; Use corfu doc
+  (corfu-separator ? ) ;; Use space as separator
   (corfu-quit-no-match 'separator)
-  (corfu-quit-at-boundary t)
-  (corfu-preview-current nil)       ; Preview current candidate?
-  (corfu-preselect-first t)           ; Preselect first candidate?
+  (corfu-quit-at-boundary 'separator)
+  (corfu-preview-current nil)  ;; Preview current candidate?
+  (corfu-preselect-first t)    ;; Preselect first candidate?
+  (corfu-history-mode 1) ;; Use history for completion
   :config
   ;; Enable Corfu completion for commands like M-: (eval-expression) or M-!
   ;; (shell-command)
@@ -407,7 +408,21 @@ targets."
     (when (where-is-internal #'completion-at-point (list (current-local-map)))
       ;; (setq-local corfu-auto nil) Enable/disable auto completion
       (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer))
+  (add-hook 'minibuffer-setup-hook #'corfu-enable-in-minibuffer)
+  (add-hook 'eshell-mode-hook (lambda () (setq-local corfu-quit-no-match t
+                                                corfu-quit-at-boundary t
+                                                corfu-auto nil)))
+  ;; Avoid press RET twice in shell
+  ;; https://github.com/minad/corfu#completing-in-the-eshell-or-shell
+  (defun corfu-send-shell (&rest _)
+    "Send completion candidate when inside comint/eshell."
+    (cond
+     ((and (derived-mode-p 'eshell-mode) (fboundp 'eshell-send-input))
+      (eshell-send-input))
+     ((and (derived-mode-p 'comint-mode)  (fboundp 'comint-send-input))
+      (comint-send-input))))
+
+  (advice-add #'corfu-insert :after #'corfu-send-shell))
 
 ;; Use dabbrev with Corfu!
 (use-package dabbrev
@@ -454,11 +469,17 @@ targets."
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  (add-to-list 'completion-at-point-functions #'cape-ispell))
-;; (add-to-list 'completion-at-point-functions #'cape-dict)
-;; (add-to-list 'completion-at-point-functions #'cape-line)
-;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  ;; (add-to-list 'completion-at-point-functions #'cape-dict)
+  ;; (add-to-list 'completion-at-point-functions #'cape-line)
+  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  ;; (add-to-list 'completion-at-point-functions #'cape-abbrev)
+  :config
+  ;; Sanitize the `pcomplete-completions-at-point' Capf.
+  ;; The Capf has undesired side effects on Emacs 28 and earlier.
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
+  )
 
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
