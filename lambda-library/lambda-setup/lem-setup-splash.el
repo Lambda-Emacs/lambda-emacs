@@ -63,7 +63,10 @@
 (defcustom lem-splash-init-info
   (lambda ()
     (let ((package-count 0) (time (emacs-init-time)))
-      (setq package-count (- (length load-path) (length (get 'load-path 'initial-value))))
+      (cond ((bound-and-true-p package-alist)
+             (setq package-count (length package-activated-list)))
+            ((boundp 'straight--profile-cache)
+             (setq package-count (+ (hash-table-count straight--profile-cache) package-count))))
       (if (zerop package-count)
           (format "Emacs started in %s" time)
         (format "%d packages loaded in %s" package-count time))))
