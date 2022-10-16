@@ -45,7 +45,9 @@
   ;; :straight (:type git :host github :repo "protesilaos/denote")
   :commands (denote denote-create-note denote-link-ol-store)
   :custom
-  (denote-file-type nil) ;; use org
+  ;; Use org-read-date
+  (denote-date-prompt-use-org-read-date t)
+  (denote-file-type 'org) ;; use org
   (denote-allow-multi-word-keywords nil) ;; single word keywords only
   ;; Better backlink display
   (denote-link-backlinks-display-buffer-action
@@ -56,7 +58,7 @@
            (slot . 99)
            (window-height . 10))))
   ;; Set default prompts for note creation
-  ;; (denote-prompts '(title keywords))
+  (denote-prompts '(title keywords))
   ;; Set multiple keywords as a list of strings
   ;; (denote-known-keywords '("workbook" "projects" "ideas"))
   )
