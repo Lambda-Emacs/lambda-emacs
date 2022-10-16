@@ -48,7 +48,8 @@
 ;;;;; Config Helper Functions
 
 (defvar lem-files-sources-data
-  `(("Init Files"      ?i ,lem-emacs-dir)
+  `(("Bootstrap Files" ?b ,lem-bootstrap-directory)
+    ("Init Files"      ?i ,lem-emacs-dir)
     ("Setup Files"     ?s ,lem-setup-dir)
     ("User Files"      ?u ,lem-user-dir))
   "Define titles, quick-keys, and directories to be searched for files.")
@@ -67,7 +68,6 @@
 				               (directory-files dir nil "[^.].*[.].+")))
       :action   ,(lambda (f) (find-file f)))))
 
-;;;###autoload
 (defun lem-find-lambda-file ()
   "Find a file from list of 𝛌-Emacs configuration files."
   (interactive)
@@ -77,7 +77,6 @@
 		          :prompt "𝛌-files: "
 		          :history 'file-name-history))
 
-;;;###autoload
 (defun lem-search-lambda-files ()
   "Search all configuration files in 𝛌-Emacs with consult-ripgrep."
   (interactive)
