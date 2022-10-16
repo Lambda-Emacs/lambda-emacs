@@ -81,8 +81,7 @@
 ;; Don't use pixel-scroll by default -- it causes janky behavior on MacOS
 (use-package pixel-scroll
   :ensure nil
-  :config
-  (pixel-scroll-mode -1))
+  :disabled)
 
 
 ;;;; Mouse
