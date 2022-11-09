@@ -34,78 +34,6 @@
   :group 'emacs)
 
 ;;;; Startup
-;;;;; System Variables
-;; Check the system used
-(defconst sys-linux   (eq system-type 'gnu/linux))
-(defconst sys-mac     (eq system-type 'darwin))
-(defconst sys-bsd     (or sys-mac (eq system-type 'berkeley-unix)))
-(defconst sys-win     (memq system-type '(cygwin windows-nt ms-dos)))
-
-;;;;; Directory Variables
-;;  We're going to define a number of directories that are used throughout this
-;;  configuration to store different types of files. This is a bit like the
-;;  `no-littering' package, and allows us to keep `user-emacs-directory' tidy.
-
-(defconst lem-emacs-dir (expand-file-name user-emacs-directory)
-  "The path to the emacs.d directory.")
-
-(defconst lem-library-dir (concat lem-emacs-dir "lambda-library/")
-  "The directory for 𝛌-Emacs Lisp libraries.
-This will house all setup libraries and external libraries or packages.")
-
-(defconst lem-user-dir (concat lem-library-dir "lambda-user/")
-  "Storage for personal elisp, scripts, and any other private files.")
-
-(defconst lem-setup-dir (concat lem-library-dir "lambda-setup/")
-  "The storage location of the setup-init files.")
-
-(defconst lem-var-dir (concat lem-emacs-dir "var/")
-  "The directory for non-essential file storage.
-Contents are subject to change. Used for package storage (elpa or
-straight) and by `lem-etc-dir' and `lem-cache-dir'.")
-
-(defconst lem-etc-dir (concat lem-var-dir "etc/")
-  "The directory for non-volatile storage.
-  These are not deleted or tampered with by emacs functions. Use
-  this for dependencies like servers or config files that are
-  stable (i.e. it should be unlikely that you need to delete them
-               if something goes wrong).")
-
-(defconst lem-cache-dir (concat lem-var-dir "cache/")
-  "The directory for volatile storage.
-  Use this for transient files that are generated on the fly like
-  caches and ephemeral/temporary files. Anything that may need to
-  be cleared if there are problems.")
-
-(defconst lem-default-config-file (concat lem-library-dir "lem-default-config.el")
-  "A sample default configuration of the personal config file to get the user started.")
-
-;;;;; User Configuration Variables
-;; Find the user configuration file
-(defconst lem-config-file (expand-file-name "config.el" lem-user-dir)
-  "The user's configuration file.")
-
-;; These next two variables are both optional, but maybe convenient.
-;; They are used with the functions `lem-goto-projects' and `lem-goto-elisp-library'.
-
-;; Set user project directory
-(defcustom lem-project-dir nil "Set the directory for user projects."
-  :group 'lambda-emacs
-  :type 'string)
-
-;; Set user elisp project dir
-(defcustom lem-user-elisp-dir nil
-  "Directory for personal elisp projects.
-Any customized libraries not available via standard package repos like elpa or melpa should go here."
-  :group 'lambda-emacs
-  :type 'string)
-
-;;;;; Path Settings
-;; Directory paths
-(dolist (dir (list lem-library-dir lem-var-dir lem-etc-dir lem-cache-dir lem-user-dir lem-setup-dir))
-  (unless (file-directory-p dir)
-    (make-directory dir t)))
-
 ;;;;; Load Path
 ;; Add all configuration files to load-path
 (eval-and-compile
@@ -138,8 +66,9 @@ Any customized libraries not available via standard package repos like elpa or m
 ;; after-init-hook or after some number of seconds of idle. This should produce
 ;; shorter startup times, which helps especially when doing, e.g., a quick
 ;; restart-and-check of something in emacs.
-(when (eq lem-package-system 'package)
-  (lem-package-initialize))
+(when (and (eq lem-package-system 'package)
+           (not package-enable-at-startup))
+  (package-initialize))
 
 ;;;;; Use-Package
 ;; Install use package
@@ -153,14 +82,17 @@ Any customized libraries not available via standard package repos like elpa or m
 ;; Settings
 (use-package use-package
   :custom
+  ;; Don't automatically defer
   (use-package-always-defer nil)
+  ;; Report loading details
   (use-package-verbose t)
   ;; This is really helpful for profiling
   (use-package-minimum-reported-time 0)
-  (use-package-enable-imenu-support t)
   (use-package-expand-minimally nil)
-  ;; Let straight handle package install
-  (use-package-always-ensure t))
+  ;; Manually handle package install
+  (use-package-always-ensure nil)
+  ;; Navigate use-package declarations w/imenu
+  (use-package-enable-imenu-support t))
 
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
@@ -258,19 +190,6 @@ emacs-version string on the kill ring."
                             (";;;;; " . 3)
                             (";;;;;; " . 4)
                             (";;;;;;; " . 5))))))
-
-;;;;; Measure Time Macro
-;; Useful macro to wrap functions in for testing
-;; See https://stackoverflow.com/q/23622296
-(defmacro measure-time (&rest body)
-  "Measure the time it takes to evaluate BODY."
-  `(let ((time (current-time)))
-     ,@body
-     (message "
-;; ======================================================
-;; *Elapsed time: %.06f*
-;; ======================================================"
-              (float-time (time-since time)))))
 
 ;;;;; Load Configuration Modules
 ;; Lambda-Emacs loads a series of lisp-libraries or 'modules'. Which modules are
