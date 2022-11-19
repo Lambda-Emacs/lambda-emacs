@@ -61,6 +61,7 @@ and bibliography and notes files.
 | lem-scratch-save-dir       | Where to save scratch file                             |
 | lem-scratch-default-dir    | Default dir for scratch buffer                         |
 | lem-ui-theme               | User prefererred theme                                 |
+| lem-ui-mac-system-theme    | On MacOS match system appearance settings              |
 | lem-custom-themes-dir      | Directory for custom lambda-themes                     |
 | lem-bib-notes              | File for reference notes                               |
 | lem-bibliography           | User bibliography used in citations                    |

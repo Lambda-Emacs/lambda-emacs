@@ -132,8 +132,14 @@
              (load-theme 'lambda-dark)
              (setq active-theme 'dark-theme)))))
 
+(defcustom lem-ui-mac-system-theme t
+  "When `t' use theme that matches macOS system theme."
+  :group 'lambda-emacs
+  :type 'boolean)
+
 ;; Add the hook on MacOS
-(when sys-mac
+(when (and sys-mac
+           lem-ui-mac-system-theme)
   (add-hook 'ns-system-appearance-change-functions #'lem--system-apply-theme))
 
 ;;;;; Define User Theme
