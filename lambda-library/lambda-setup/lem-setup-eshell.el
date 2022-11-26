@@ -430,9 +430,13 @@ This function is meant to be used as advice around
   "Open `eshell' in current dir, with project as name.
 If called with universal arg, open in home dir."
   (interactive "P")
-  (if arg
-      (lem-eshell-home)
-    (eshell)))
+  (cond ((get-buffer-window "*eshell*")
+         (switch-to-buffer "*eshell*")
+         (delete-window))
+        (arg
+         (lem-eshell-home))
+        (t
+         (eshell))))
 
 ;;;;; Clear Eshell
 ;; Make eshell act like a standard unix terminal.
