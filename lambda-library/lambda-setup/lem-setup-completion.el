@@ -427,7 +427,10 @@ targets."
          ("M-j" . corfu-doc-scroll-down))
   :custom
   (corfu-doc-max-width 70)
-  (corfu-doc-max-height 20))
+  (corfu-doc-max-height 20)
+  :config
+  ;; ignore deprecation warning
+  (add-to-list 'warning-suppress-types '(corfu-doc)))
 
 ;;;;;; Corfu Extensions (Cape)
 ;; Add extensions
