@@ -430,7 +430,8 @@ targets."
   (corfu-doc-max-height 20)
   :config
   ;; ignore deprecation warning
-  (add-to-list 'warning-suppress-types '(corfu-doc)))
+  (with-eval-after-load 'warnings
+    (add-to-list 'warning-suppress-types '(corfu-doc))))
 
 ;;;;;; Corfu Extensions (Cape)
 ;; Add extensions
