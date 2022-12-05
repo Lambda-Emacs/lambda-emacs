@@ -141,7 +141,7 @@
 
 ;;;; Revert All Buffers
 (use-package revert-buffer-all
-  :straight (:type git :host gitlab :repo "ideasman42/emacs-revert-buffer-all")
+  :straight (:type git :host codeberg :repo "ideasman42/emacs-revert-buffer-all")
   :commands (revert-buffer-all))
 
 ;;;; iBuffer
