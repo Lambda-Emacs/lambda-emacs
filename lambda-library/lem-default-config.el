@@ -101,6 +101,7 @@
   (measure-time (cl-dolist (mod (list
                                  ;; Splash/Dashboard
                                  'lem-setup-splash
+                                 ;;'lem-setup-dashboard
 
                                  ;; Completion & Keybinds
                                  'lem-setup-completion
