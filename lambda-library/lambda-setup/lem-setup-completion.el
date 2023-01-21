@@ -343,7 +343,7 @@ targets."
    --exclude-dir=.git --line-number -I -R -S .")
 
   (setq consult-ripgrep-args
-        "rg --null --line-buffered --color=never --max-columns=1000 --path-separator /\
+        "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator /\
   --smart-case --no-heading --line-number --hidden --glob=!.git/ -L .")
 
   ;; Make consult locate work with macos spotlight
@@ -442,7 +442,11 @@ targets."
          ("M-j" . corfu-doc-scroll-down))
   :custom
   (corfu-doc-max-width 70)
-  (corfu-doc-max-height 20))
+  (corfu-doc-max-height 20)
+  :config
+  (with-eval-after-load 'warnings
+    (add-to-list 'warning-suppress-types '(corfu-doc))))
+
 
 ;;;;;; Corfu Extensions (Cape)
 ;; Add extensions
