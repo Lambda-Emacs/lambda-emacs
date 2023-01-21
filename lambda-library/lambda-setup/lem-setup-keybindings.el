@@ -31,8 +31,8 @@
 ;;;; Bind Key
 ;; Note that bind-key comes with use-package
 (use-package bind-key
-:config
-  (setq bind-key-describe-special-forms t))
+  :config
+  (setq bind-key-describe-special-forms nil))
 
 ;;;; Personal Keybindings Prefix
 (defcustom lem-prefix "C-c C-SPC"
@@ -59,6 +59,7 @@
            ("b" . consult-buffer)
            ("c" . lem-copy-whole-buffer-to-clipboard )
            ("d" . kill-buffer-and-window             )
+           ("e" . lem-create-new-elisp-buffer        )
            ("E" . erase-buffer                       )
            ("f" . reveal-in-osx-finder               )
            ("i" . consult-imenu                      )
@@ -156,7 +157,7 @@
            ("c" . mu4e-compose-new           )
            ("e" . lem-email-save-and-kill    )
            ("i" . lem-go-to-mail-inbox       )
-           ("k" . lem-mu-kill-server         )
+           ("k" . mu4e-kill-update-mail      )
            ("m" . lem-open-email-in-workspace)
            ("s" . mu4e-update-mail-and-index )
            ("S" . lem-swiftbar-email-update  )
@@ -305,7 +306,7 @@
 
 ;;;; Which Key
 (use-package which-key
-:defer 1
+  :defer 1
   :diminish ""
   :config
   ;; Allow C-h to trigger which-key before it is done automatically
