@@ -26,7 +26,6 @@
 ;;;; Dependencies
 ;; Load dependencies from Lambda-Emacs. Note these packages are usually deferred
 ;; but they must be loaded with dashboard since it requires icons.
-(require 'corfu)
 (require 'all-the-icons)
 
 ;; dashboard dependency
@@ -39,7 +38,6 @@
 
 ;;;; Dashboard
 (use-package dashboard
-  :straight t
   ;; Use only with GUI emacs
   :if (display-graphic-p)
   :if (< (length command-line-args) 2)
