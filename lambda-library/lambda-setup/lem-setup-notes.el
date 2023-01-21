@@ -58,10 +58,9 @@
            (slot . 99)
            (window-height . 10))))
   ;; Set default prompts for note creation
-  (denote-prompts '(title keywords))
+  (denote-prompts '(title keywords subdirectory))
   ;; Set multiple keywords as a list of strings
-  ;; (denote-known-keywords '("workbook" "projects" "ideas"))
-  )
+  (denote-known-keywords '("workbook" "project" "idea")))
 
 ;; Org-capture note creation with Denote
 (with-eval-after-load 'org-capture
@@ -85,6 +84,15 @@
    (concat lem-notes-dir "workbook"))
   (insert "* ")
   (lem-insert-time))
+
+;;;; Citar-Denote
+;; Integration of denote with citar
+(use-package citar-denote
+  :commands (citar-create-note
+             citar-open-notes
+             citar-denote-add-citekey)
+  :config
+  (citar-denote-mode))
 
 ;;;; Consult Notes
 ;; Adapted from https://github.com/minad/consult/wiki/hrm-notes
