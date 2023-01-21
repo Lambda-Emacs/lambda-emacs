@@ -251,7 +251,7 @@
   ;; This is just a slight modification of the existing functions.
   (defun popper-select-popup-at-top (buffer &optional _alist)
     "Display and switch to popup-buffer BUFFER at the top of the screen."
-    (let ((window (popper-display-popup-at-top buffer _alist)))
+    (let ((window (popper-display-popup-at-top buffer)))
       (select-window window)))
 
   (defun popper-display-popup-at-top (buffer &optional _alist)

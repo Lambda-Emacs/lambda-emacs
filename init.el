@@ -72,7 +72,9 @@
 
 ;;;;; Use-Package
 ;; Install use package
-(cond ((eq lem-package-system 'package)
+(cond ((version= (format "%s" emacs-major-version) "29")
+       (require 'use-package))
+      ((eq lem-package-system 'package)
        (unless (package-installed-p 'use-package)
          (package-refresh-contents)
          (package-install 'use-package)))
@@ -88,9 +90,10 @@
   (use-package-verbose t)
   ;; This is really helpful for profiling
   (use-package-minimum-reported-time 0)
+  ;; Expand normally
   (use-package-expand-minimally nil)
-  ;; Manually handle package install
-  (use-package-always-ensure nil)
+  ;; Unless otherwise set, manually handle package install -- see early-config.el
+  (use-package-always-ensure (if lem-package-ensure-packages t nil))
   ;; Navigate use-package declarations w/imenu
   (use-package-enable-imenu-support t))
 

@@ -39,14 +39,12 @@
 (customize-set-variable 'package-archive-priorities
                         '( ;; Prefer GNU packages
                           ("elpa-devel" . 99)
-                          ("elpa"    . 90)
-                          ;; Use Non-GNU packages if not found in GNU elpa
-                          ("nongnu" . 80)
-                          ("melpa" . 70)))
+                          ("melpa" . 90)))
 
 ;; Set location of package directory
 (customize-set-variable 'package-user-dir
                         (expand-file-name "elpa/" (concat lem-var-dir)))
+(customize-set-variable 'package-gnupghome-dir (concat package-user-dir "gnupg"))
 
 ;; Make sure the elpa/ folder exists after setting it above.
 (unless (file-exists-p package-user-dir)
@@ -55,6 +53,12 @@
 
 ;; TODO: add auto refresh option
 ;; See https://andreyorst.gitlab.io/posts/2022-07-15-refresh-package-contents-automatically/
+
+;; Ensure packages?
+(defcustom lem-package-ensure-packages t
+  "Whether to ensure packages with use-package, or install manually using the list in `package-selected-packages'."
+  :group 'lambda-emacs
+  :type 'boolean)
 
 (provide 'lem-package-bootstrap)
 ;;; lem-package-bootstrap.el ends here
