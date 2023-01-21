@@ -52,7 +52,6 @@
 ;;;; Reveal Mode
 ;; Toggle uncloaking of invisible text near point, including folded org headlines (Reveal mode).
 (use-package reveal
-  :ensure nil
   :defer 1
   :config
   (setq reveal-auto-hide nil)
@@ -75,6 +74,14 @@
           ("NOTE:"  . ((lambda (tag) (svg-tag-make "NOTE:"  :face 'warning :inverse t))))
           ("TODO:"  . ((lambda (tag) (svg-tag-make "TODO:"  :face 'warning :inverse t)))))))
 
+
+;;;; Widgets
+(use-package wid-edit
+  :ensure nil
+  :defer 1
+  :custom
+  ;; No ugly button for checkboxes
+  (widget-image-enable nil))
 
 ;;;; Highlight
 
@@ -141,7 +148,6 @@
 ;; Replace external package with internal command
 
 (use-package pulse
-  :ensure nil
   :defer 1
   :bind
   ("C-<return>" . pulse-line)
