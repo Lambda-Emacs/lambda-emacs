@@ -415,7 +415,7 @@ This function is meant to be used as advice around
 
 ;;;; Useful Functions
 
-;;;;; Call Eshell
+;;;;; Toggle Eshell
 ;; Open eshell in $HOME
 (defun lem-eshell-home ()
   "Open eshell in home dir."
@@ -424,19 +424,64 @@ This function is meant to be used as advice around
     (require 'eshell)
     (eshell)))
 
-;; Open an eshell in current dir, with project as name.
-;; If called with universal arg, open in home dir.
-(defun lem-call-eshell (&optional arg)
+(defun lem-is-eshell-toggled ()
+  "Checks if eshell is toggled."
+  (let ((eshell-buffer-name nil)
+        (result nil))
+    (if (project-current)
+        (setq eshell-buffer-name (concat "*eshell " (project-root (project-current)) "*"))
+      (setq eshell-buffer-name (concat "*eshell " default-directory "*")))
+    (dolist (elmnt (window-list) result)
+      (if (string= eshell-buffer-name (buffer-name (window-buffer elmnt)))
+          (setq result t)))
+    result))
+
+;; Open an eshell in current dir, with project as name. If called with universal
+;; arg, open in home dir. With popper this allows for a popup eshell buffer
+(defun lem-toggle-eshell (&optional arg)
   "Open `eshell' in current dir, with project as name.
-If called with universal arg, open in home dir."
+If called with universal arg ARG, open in home dir.
+
+If closed, toggle open and jump to buffer.
+If open, and not in eshell, jump to eshell.
+If open and in eshell, toggle closed."
   (interactive "P")
-  (cond ((get-buffer-window "*eshell*")
-         (switch-to-buffer "*eshell*")
-         (delete-window))
-        (arg
-         (lem-eshell-home))
-        (t
-         (eshell))))
+  (require 'eshell)
+  (let ((eshell-exists nil)
+        (eshell-buffer-name nil)
+        (eshell-buffer nil)
+        (default-directory default-directory))
+
+    (if (project-current)
+        (setq eshell-buffer-name (concat "*eshell • " (file-name-nondirectory (directory-file-name (project-root (project-current)))) "*"))
+      default-directory (project-root (project-current)))
+    (setq eshell-buffer-name (concat "*eshell • " (file-name-nondirectory (directory-file-name default-directory)) "*"))
+
+    (dolist (buffer (buffer-list) eshell-exists)
+      (if (string= (buffer-name buffer) eshell-buffer-name)
+          (progn (setq eshell-exists t)
+                 (setq eshell-buffer buffer))))
+
+    (cond ((and (get-buffer-window eshell-buffer-name)
+                (derived-mode-p 'eshell-mode))
+           (pop-to-buffer eshell-buffer-name)
+           (delete-window))
+          ((and (get-buffer-window eshell-buffer-name)
+                (not (derived-mode-p 'eshell-mode)))
+           (pop-to-buffer eshell-buffer-name))
+          (arg
+           (lem-eshell-home))
+          (t
+           (eshell)))))
+
+;; Make old call obsolete
+(define-obsolete-function-alias 'lem-call-eshell 'lem-toggle-eshell "Lambda-Emacs 0.4")
+
+;;;;; New Eshell
+(defun lem-new-eshell()
+  "Open a new instance of eshell."
+  (interactive)
+  (eshell 'N))
 
 ;;;;; Clear Eshell
 ;; Make eshell act like a standard unix terminal.
