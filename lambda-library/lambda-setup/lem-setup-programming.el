@@ -56,11 +56,16 @@
 (use-package rainbow-identifiers
   :commands rainbow-identifiers-mode)
 
+;;;;; Pair Delimiters
+(use-package elec-pair
+  :defer 1
+  :config (electric-pair-mode 1))
+
 ;;;;; Surround & Change Delimiters
 
 (use-package embrace
   ;; :straight (:type git :host github :repo "cute-jumper/embrace.el")
-    :bind (("C-M-s-#" . embrace-commander))
+  :bind (("C-M-s-#" . embrace-commander))
   :config
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
   (defun embrace-markdown-mode-hook ()
@@ -71,13 +76,11 @@
       (embrace-add-pair (car lst) (cadr lst) (cddr lst))))
   (add-hook 'markdown-mode-hook 'embrace-markdown-mode-hook))
 
-;;;;; Edit & Traverse Delimiters
+;;;;; Structural Editing: Edit & Traverse Delimiters
 
 (use-package puni
-  ;; :straight (:type git :host github :repo "AmaiKinono/puni")
   :hook ((prog-mode tex-mode org-mode markdown-mode
                     eval-expression-minibuffer-setup) . puni-mode))
-
 
 ;;;; Multiple Cursors
 (use-package iedit
@@ -86,27 +89,21 @@
          ("c" . iedit-mode)))
 
 ;;;; Languages
-;;;;; Applescript
-(use-package applescript-mode
-  :mode (("\\.scpt\\'" . applescript-mode)
-         ("\\.applescript\\'"       . applescript-mode))
-  :commands (applescript-mode))
+
+;; Only Elisp and shell are set up here. Add other languages as you like in your config file.
 
 ;;;;; Elisp
 ;;;;;; Lisp Packages
 (use-package lisp-mode
   :ensure nil
-  ;; :straight (:type built-in)
   :commands lisp-mode)
 
 (use-package emacs-lisp-mode
-  ;; :straight (:type built-in)
   :ensure nil
   :mode (("\\.el$" . emacs-lisp-mode))
   :interpreter (("emacs" . emacs-lisp-mode)))
 
 (use-package eldoc
-  ;; :straight (:type built-in)
   :ensure nil
   :commands eldoc-mode
   :hook (emacs-lisp-mode . turn-on-eldoc-mode)
@@ -119,19 +116,25 @@
 (use-package elisp-def
   :commands (elisp-def elisp-def-mode)
   :config
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
     (add-hook hook #'elisp-def-mode)))
 
 ;; Elisp hook
-(add-hook 'emacs-lisp-mode-hook (lambda ()
-                                  (setq show-trailing-whitespace t)
-                                  (setq show-paren-context-when-offscreen t)
-                                  (prettify-symbols-mode)
-                                  (eldoc-mode)
-                                  (yas-minor-mode)
-                                  ;; (company-mode)
-                                  (rainbow-delimiters-mode)))
+(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook lisp-interaction-mode-hook))
+  (add-hook hook (lambda ()
+                   (setq show-trailing-whitespace t)
+                   (setq show-paren-context-when-offscreen t)
+                   (prettify-symbols-mode 1)
+                   (eldoc-mode 1)
+                   (yas-minor-mode 1)
+                   (rainbow-delimiters-mode 1))))
 
+;; Show matching parens
+(use-package paren
+  :ensure nil
+  :hook (after-init . show-paren-mode)
+  :custom
+  (show-paren-delay 0))
 
 ;;;;;; Lisp Functions
 ;; idea from http://www.reddit.com/r/emacs/comments/312ge1/i_created_this_function_because_i_was_tired_of/
@@ -257,35 +260,6 @@ Lisp function does not specify a special indentation."
               (current-column)))
            (t $else)))))))
 
-;;;;; Haskell
-(use-package haskell-mode
-  :commands haskell-mode)
-
-;;;;; HTML
-(use-package web-mode
-  :commands (web-mode)
-  :mode ("\\.html$" . web-mode)
-  :config
-  (setq web-mode-enable-auto-pairing t
-        web-mode-enable-auto-expanding t
-        web-mode-enable-css-colorization t
-        web-mode-enable-auto-closing t
-        web-mode-enable-auto-quoting t))
-
-;;;;; Lua
-(use-package lua-mode
-  :commands lua-mode
-  :init
-  (dolist (pattern '("\\.lua\\'"))
-    (add-to-list 'auto-mode-alist (cons pattern 'lua-mode))))
-
-;;;;; PHP
-(use-package php-mode
-  :commands php-mode
-  :init
-  (dolist (pattern '("\\.php\\'"))
-    (add-to-list 'auto-mode-alist (cons pattern 'php-mode))))
-
 ;;;;; Shell Scripts
 (use-package sh-script
   :commands sh-script-mode
@@ -307,37 +281,6 @@ Lisp function does not specify a special indentation."
     (sh-set-shell "zsh")))
 (add-hook 'sh-mode-hook 'spacemacs//setup-shell)
 
-;;;;; YAML
-(use-package yaml-mode
-  :commands yaml-mode
-  :mode (("\\.yml$" . yaml-mode)
-         ("\\.yaml$" . yaml-mode))
-  :config
-  (add-hook 'yaml-mode-hook (lambda () (run-hooks 'prog-mode-hook))))
-
-;;;;; Plist
-(use-package plist-mode
-  ;; :straight nil
-  :load-path "~/bin/lisp-projects/plist-mode"
-  :commands (plist-mode))
-
-;;;;; Vim
-(use-package vimrc-mode
-  :commands vimrc-mode)
-
-;;;; Macrostep
-;; https://github.com/joddie/macrostep Interactive macro expander for emacs
-(use-package macrostep :commands macrostep-expand)
-
-;;;; Documentation
-(use-package tldr
-  :commands (tldr tldr-update-docs)
-  :init
-  (with-eval-after-load 'evil
-    (evil-set-initial-state 'tldr-mode 'emacs))
-  :config
-  (setq tldr-directory-path (expand-file-name "tldr/" lem-etc-dir)))
-
 ;;;; Indentation
 (use-package aggressive-indent
   :preface
@@ -346,8 +289,9 @@ Lisp function does not specify a special indentation."
   :hook
   ((css-mode . aggressive-indent-mode)
    (emacs-lisp-mode . aggressive-indent-mode)
-   (js-mode . aggressive-indent-mode)
+   (lisp-interaction-mode . aggressive-indent-mode)
    (lisp-mode . aggressive-indent-mode)
+   (js-mode . aggressive-indent-mode)
    (sgml-mode . aggressive-indent-mode))
   :config
   (setq-default aggressive-indent-comments-too t)
@@ -366,13 +310,11 @@ Lisp function does not specify a special indentation."
                 highlight-indent-guides-auto-character-face-perc 15
                 highlight-indent-guides-auto-enabled t))
 
-
 ;;;; Linting/Error Checking (Flymake)
 ;; Both Flycheck and Flymake are good linters, but let's stick with the built-in Flymake
 
 (use-package flymake
   ;; :straight (:type built-in)
-  :ensure nil
   :hook (prog-mode . flymake-mode)
   :custom
   (flymake-fringe-indicator-position 'left-fringe)
@@ -407,12 +349,8 @@ Lisp function does not specify a special indentation."
 ;; Use Consult with Flymake
 (use-package consult-flymake
   ;; :straight (:type git :host github :repo "minad/consult-flymake")
-  :ensure nil
   :bind (:map lem+flymake-keys
          ("c" . consult-flymake)))
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;; Compiling
 
@@ -427,11 +365,6 @@ Lisp function does not specify a special indentation."
   (defun string/starts-with (string prefix)
     "Return t if STRING starts with prefix."
     (and (stringp string) (string-match (rx-to-string `(: bos ,prefix) t) string))))
-
-
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;; Compile with Nearest Makefile
 ;; See https://www.emacswiki.org/emacs/CompileCommand
