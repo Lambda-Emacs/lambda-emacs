@@ -83,7 +83,7 @@
   (require 'consult)
   (let ((consult-ripgrep-args
          "rg --null --line-buffered --max-columns=1000 --path-separator /\
-   --smart-case --no-heading --line-number --hidden --glob=!straight --glob=!var --glob=!.git/ ."))
+   --smart-case --no-heading --line-number --hidden --glob=lambda-library/** --glob=!straight --glob=!var --glob=!.git/ ."))
     (if (executable-find "rg")
         (consult-ripgrep lem-emacs-dir)
       (message "Please install `rg' first."))))
@@ -287,15 +287,25 @@
 
 ;;;;; Create new buffer
 (defun lem-create-new-buffer ()
+  "Create a new buffer in the default major mode."
   (interactive)
   (let ((buffer (generate-new-buffer "*new*")))
     (set-window-buffer nil buffer)
     (with-current-buffer buffer
       (funcall (default-value 'major-mode)))))
 
+;;;;; Create New Elisp Buffer
+(defun lem-create-new-elisp-buffer ()
+  "Create a new buffer in `'emacs-lisp-mode'."
+  (interactive)
+  (let ((buffer (generate-new-buffer "*elisp*")))
+    (set-window-buffer nil buffer)
+    (with-current-buffer buffer
+      (emacs-lisp-mode))))
+
 ;;;;; Make Temp Buffer
 (defun lem-tmp-buffer()
-  "Make a temporary buffer and switch to it"
+  "Make a temporary buffer and switch to it."
   (interactive)
   (switch-to-buffer (get-buffer-create (concat "tmp-" (format-time-string "%m.%dT%H.%M.%S"))))
   (delete-other-windows))
