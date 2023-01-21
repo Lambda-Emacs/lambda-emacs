@@ -165,40 +165,6 @@
   :after markdown
   :hook (markdown-mode . markdown-toc))
 
-;;;; Pandoc
-(use-package pandoc-mode
-  :commands (lem-pandoc-convert-to-pdf run-pandoc pandoc-convert-to-pdf)
-  :config
-  (setq pandoc-use-async t)
-  ;; stop pandoc from just hanging forever and not completing conversion
-  ;; see https://github.com/joostkremers/pandoc-mode/issues/44
-  (setq pandoc-process-connection-type nil)
-  (progn
-    (defun run-pandoc ()
-      "Start pandoc for the buffer and open the menu"
-      (interactive)
-      (pandoc-mode)
-      (pandoc-main-hydra/body))
-    (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-
-    (defun lem-pandoc-convert-to-pdf ()
-      (interactive)
-      (cond
-       ((eq major-mode 'org-mode)
-        (call-interactively 'org-pandoc-export-to-latex-pdf-and-open))
-       (t
-        (call-interactively 'pandoc-convert-to-pdf) (lem-pandoc-pdf-open))))
-
-    (defun lem-pandoc-pdf-open ()
-      "Open created PDF file"
-      (interactive)
-      (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".pdf"))))
-  :init
-  (progn
-    (setq pandoc-data-dir (concat lem-etc-dir "pandoc-mode/"))
-    ;; help pandoc find xelatex
-    (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin"))))
-
 ;;;; Writeroom
 (use-package writeroom-mode
   :commands (writeroom-mode)
@@ -206,7 +172,17 @@
   (setq writeroom-fullscreen-effect 'maximized)
   (setq writeroom-width 95)
   (setq writeroom-mode-line t)
-  (setq writeroom-bottom-divider-width 0))
+  (setq writeroom-bottom-divider-width 0)
+  ;; better scrolling while writing
+  (add-hook 'writeroom-mode-hook #'lem-writing-mode-scroll-settings))
+
+(defun lem-writing-mode-scroll-settings ()
+  "Center cursor for typewriter-like scrolling during writing."
+  (progn
+    (setq-local scroll-preserve-screen-position t
+                scroll-conservatively 0
+                maximum-scroll-margin 0.5
+                scroll-margin 99999)))
 
 ;;;; Lorem Ipsum
 (use-package lorem-ipsum
