@@ -130,6 +130,48 @@
         (vterm)
         (set-frame-parameter frame 'name "terminal")))))
 
+;;;; Toggle Vterm
+;; I'm less interested in this for vterm than as using the project stuff for my vterm toggle function.
+(defun lem-is-vterm-toggled ()
+  "Checks if vterm is toggled."
+  (let ((vterm-buffer-name nil)
+        (result nil))
+    (if (project-current)
+        (setq vterm-buffer-name (concat "*vterm " (project-root (project-current)) "*"))
+      (setq vterm-buffer-name (concat "*vterm " default-directory "*")))
+    (dolist (elmnt (window-list) result)
+      (if (string= vterm-buffer-name (buffer-name (window-buffer elmnt)))
+          (setq result t)))
+    result))
+
+(defun lem-toggle-vterm ()
+  "Toggle a mini vterm."
+  (interactive)
+  (let ((vterm-exists nil)
+        (vterm-buffer-name nil)
+        (vterm-buffer nil)
+        (default-directory default-directory))
+
+    (if (project-current)
+        (setq vterm-buffer-name (concat "*vterm " (project-root (project-current)) "*")
+              default-directory (project-root (project-current)))
+      (setq vterm-buffer-name (concat "*vterm " default-directory "*")))
+
+    (dolist (buffer (buffer-list) vterm-exists)
+      (if (string= (buffer-name buffer) vterm-buffer-name)
+          (progn (setq vterm-exists t)
+                 (setq vterm-buffer buffer))))
+
+    (cond ((and (get-buffer-window vterm-buffer-name)
+                (derived-mode-p 'vterm-mode))
+           (pop-to-buffer vterm-buffer-name)
+           (delete-window))
+          ((and (get-buffer-window vterm-buffer-name)
+                (not (derived-mode-p 'vterm-mode)))
+           (pop-to-buffer vterm-buffer-name))
+          (t
+           (vterm)))))
+
 ;;;; Run Command in Vterm
 ;; See https://www.reddit.com/r/emacs/comments/ft84xy/run_shell_command_in_new_vterm/
 ;; https://github.com/akermu/emacs-libvterm/pull/145
@@ -165,29 +207,23 @@ shell exits, the buffer is killed."
                           (cons 'shell-command-history 1)
                           (list filename)))))
   (with-current-buffer (vterm (concat "*" command "*"))
-    (set-process-sentinel vterm--process #'run-in-vterm-kill)
+    (set-process-sentinel vterm--process #'lem-run-in-vterm-kill)
     (vterm-send-string command)
     (vterm-send-return)))
 
-;;;; Multi-Vterm
-(use-package multi-vterm
-  :commands (multi-vterm
-             multi-vterm-project
-             multi-vterm-dedicated-toggle))
-
 ;;; Virtualenvwrapper
 (use-package virtualenvwrapper
-  :after (:any eshell ansi-term)
+  :after (:any vterm ansi-term)
   :config
   (venv-initialize-interactive-shells) ;; if you want interactive shell support
-  (venv-initialize-eshell) ;; if you want eshell support
+  (venv-initialize-vterm) ;; if you want vterm support
   (setq venv-project-home
         (expand-file-name (or (getenv "PROJECT_HOME") "~/Dropbox/Work/projects/")))
   (setq venv-location "~/bin/virtualenvs")
   (add-hook 'venv-postactivate-hook (lambda () (workon-venv)))
   (defun workon-venv ()
-    "change directory to project in eshell"
-    (eshell/cd (concat venv-project-home venv-current-name))))
+    "change directory to project in vterm"
+    (vterm/cd (concat venv-project-home venv-current-name))))
 
 ;;; Tramp
 ;; An easy way to ssh
