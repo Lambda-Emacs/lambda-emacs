@@ -117,12 +117,14 @@
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-(use-package wid-edit
-  :ensure nil
-  :defer 1
-  :custom
-  ;; No ugly button for checkboxes
-  (widget-image-enable nil))
+;; Completion Icons
+(use-package all-the-icons-completion
+  :if (display-graphic-p)
+  :load-path (lambda () (concat lem-user-elisp-dir "all-the-icons-completion/"))
+  :hook (emacs-startup . all-the-icons-completion-mode)
+  :config
+  (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
+
 
 (provide 'lem-setup-fonts)
 ;;; lem-setup-fonts.el ends here

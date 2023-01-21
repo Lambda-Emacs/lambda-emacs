@@ -543,14 +543,6 @@ targets."
   :config
   (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
 
-
-;;;; Completion Icons
-(use-package all-the-icons-completion
-  :if (display-graphic-p)
-  :hook (after-init . all-the-icons-completion-mode))
-
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-completion)
 ;;; lem-setup-completion.el ends here
