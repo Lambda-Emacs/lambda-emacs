@@ -64,20 +64,6 @@
   (other-window 1))
 (bind-key* "C-c C-o" 'lem-other-window)
 
-;; Move by window numbers
-(use-package winum
-  :hook (after-init . winum-mode)
-  :custom
-  ;; seems to require being set in custom to take effect
-  (winum-auto-setup-mode-line nil)
-  :config
-  (setq window-numbering-scope            'global
-        winum-reverse-frame-list          nil
-        winum-auto-assign-0-to-minibuffer t
-        ;; winum-format                      " %s
-        ;; winum-mode-line-position          1
-        winum-ignored-buffers             '(" *which-key*")
-        winum-ignored-buffers-regexp      '(" \\*Treemacs-.*")))
 
 ;; Easy window movement by key
 (use-package windmove
