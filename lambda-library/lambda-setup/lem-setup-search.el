@@ -74,6 +74,14 @@
   :ensure nil
   :defer 1)
 
+;;;; Search and Replace
+(use-package visual-regexp
+  :commands (vr/query-replace)
+  :config
+  (use-package visual-regexp-steroids
+    :commands (vr/select-query-replace)))
+
+
 ;;; Provide
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
