@@ -39,7 +39,11 @@
 (setq-default pop-up-frames nil)
 
 ;;;;; Hydra Menus
-(use-package hydra :defer 1)
+(use-package hydra
+  :defer 1
+  :config
+  ;; Remove this advice as it breaks xref jump to definition, and thus all helpful functions
+  (advice-remove 'find-function-search-for-symbol #'hydra--around-find-function-search-for-symbol-advice))
 
 ;;;;; Transient Menus
 (use-package transient
