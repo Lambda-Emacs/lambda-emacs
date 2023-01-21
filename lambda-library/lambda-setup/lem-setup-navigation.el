@@ -52,11 +52,12 @@
 ;; List recent files
 (use-package recentf
   :ensure nil
-  :hook (emacs-startup . recentf-mode)
   :custom
   (recentf-save-file (concat lem-cache-dir "recentf"))
   (recentf-max-saved-items 500)
-  (recentf-max-menu-items 10))
+  (recentf-max-menu-items 10)
+  :config
+  (recentf-mode 1))
 
 ;;;; Goto Address
 ;; This package allows you to click or hit a key sequence while on a

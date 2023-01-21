@@ -48,12 +48,13 @@
   (tab-bar-tab-name-format-function #'lem--tab-bar-tab-name-format)
   (tab-bar-new-button nil)
   (tab-bar-close-button nil)
+  (tab-bar-auto-width nil)
   (tab-bar-format '(tab-bar-format-history
                     tab-bar-format-tabs
                     lem--tab-bar-suffix
                     tab-bar-format-add-tab))
   :config
-  ;; Tab bar numbers
+
   ;; https://christiantietze.de/posts/2022/02/emacs-tab-bar-numbered-tabs/
   (defvar lem-tab-bar--circle-numbers-alist
     '((0 . "⓪")
@@ -74,7 +75,6 @@
       (15 . "⑮"))
 
     "Alist of integers to strings of circled unicode numbers.")
-
   (defun lem--tab-bar-tab-name-format (tab i)
     (let ((current-p (eq (car tab) 'current-tab))
           (tab-num (if (and tab-bar-tab-hints (< i 16))
@@ -92,6 +92,7 @@
             "")
         (propertize " " 'display '(space :width (4))))
        'face (funcall tab-bar-tab-face-function tab))))
+
 
   ;; See https://github.com/rougier/nano-modeline/issues/33
   (defun lem--tab-bar-suffix ()

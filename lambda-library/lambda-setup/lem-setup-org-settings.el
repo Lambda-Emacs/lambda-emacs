@@ -42,7 +42,7 @@
 ;;;; Org Agenda
 ;;;;; Agenda Settings
 (use-package org-agenda
-  :straight nil
+  :ensure nil
   :commands (org-agenda)
   :bind
   (:map org-agenda-mode-map
@@ -241,7 +241,7 @@ _vr_ reset      ^^                       ^^                 ^^
 
 ;;;; Org Contrib
 (use-package org-contrib
-  :straight t
+  :ensure t
   :after org
   :config
   ;; ignore export of headlines marked with :ignore: tag
@@ -251,7 +251,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;;;; Org Export
 ;; Useful base export settings
 (use-package ox
-  :straight (:type built-in)
+  :ensure nil
   :after org
   :custom
   ;; Don't use bad hyperref value
@@ -280,7 +280,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;;;; Org ID
 ;; Use org ids for reference
 (use-package org-id
-  :straight nil
+  :ensure nil
   :after org
   :custom
   (org-id-locations-file (concat lem-cache-dir ".org-id-locations"))
@@ -303,7 +303,7 @@ _vr_ reset      ^^                       ^^                 ^^
                           (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELED(c@/!)")))
 
 ;;;; Org Inline Tasks
-(use-package org-inlinetask :straight nil
+(use-package org-inlinetask :ensure nil
   :commands org-inlinetask-insert-task)
 
 ;;;; Org Archive
@@ -336,7 +336,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;; files in org-agenda-files. You can also refile to the top header in a
 ;; document and create new parents.
 (use-package org-refile
-  :straight nil
+  :ensure nil
   :after org
   :custom
   (org-refile-targets '((nil :maxlevel . 9)

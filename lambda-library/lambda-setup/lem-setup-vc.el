@@ -29,20 +29,17 @@
 
 ;;;; VC
 (use-package vc
-  :ensure nil
   :hook (after-init . vc-mode)
   :custom (vc-follow-symlinks t))
 
 (use-package vc-git
-  :ensure nil
-  :defer
+  :after vc
   :config
   (setq vc-git-diff-switches "--patch-with-stat")
   (setq vc-git-print-log-follow t))
 
 (use-package vc-annotate
-  :ensure nil
-  :defer
+  :after vc
   :config
   (setq vc-annotate-display-mode 'scale))
 
@@ -119,19 +116,6 @@
     (add-hook 'git-commit-mode-hook
               (lambda ()
                 (meow-insert-mode)))))
-
-;; add todos in magit, but don't automatically display them as it can be slow to load
-(use-package magit-todos
-  :commands (magit-todos-list magit-todos-mode)
-  :config
-  (setq magit-todos-depth 2))
-
-;;;; Git Navigation
-;; Go back in Git time
-(use-package git-timemachine :commands git-timemachine)
-
-;; Give git projects branches the dired treatment
-(use-package gited :commands (gited-list gited-list-branches))
 
 ;;;; Git Gutter HL (Diff-HL)
 ;; Nice vc highlighting in margin/fringe

@@ -31,9 +31,7 @@
 ;; might be worth checking this out more closely
 ;; https://github.com/raxod502/radian/blob/c4246176155873d3937ff997965279048dabbc01/emacs/radian.el#L4423-L4476
 (use-package esup
-  :commands esup
-  :config
-  (setq esup-depth 0))
+  :commands esup)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-debug)

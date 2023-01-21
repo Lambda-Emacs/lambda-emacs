@@ -82,6 +82,7 @@
 
 ;;;; Peep Dired
 (use-package peep-dired
+  :after dired
   :commands (peep-dired)
   :bind* (:map dired-mode-map
           ("P" . peep-dired)
