@@ -2,33 +2,8 @@
 
 ;;;; Doc-View Mode
 (use-package doc-view
-  :ensure nil
   :disabled
   :config
-  (fset 'doc-prev "\C-xo\C-x[\C-xo")
-  (fset 'doc-next "\C-xo\C-x]\C-xo")
-  (global-set-key (kbd "M-[") 'doc-prev)
-  (global-set-key (kbd "M-]") 'doc-next)
-  ;; (evil-set-initial-state 'doc-view-mode 'normal)
-  ;; (evil-define-key 'normal doc-view-mode-map
-  ;; "/"  'spacemacs/doc-view-search-new-query
-  ;; "?"  'spacemacs/doc-view-search-new-query-backward
-  ;; "gg" 'doc-view-first-page
-  ;; "f"  'doc-view-autofit-mode
-  ;; "G"  'doc-view-last-page
-  ;; "gt" 'doc-view-goto-page
-  ;; "h"  'doc-view-previous-page
-  ;; "j"  'doc-view-next-line-or-next-page
-  ;; "k"  'doc-view-previous-line-or-previous-page
-  ;; "K"  'doc-view-kill-proc-and-buffer
-  ;; "l"  'doc-view-next-page
-  ;; "n"  'doc-view-search
-  ;; "N"  'doc-view-search-backward
-  ;; "-"  'doc-view-shrink
-  ;; "+"  'doc-view-enlarge
-  ;; (kbd "C-d") 'doc-view-scroll-up-or-next-page
-  ;; (kbd "C-k") 'doc-view-kill-proc
-  ;; (kbd "C-u") 'doc-view-scroll-down-or-previous-page)
   (progn
     (defun spacemacs/doc-view-search-new-query ()
       "Initiate a new query."
@@ -91,25 +66,25 @@
   delayed with a timer, so multiple calls in succession
   don't cause as much overhead."
       (lexical-let
-       ((window (selected-window)))
-       (if (equal doc-view-autofit-timer nil)
-           (setq doc-view-autofit-timer
-                 (run-with-timer
-                  doc-view-autofit-timer-start nil
-                  (lambda ()
-                    (if (window-live-p window)
-                        (save-selected-window
-                          (select-window window)
-                          (cancel-timer doc-view-autofit-timer)
-                          (setq doc-view-autofit-timer nil)
-                          (cond
-                           ((equal 'width doc-view-autofit-type)
-                            (doc-view-fit-width-to-window))
-                           ((equal 'height doc-view-autofit-type)
-                            (doc-view-fit-height-to-window))
-                           ((equal 'page doc-view-autofit-type)
-                            (doc-view-fit-page-to-window))))))))
-         (timer-inc-time doc-view-autofit-timer doc-view-autofit-timer-inc))))
+          ((window (selected-window)))
+        (if (equal doc-view-autofit-timer nil)
+            (setq doc-view-autofit-timer
+                  (run-with-timer
+                   doc-view-autofit-timer-start nil
+                   (lambda ()
+                     (if (window-live-p window)
+                         (save-selected-window
+                           (select-window window)
+                           (cancel-timer doc-view-autofit-timer)
+                           (setq doc-view-autofit-timer nil)
+                           (cond
+                            ((equal 'width doc-view-autofit-type)
+                             (doc-view-fit-width-to-window))
+                            ((equal 'height doc-view-autofit-type)
+                             (doc-view-fit-height-to-window))
+                            ((equal 'page doc-view-autofit-type)
+                             (doc-view-fit-page-to-window))))))))
+          (timer-inc-time doc-view-autofit-timer doc-view-autofit-timer-inc))))
 
     (define-minor-mode doc-view-autofit-mode
       "Minor mode for automatic (timer based) fitting in DocView."
@@ -135,16 +110,15 @@
     ;; continuous scroll mode
     (setq doc-view-continuous t)))
 
-;;;;; PDF-Tools
+;;;; PDF-Tools
 ;; good but often problematic pdf reader and annotator
 (use-package pdf-tools
   ;; use maintained fork
   ;; :straight (:host github :repo "vedang/pdf-tools")
   :mode (("\\.pdf$" . pdf-view-mode))
   :commands (pdf-view-mode)
-  :init
-  ;; initialise
-  (pdf-loader-install :no-query)
+  ;; :init
+  ;; (pdf-loader-install :no-query)
   :bind (:map pdf-view-mode-map
          ;; Navigation
          ("j"  . pdf-view-next-line-or-next-page)
@@ -170,8 +144,11 @@
          ("@"  . lem-pdf-midnight-amber)
          ("$"  . lem-pdf-midnight-green))
   :config
+  ;; initialise
+  (pdf-tools-install-noverify)
   ;; HiDPI
-  (setq pdf-view-use-scaling t)
+  (setq pdf-view-use-imagemagick t
+        pdf-view-use-scaling t)
 
   (defun lem-pdf-no-filter ()
     "View pdf without colour filter."
@@ -214,8 +191,8 @@
   (add-hook 'pdf-view-mode-hook (lambda ()
                                   (lem-pdf-color-theme)
                                   (blink-cursor-mode -1)
-                                  (linum-mode -1)
-                                  (line-number-mode -1)
+                                  (pulsing-cursor-mode -1)
+                                  (display-line-numbers-mode -1)
                                   (column-number-mode -1)
                                   (auto-revert-mode -1))))
 
