@@ -581,7 +581,7 @@ will be killed."
 ;; From [[https://www.baty.blog/2019/insert-weather-into-emacs-buffer][Jack Baty]] with some slight modifications for formatting. See also [[https://github.com/chubin/wttr.in][wttr.in]].
 (defun lem-insert-weather ()
   (interactive)
-  (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT'")))
+  (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT' | head -n10")))
     (insert (mapconcat (function (lambda (x) (format ": %s" x)))
                        (split-string w "\n")
                        "\n")))
