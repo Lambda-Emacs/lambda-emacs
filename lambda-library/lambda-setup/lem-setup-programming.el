@@ -77,10 +77,18 @@
   (add-hook 'markdown-mode-hook 'embrace-markdown-mode-hook))
 
 ;;;;; Structural Editing: Edit & Traverse Delimiters
-
+;; TODO: Write a transient for puni bindings
 (use-package puni
-  :hook ((prog-mode tex-mode org-mode markdown-mode
-                    eval-expression-minibuffer-setup) . puni-mode))
+  :bind (:map puni-mode-map
+         ;; Add slurp and bark bindings
+         ("C-(" . #'puni-slurp-backward)
+         ("C-)" . #'puni-slurp-forward)
+         ("C-{" . #'puni-barf-backward)
+         ("C-}" . #'puni-barf-forward))
+  :hook ((prog-mode
+          tex-mode
+          org-mode markdown-mode
+          eval-expression-minibuffer-setup) . puni-mode))
 
 ;;;; Multiple Cursors
 (use-package iedit
