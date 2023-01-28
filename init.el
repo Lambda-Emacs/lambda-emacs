@@ -42,36 +42,21 @@
     (push lem-user-dir load-path)))
 
 ;;;;; Exec Path
-;; Set PATH properly for emacs. This should make a package like
-;; `exec-path-from-shell' unnecessary
-
-;; If on a mac using homebrew set path correctly
-;; NOTE: the location of homebrew depends on whether we're on mac silicon
-(when (and sys-mac
-           (shell-command-to-string "command -v brew"))
-  (defconst homebrew-bin (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin" "/usr/local/bin") "Path to homebrew bin packages.")
-  (defconst homebrew-sbin (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/sbin" "/usr/local/sbin") "Path to homebrew sbin packages."))
-
-;; Define the system local bins
-(defconst usr-local-bin "/usr/local/bin" "System bin.")
-(defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
-
-;; Set paths
-(setenv "PATH" (concat (when sys-mac (concat homebrew-bin ":" homebrew-sbin ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list (when sys-mac homebrew-bin) (when sys-mac homebrew-sbin) usr-local-bin usr-local-sbin)))
+;; Use exec-path-from-shell to fix path issues when starting from GUI
+(when (memq window-system '(mac ns x))
+  (add-hook 'emacs-startup-hook
+            #'exec-path-from-shell-initialize))
 
 ;;;;; Package Settings
-;; Use straight to manage package installation and use-package to manage
-;; settings. Defer package loading as much as possible to either the
-;; after-init-hook or after some number of seconds of idle. This should produce
-;; shorter startup times, which helps especially when doing, e.g., a quick
-;; restart-and-check of something in emacs.
+;; Check if package system for Lambda-Emacs is using package.el. Initialize
+;; system if not already initialized.
 (when (and (eq lem-package-system 'package)
            (not package-enable-at-startup))
   (package-initialize))
 
 ;;;;; Use-Package
-;; Install use package
+;; Install use-package to manage package setup. If using Emacs 29 or later
+;; use-package is built-in.
 (cond ((version= (format "%s" emacs-major-version) "29")
        (require 'use-package))
       ((eq lem-package-system 'package)
@@ -81,7 +66,7 @@
       ((eq lem-package-system 'straight)
        (straight-use-package 'use-package)))
 
-;; Settings
+;; Use-Package Settings
 (use-package use-package
   :custom
   ;; Don't automatically defer
@@ -238,19 +223,21 @@ emacs-version string on the kill ring."
                     'lem-setup-projects
                     'lem-setup-tabs
 
+                    ;; Org modules
+                    'lem-setup-org-base
+                    'lem-setup-org-settings
+
                     ;; Writing modules
                     'lem-setup-writing
-                    ;; 'lem-setup-notes ;; coming soon!
+                    'lem-setup-notes
                     'lem-setup-citation
+
+                    ;; Shell & Terminal
+                    'lem-setup-shell
+                    'lem-setup-eshell
 
                     ;; Programming modules
                     'lem-setup-programming
-                    'lem-setup-debug
-                    'lem-setup-shell
-
-                    ;; Org modules (coming soon!)
-                    ;; 'lem-setup-org
-                    ;; 'lem-setup-org-extensions
 
                     ;; Productivity
                     'lem-setup-pdf))
