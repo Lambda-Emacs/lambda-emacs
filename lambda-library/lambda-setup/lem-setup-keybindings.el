@@ -251,11 +251,6 @@
 ;;;;; Window Keybindings
 (bind-keys :prefix-map lem+window-keys
            :prefix (concat lem-prefix " w")
-           ("0" .  winum-select-window-0           )
-           ("1" .  winum-select-window-1           )
-           ("2" .  winum-select-window-2           )
-           ("3" .  winum-select-window-3           )
-           ("4" .  winum-select-window-4           )
            ("a" .  ace-window                      )
            ("f" .  lem-toggle-window-split         )
            ("c" .  delete-window                   )
@@ -271,7 +266,7 @@
            ("U" .  winner-redo                     )
            ("v" .  lem-split-window-right-and-focus)
            ("V" .  split-window-right              )
-           ("w" .  lem-other-window                )
+           ("w" .  ace-window                      )
            ("x" .  lem-window-exchange-buffer      )
            ("-" .  split-window-below              )
            ("_" .  lem-split-window-below-and-focus))

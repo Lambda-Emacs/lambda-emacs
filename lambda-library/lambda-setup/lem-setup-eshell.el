@@ -287,7 +287,7 @@ You should use `lem-set-eshell-alias' to change this.")
 ;; Define a var to backup aliases that may already exist
 (defvar lem-eshell--default-aliases nil)
 
-;;;###autodef
+;;;###autoload
 (defun lem-set-eshell-alias (&rest aliases)
   "Define aliases for eshell.
 ALIASES is a flat list of alias -> command pairs. e.g.

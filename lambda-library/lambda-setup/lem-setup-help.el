@@ -52,6 +52,9 @@
   (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
   (transient-values-file (concat lem-cache-dir "transient/values.el"))
   (transient-history-file (concat lem-cache-dir "transient/history.el"))
+  (transient-detect-key-conflicts t)
+  (transient-force-fixed-pitch t)
+  (transient-show-popup t)
   ;; set transient popop to top of window
   (transient-display-buffer-action '(display-buffer-in-side-window
                                      (side . top)

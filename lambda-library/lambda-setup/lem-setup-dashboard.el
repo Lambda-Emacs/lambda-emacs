@@ -16,7 +16,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
 
 ;; All packages and setup related to the dashboard replacement of the splash screen. Further options or defaults may be overridden in the user's config.

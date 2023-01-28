@@ -30,7 +30,9 @@
 ;;;; VC
 (use-package vc
   :hook (after-init . vc-mode)
-  :custom (vc-follow-symlinks t))
+  :custom
+  (vc-follow-symlinks t)
+  (vc-log-short-style '(file)))
 
 (use-package vc-git
   :after vc
