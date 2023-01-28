@@ -389,17 +389,17 @@ targets."
   (corfu-min-width 25)
   (corfu-max-width 90)
   (corfu-count 10)
-  (corfu-scroll-margin 4)
+  (corfu-scroll-margin 5)
   (corfu-cycle t)
   ;; TAB cycle if there are only few candidates
   (completion-cycle-threshold 3)
-  (corfu-echo-documentation nil) ;; Use corfu doc
-  (corfu-separator ? ) ;; Use space as separator
+  (corfu-separator ?\s) ;; Use space as separator
   (corfu-quit-no-match 'separator)
   (corfu-quit-at-boundary 'separator)
-  (corfu-preview-current nil)  ;; Preview current candidate?
+  (corfu-preview-current t)  ;; Preview current candidate?
   (corfu-preselect-first t)    ;; Preselect first candidate?
   (corfu-history-mode 1) ;; Use history for completion
+  (corfu-popupinfo-delay 1) ;; delay for info popup
   :config
   ;; Enable Corfu completion for commands like M-: (eval-expression) or M-!
   ;; (shell-command)
@@ -422,31 +422,24 @@ targets."
      ((and (derived-mode-p 'comint-mode)  (fboundp 'comint-send-input))
       (comint-send-input))))
 
-  (advice-add #'corfu-insert :after #'corfu-send-shell))
+  (advice-add #'corfu-insert :after #'corfu-send-shell)
+
+  ;; Completion in eshell
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (setq-local corfu-auto nil)
+              (corfu-mode)))
+
+  ;; Display popup info
+  (require 'corfu-popupinfo)
+  (corfu-popupinfo-mode 1))
+
 
 ;; Use dabbrev with Corfu!
 (use-package dabbrev
   ;; Swap M-/ and C-M-/
   :bind (("M-/" . dabbrev-completion)
          ("C-M-/" . dabbrev-expand)))
-
-;;;;; Corfu Doc
-(use-package corfu-doc
-  :hook   (corfu-mode . corfu-doc-mode)
-  :bind (:map corfu-map
-         ("C-d" . corfu-doc-toggle)
-         ;;        ;; This is a manual toggle for the documentation window.
-         ;;        ([remap corfu-show-documentation] . corfu-doc-toggle) ; Remap the default doc command
-         ;; Scroll in the documentation window
-         ("M-k" . corfu-doc-scroll-up)
-         ("M-j" . corfu-doc-scroll-down))
-  :custom
-  (corfu-doc-max-width 70)
-  (corfu-doc-max-height 20)
-  :config
-  (with-eval-after-load 'warnings
-    (add-to-list 'warning-suppress-types '(corfu-doc))))
-
 
 ;;;;;; Corfu Extensions (Cape)
 ;; Add extensions
@@ -516,17 +509,19 @@ targets."
   :defer 1
   :bind (:map yas-minor-mode-map
          ("C-'" . yas-expand))
-  :config
-  ;; NOTE: need to specify dirs; does not look in non-snippet subdirs
+  :init
   (mkdir (concat lem-all-snippets-dir "lem-snippets/") t)
   (mkdir (concat lem-all-snippets-dir "yasnippet-snippets/") t)
-  (setq yas-snippet-dirs `(; custom snippets
-                           ,(concat lem-all-snippets-dir "lem-snippets/")
-                                        ; yas snippets
-                           ,(concat lem-all-snippets-dir "yasnippet-snippets/")))
-  (setq yas--loaddir yas-snippet-dirs)
-  (setq yas-installed-snippets-dir yas-snippet-dirs)
-  (setq yas--default-user-snippets-dir yas-snippet-dirs)
+  :custom
+  (yas-snippet-dirs `(;; custom snippets
+                      ,(concat lem-all-snippets-dir "lem-snippets/")
+                      ;; yas snippets
+                      ,(concat lem-all-snippets-dir "yasnippet-snippets/")))
+  ;; NOTE: need to specify dirs; does not look in non-snippet subdirs
+  (yas--loaddir yas-snippet-dirs)
+  (yas-installed-snippets-dir yas-snippet-dirs)
+  (yas--default-user-snippets-dir yas-snippet-dirs)
+  :config
   ;; see https://emacs.stackexchange.com/a/30150/11934
   (defun lem-yas-org-mode-hook ()
     (setq-local yas-buffer-local-condition
@@ -540,8 +535,8 @@ targets."
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
 (use-package yasnippet-snippets
   :after (yasnippet)
-  :config
-  (setq yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
+  :custom
+  (yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-completion)
