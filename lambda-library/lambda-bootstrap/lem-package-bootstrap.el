@@ -55,7 +55,7 @@
 ;; See https://andreyorst.gitlab.io/posts/2022-07-15-refresh-package-contents-automatically/
 
 ;; Ensure packages?
-(defcustom lem-package-ensure-packages t
+(defcustom lem-package-ensure-packages nil
   "Whether to ensure packages with use-package, or install manually using the list in `package-selected-packages'."
   :group 'lambda-emacs
   :type 'boolean)
