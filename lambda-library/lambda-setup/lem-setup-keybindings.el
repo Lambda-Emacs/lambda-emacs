@@ -163,6 +163,22 @@
            ("S" . lem-swiftbar-email-update  )
            ("u" . lem-go-to-mail-unread      ))
 
+;;;;; Notes
+;; General notes
+(bind-keys :prefix-map lem+notes-keys
+           :prefix (concat lem-prefix " n")
+           ("d"  .  denote)
+           ("n"  .  consult-notes)
+           ("s"  .  consult-notes-search-in-all-notes)
+           ("w"  .  lem-denote-workbook-create-entry))
+;; Biblio notes
+(bind-keys :prefix-map lem+bib-keys
+           :prefix (concat lem-prefix " n b")
+           ("a"  .  citar-denote-add-citekey)
+           ("c"  .  citar-create-note)
+           ("o"  .  citar-open-notes)
+           ("O"  .  citar-denote-dwim))
+
 ;;;;; Quit Keybindings
 (bind-keys :prefix-map lem+quit-keys
            :prefix (concat lem-prefix " q")
@@ -283,21 +299,6 @@
            ("r"  .  tabspaces-remove-current-buffer)
            ("R"  .  tabspaces-remove-selected-buffer)
            ("s"  .  tabspaces-switch-or-create-workspace))
-
-;;;;; Zettelkasten/Notes/Wiki
-(bind-keys :prefix-map lem+notes-keys
-           :prefix (concat lem-prefix " n")
-           ("a"  .  consult-notes           )
-           ("c"  .  org-roam-capture        )
-           ("i"  .  org-roam-node-insert    )
-           ("f"  .  org-roam-node-find      )
-           ("g"  .  org-roam-graph          )
-           ("n"  .  consult-notes           )
-           ("N"  .  org-roam--new-file-named)
-           ("r"  .  citar-open-notes        )
-           ("R"  .  consult-notes-org-roam-cited)
-           ("s"  .  consult-notes-search-in-all-notes)
-           ("t"  .  org-roam-buffer-toggle))
 
 ;;;; Which Key
 (use-package which-key
