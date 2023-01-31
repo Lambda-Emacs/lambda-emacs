@@ -41,12 +41,6 @@
     (push lem-setup-dir load-path)
     (push lem-user-dir load-path)))
 
-;;;;; Exec Path
-;; Use exec-path-from-shell to fix path issues when starting from GUI
-(when (memq window-system '(mac ns x))
-  (add-hook 'emacs-startup-hook
-            #'exec-path-from-shell-initialize))
-
 ;;;;; Package Settings
 ;; Check if package system for Lambda-Emacs is using package.el. Initialize
 ;; system if not already initialized.

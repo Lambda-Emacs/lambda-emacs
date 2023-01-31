@@ -9,7 +9,6 @@
 
 ;;; Compilation
 (use-package compile
-  ;; :straight (:type built-in)
   :ensure nil
   :defer 2
   ;; Add recompile to project map
@@ -32,7 +31,7 @@
                 (and (get-buffer buffer)
                      (kill-buffer buffer)))))
 
-;;;; Display Buffers for Shell Processes
+;;; Display Buffers for Shell Processes
 ;; See https://stackoverflow.com/a/47910509
 (defun async-shell-command-no-window (command)
   "Don't pop up buffer for async commands"
@@ -44,15 +43,27 @@
            (cons #'display-buffer-no-window nil)))))
     (async-shell-command command)))
 
+;;; Exec Path
+;; Fix path issues when launching from GUI
+(use-package exec-path-from-shell
+  :custom
+  ;; Set this to nil only if you have your startup files set correctly.
+  ;; See https://github.com/purcell/exec-path-from-shell#setting-up-your-shell-startup-files-correctly
+  (exec-path-from-shell-arguments nil)
+  :config
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+
 ;;; Terminal
 ;;;; Settings
-;; Sane settings for ansi-term
-;;  Other useful shell settings
-;; don't add newline in long lines
+;; Some useful shell settings
+
+;; Don't add newline in long lines
 (setq-default term-suppress-hard-newline t)
-;; kill process buffers without query
+;; Kill process buffers without query
 (setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
-;; kill ansi-buffer on exit
+;; Kill term-buffer on exit
 (defadvice term-sentinel (around my-advice-term-sentinel (proc msg))
   (if (memq (process-status proc) '(signal exit))
       (let ((buffer (process-buffer proc)))
@@ -69,7 +80,7 @@
     (setq comint-buffer-maximum-size most-positive-fixnum)))
 
 (add-hook 'term-mode-hook 'lem-term-hook)
-(add-hook 'vterm-mode-hook 'lem-term-hook)
+(add-hook 'eshell-mode-hook 'lem-term-hook)
 
 ;; paste and navigation
 (defun term-send-tab ()

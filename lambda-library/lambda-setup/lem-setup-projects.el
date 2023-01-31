@@ -17,7 +17,6 @@
   (project-switch-commands '((project-find-file "Find file")
                              (project-find-regexp "Find regexp")
                              (project-find-dir "Find directory")
-                             (project-vterm "Vterm shell")
                              (project-vc-dir "VC-Dir")
                              (project-magit-dir "Magit status")))
   :config
@@ -39,19 +38,6 @@
   (magit-status))
 ;; Add to keymap
 (define-key (current-global-map) (kbd "C-x p G") #'project-magit-dir)
-
-;; vterm function for project
-(defun project-vterm ()
-  "Run vterm in the current project's root"
-  (interactive)
-  (let* ((default-directory (project-root (project-current t)))
-         (default-project-shell-name (project-prefixed-buffer-name "shell"))
-         (vterm (get-buffer default-project-shell-name)))
-    (if (and vterm (not current-prefix-arg))
-        (pop-to-buffer-same-window vterm)
-      (vterm (generate-new-buffer-name default-project-shell-name)))))
-;; Add to keymap
-(define-key (current-global-map) (kbd "C-x p s") #'project-vterm)
 
 ;;;; Open project & file
 (with-eval-after-load 'project

@@ -64,10 +64,6 @@
   :config
   (setq magit-log-margin '(t "%Y-%m-%d.%H:%M:%S "  magit-log-margin-width nil 18))
   (setq magit-refresh-status-buffer t)
-  ;; Set git for macos & homebrew
-  (if (and sys-mac homebrew-bin)
-      (setq magit-git-executable (concat homebrew-bin "/git"))
-    (setq magit-git-executable "/usr/bin/git"))
   ;; Fine grained diffs
   (setq magit-diff-refine-hunk t)
   ;; control magit initial visibility
