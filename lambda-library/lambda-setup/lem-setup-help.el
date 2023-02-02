@@ -373,7 +373,7 @@ If TOP-NODE is provided, then just select from its sub-nodes."
   (completing-read-info "(org)"))
 
 ;; Bind keys for completing-read-info
-(bind-key "C-h i" #'completing-read-info)
+(bind-key "C-h I" #'completing-read-info)
 
 
 ;;; Provide
