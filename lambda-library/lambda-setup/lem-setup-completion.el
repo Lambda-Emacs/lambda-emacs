@@ -116,13 +116,14 @@
                   header-line-format nil
                   mode-line-format nil
                   cursor-in-non-selected-windows 'box
+                  ;; fix window height
                   vertico-count (- (/ (window-pixel-height win)
-                                      (default-line-height)) 2))))
+                                      (default-line-height)) 1))))
   :config
   ;; put minibuffer at top -- this is the more natural place to be looking!
   (setq vertico-buffer-display-action
         '(display-buffer-in-side-window
-          (window-height . 13)
+          (window-height . 12)
           (side . top)))
   (vertico-buffer-mode 1))
 
@@ -349,7 +350,25 @@ targets."
   ;; Make consult locate work with macos spotlight
   (setq consult-locate-args "mdfind -name")
 
-  (setq consult-async-min-input 2))
+  (setq consult-async-min-input 2)
+
+  ;; Consult info functions
+  (defun consult-info-emacs ()
+    "Search through Emacs info pages."
+    (interactive)
+    (consult-info "emacs" "efaq" "elisp" "cl" "compat"))
+
+  (defun consult-info-org ()
+    "Search through the Org info page."
+    (interactive)
+    (consult-info "org"))
+
+  (defun consult-info-completion ()
+    "Search through completion info pages."
+    (interactive)
+    (consult-info "vertico" "consult" "marginalia" "orderless" "embark"
+                  "corfu" "cape" "tempel"))
+  (bind-key "C-h i" #'consult-info))
 
 ;;;;; Consult Search At Point
 ;; Search at point with consult
@@ -475,8 +494,7 @@ targets."
   ;; Sanitize the `pcomplete-completions-at-point' Capf.
   ;; The Capf has undesired side effects on Emacs 28 and earlier.
   (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
-  )
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
 
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
@@ -509,7 +527,7 @@ targets."
   :defer 1
   :bind (:map yas-minor-mode-map
          ("C-'" . yas-expand))
-  :init
+  :preface
   (mkdir (concat lem-all-snippets-dir "lem-snippets/") t)
   (mkdir (concat lem-all-snippets-dir "yasnippet-snippets/") t)
   :custom
