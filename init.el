@@ -51,14 +51,20 @@
 ;;;;; Use-Package
 ;; Install use-package to manage package setup. If using Emacs 29 or later
 ;; use-package is built-in.
-(cond ((version= (format "%s" emacs-major-version) "29")
-       (require 'use-package))
-      ((eq lem-package-system 'package)
-       (unless (package-installed-p 'use-package)
+(unless (package-installed-p 'use-package)
+  (cond ((eq lem-package-system 'package)
          (package-refresh-contents)
-         (package-install 'use-package)))
-      ((eq lem-package-system 'straight)
-       (straight-use-package 'use-package)))
+         (package-install 'use-package))
+        ((eq lem-package-system 'straight)
+         (straight-use-package 'use-package))
+        ((eq lem-package-system 'elpaca)
+         (elpaca elpaca-use-package))))
+
+;; When using elpaca load use-package integration
+(when (eq lem-package-system 'elpaca)
+  (elpaca-use-package-mode)
+  (setq elpaca-use-package-by-default t)
+  (elpaca-wait))
 
 ;; Use-Package Settings
 (use-package use-package
