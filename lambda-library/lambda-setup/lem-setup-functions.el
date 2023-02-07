@@ -48,8 +48,7 @@
 ;;;;; Config Helper Functions
 
 (defvar lem-files-sources-data
-  `(("Bootstrap Files" ?b ,lem-bootstrap-directory)
-    ("Init Files"      ?i ,lem-emacs-dir)
+  `(("Init Files"      ?i ,lem-emacs-dir)
     ("Setup Files"     ?s ,lem-setup-dir)
     ("User Files"      ?u ,lem-user-dir))
   "Define titles, quick-keys, and directories to be searched for files.")

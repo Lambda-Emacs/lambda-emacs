@@ -38,6 +38,7 @@
 
 ;;;;; Set Fonts
 ;; Set fonts
+;; Uncomment and set below variables for fonts other than the defaults
 ;; (custom-set-variables
 ;;  '(lem-ui-default-font
 ;;    '(:font "" :height 120)))
@@ -52,12 +53,6 @@
 (setq org-directory ""
       org-default-notes-file (concat org-directory "inbox.org")
       org-agenda-files (list org-directory))
-
-;;;;; Straight Package Manager
-;; Don't walk straight repos
-(push "straight" vc-directory-exclusion-list)
-;; Delete .DS_Store before prune
-(advice-add 'straight-prune-build :before #'(lambda () (move-file-to-trash (concat lem-var-dir "straight/build/.DS_Store"))))
 
 ;;;;; Set Splash Footer
 ;; Set a footer for the splash screen
