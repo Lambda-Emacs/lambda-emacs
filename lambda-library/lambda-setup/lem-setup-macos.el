@@ -103,12 +103,10 @@ Get it from:  <http://hasseg.org/trash/>"
   (global-set-key (kbd "<C-s-268632070>") 'ns-toggle-fullscreen))
 
 ;;;; Reveal in Finder
-(use-package reveal-in-osx-finder
-  :defer 2)
+(use-package reveal-in-osx-finder :defer 2)
 
 ;;;; Get mac links from safari
-(use-package grab-mac-link
-  :defer 1)
+(use-package grab-mac-link :defer 1)
 
 (with-eval-after-load 'org-mac-link
   (defun org-mac-message-open (message-id)
@@ -127,9 +125,7 @@ This will use the command `open' with the message URL."
 ;;;; OSX Lib
 ;; useful library of functions
 ;; https://melpa.org/#/osx-lib
-(use-package osx-lib
-  ;; :straight (:type git :host github :repo "raghavgautam/osx-lib")
-  :defer t)
+(use-package osx-lib :defer t)
 
 
 ;;; Provide

@@ -52,6 +52,7 @@
 ;;;; Reveal Mode
 ;; Toggle uncloaking of invisible text near point, including folded org headlines (Reveal mode).
 (use-package reveal
+  :ensure nil
   :defer 1
   :config
   (setq reveal-auto-hide nil)
@@ -128,7 +129,6 @@
 ;; Replace external package with internal command
 
 (use-package pulse
-  :defer 1
   :bind
   ("C-<return>" . pulse-line)
   :commands (pulse-line pulse-momentary-highlight-one-line)

@@ -32,6 +32,7 @@
 ;;;; Org
 ;; Use Org from source rather than built in
 (use-package org
+  :ensure nil
   :commands (org-mode)
   :mode (("\\.org$" . org-mode))
   :bind

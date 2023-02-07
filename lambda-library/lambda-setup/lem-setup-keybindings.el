@@ -31,6 +31,7 @@
 ;;;; Bind Key
 ;; Note that bind-key comes with use-package
 (use-package bind-key
+  :ensure nil
   :config
   (setq bind-key-describe-special-forms nil))
 

@@ -58,13 +58,13 @@
 
 ;;;;; Pair Delimiters
 (use-package elec-pair
+  :ensure nil
   :defer 1
   :config (electric-pair-mode 1))
 
 ;;;;; Surround & Change Delimiters
 
 (use-package embrace
-  ;; :straight (:type git :host github :repo "cute-jumper/embrace.el")
   :bind (("C-M-s-#" . embrace-commander))
   :config
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
@@ -281,6 +281,7 @@ Lisp function does not specify a special indentation."
 
 ;;;;; Shell Scripts
 (use-package sh-script
+  :ensure nil
   :commands sh-script-mode
   :init
   (progn
@@ -333,7 +334,7 @@ Lisp function does not specify a special indentation."
 ;; Both Flycheck and Flymake are good linters, but let's stick with the built-in Flymake
 
 (use-package flymake
-  ;; :straight (:type built-in)
+  :ensure nil
   :hook (prog-mode . flymake-mode)
   :custom
   (flymake-fringe-indicator-position 'left-fringe)
@@ -349,7 +350,6 @@ Lisp function does not specify a special indentation."
 
 ;; Linting for emacs package libraries
 (use-package package-lint
-  ;; :straight (:type git :host github :repo "purcell/package-lint")
   :commands (package-lint-batch-and-exit
              package-lint-current-buffer
              package-lint-buffer)

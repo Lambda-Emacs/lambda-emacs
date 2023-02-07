@@ -122,6 +122,7 @@
   :ensure nil
   :if (display-graphic-p)
   :init
+  ;; NOTE: This is a fork -- install original once these changes have been merged
   (unless (package-installed-p 'all-the-icons-completion)
     (package-vc-install "https://github.com/MintSoup/all-the-icons-completion"))
   :hook (emacs-startup . all-the-icons-completion-mode)

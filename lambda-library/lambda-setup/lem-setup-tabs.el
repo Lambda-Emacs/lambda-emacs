@@ -31,6 +31,7 @@
 ;;;; Tab Bar
 ;; Use tab-bar for window grouping and configuration within a project (replaces eyebrowse)
 (use-package tab-bar
+  :ensure nil
   :after (project)
   :commands (tab-bar-new-tab
              tab-bar-switch-to-tab

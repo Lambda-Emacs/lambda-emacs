@@ -2,6 +2,7 @@
 
 ;;;; Doc-View Mode
 (use-package doc-view
+  :ensure nil
   :disabled
   :config
   (progn
@@ -66,25 +67,25 @@
   delayed with a timer, so multiple calls in succession
   don't cause as much overhead."
       (lexical-let
-          ((window (selected-window)))
-        (if (equal doc-view-autofit-timer nil)
-            (setq doc-view-autofit-timer
-                  (run-with-timer
-                   doc-view-autofit-timer-start nil
-                   (lambda ()
-                     (if (window-live-p window)
-                         (save-selected-window
-                           (select-window window)
-                           (cancel-timer doc-view-autofit-timer)
-                           (setq doc-view-autofit-timer nil)
-                           (cond
-                            ((equal 'width doc-view-autofit-type)
-                             (doc-view-fit-width-to-window))
-                            ((equal 'height doc-view-autofit-type)
-                             (doc-view-fit-height-to-window))
-                            ((equal 'page doc-view-autofit-type)
-                             (doc-view-fit-page-to-window))))))))
-          (timer-inc-time doc-view-autofit-timer doc-view-autofit-timer-inc))))
+       ((window (selected-window)))
+       (if (equal doc-view-autofit-timer nil)
+           (setq doc-view-autofit-timer
+                 (run-with-timer
+                  doc-view-autofit-timer-start nil
+                  (lambda ()
+                    (if (window-live-p window)
+                        (save-selected-window
+                          (select-window window)
+                          (cancel-timer doc-view-autofit-timer)
+                          (setq doc-view-autofit-timer nil)
+                          (cond
+                           ((equal 'width doc-view-autofit-type)
+                            (doc-view-fit-width-to-window))
+                           ((equal 'height doc-view-autofit-type)
+                            (doc-view-fit-height-to-window))
+                           ((equal 'page doc-view-autofit-type)
+                            (doc-view-fit-page-to-window))))))))
+         (timer-inc-time doc-view-autofit-timer doc-view-autofit-timer-inc))))
 
     (define-minor-mode doc-view-autofit-mode
       "Minor mode for automatic (timer based) fitting in DocView."
@@ -113,8 +114,6 @@
 ;;;; PDF-Tools
 ;; good but often problematic pdf reader and annotator
 (use-package pdf-tools
-  ;; use maintained fork
-  ;; :straight (:host github :repo "vedang/pdf-tools")
   :mode (("\\.pdf$" . pdf-view-mode))
   :commands (pdf-view-mode)
   ;; :init

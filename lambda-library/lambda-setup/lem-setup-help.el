@@ -47,6 +47,7 @@
 
 ;;;;; Transient Menus
 (use-package transient
+  :ensure nil
   :defer 1
   :custom
   (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
@@ -91,7 +92,6 @@
 ;; Better help info
 ;; Much better lookup both in details and headings/aesthetics
 (use-package helpful
-  :defer t
   :bind (;; Remap standard commands.
          ([remap display-local-help] . helpful-at-point)
          ([remap describe-function]  . helpful-callable)
@@ -114,7 +114,6 @@
 ;;;;; Better Info
 ;; Better looking info pages
 (use-package info-colors
-  ;; :straight (:host github :repo "ubolonton/info-colors")
   :hook (Info-selection . info-colors-fontify-node))
 
 ;;;;; Help Transient

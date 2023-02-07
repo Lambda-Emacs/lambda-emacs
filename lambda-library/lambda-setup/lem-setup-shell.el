@@ -106,7 +106,6 @@
 ;;; Tramp
 ;; An easy way to ssh
 (use-package tramp
-  ;; :straight nil
   :ensure nil
   :defer 1
   :config

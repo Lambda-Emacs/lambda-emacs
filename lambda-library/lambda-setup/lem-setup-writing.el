@@ -74,9 +74,6 @@
 
 ;; Completion of misspelled words in buffer
 (use-package consult-flyspell
-  ;; :straight (consult-flyspell :type git :host gitlab
-  ;;                             :repo "OlMon/consult-flyspell"
-  ;;                             :branch "master")
   :after flyspell
   :config
   (setq consult-flyspell-set-point-after-word t
@@ -98,7 +95,6 @@
 ;;;; Abbrev
 (use-package abbrev
   :ensure nil
-  ;; :straight (:type built-in)
   :defer 2
   :config
   ;; (add-hook 'text-mode-hook #'abbrev-mode)
@@ -228,11 +224,13 @@
                   preview-scale-function '(lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))))
 
 (use-package reftex
+  :ensure nil
   :commands turn-on-reftex
   :init
   (setq reftex-plug-into-AUCTeX t))
 
 (use-package bibtex
+  :ensure nil
   :defer t
   :mode ("\\.bib" . bibtex-mode)
   :init

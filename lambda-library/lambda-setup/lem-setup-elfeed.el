@@ -13,7 +13,6 @@
 
 ;;;; Elfeed
 (use-package elfeed
-  ;; :straight (:type git :host github :repo "skeeto/elfeed")
   :commands (elfeed-load-db-and-open)
   :bind (:map elfeed-search-mode-map
          ("a" . elfeed-show-all)

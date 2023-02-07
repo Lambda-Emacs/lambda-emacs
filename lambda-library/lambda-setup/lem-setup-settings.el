@@ -347,7 +347,7 @@
 ;;;; Multisession
 
 (use-package multisession
-  :disabled
+  :ensure nil
   :defer t
   :config
   (setq multisession-directory (concat lem-cache-dir "multisession/")))

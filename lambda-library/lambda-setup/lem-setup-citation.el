@@ -50,7 +50,6 @@
 
 ;; Use csl
 (use-package oc-csl
-  ;; :straight nil
   :ensure nil
   :after oc
   :init
@@ -63,12 +62,10 @@
 
 ;;;; Citeproc
 (use-package citeproc
-  ;; :straight (:host github :repo "andras-simonyi/citeproc-el")
   :after (oc oc-csl))
 
 ;;;; Citar
 (use-package citar
-  ;; :straight (:host github :repo "emacs-citar/citar")
   :commands (citar-open-beref
              citar-open-notes
              citar-insert-citation)

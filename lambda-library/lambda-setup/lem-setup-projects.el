@@ -4,6 +4,7 @@
 ;;; Project
 ;; Use project to switch to, and search in, projects (replaces projectile)
 (use-package project
+  :ensure nil
   :commands (project-find-file
              project-switch-to-buffer
              project-switch-project
