@@ -28,11 +28,14 @@
 
 ;; Built in libraries; lots of packages depend on these
 (use-package subr-x
+  :ensure nil
   :defer 1)
 (use-package cl-lib
+  :ensure nil
   :defer t)
 ;; Include this only for compatibility purposes
 (use-package cl
+  :ensure nil
   :defer t)
 
 ;; Asynchronous commands. Adds the ability to call asynchronous functions and

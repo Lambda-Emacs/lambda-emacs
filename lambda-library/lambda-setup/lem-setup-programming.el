@@ -362,12 +362,12 @@ Lisp function does not specify a special indentation."
 
 ;; A collection of flymake backends
 (use-package flymake-collection
-  ;; :straight t
   :hook (after-init . flymake-collection-hook-setup))
 
 ;; Use Consult with Flymake
 (use-package consult-flymake
-  ;; :straight (:type git :host github :repo "minad/consult-flymake")
+  ;; comes with consult
+  :ensure nil
   :bind (:map lem+flymake-keys
          ("c" . consult-flymake)))
 

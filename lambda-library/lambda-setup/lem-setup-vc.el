@@ -29,18 +29,21 @@
 
 ;;;; VC
 (use-package vc
+  :ensure nil
   :hook (after-init . vc-mode)
   :custom
   (vc-follow-symlinks t)
   (vc-log-short-style '(file)))
 
 (use-package vc-git
+  :ensure nil
   :after vc
   :config
   (setq vc-git-diff-switches "--patch-with-stat")
   (setq vc-git-print-log-follow t))
 
 (use-package vc-annotate
+  :ensure nil
   :after vc
   :config
   (setq vc-annotate-display-mode 'scale))

@@ -181,7 +181,7 @@ Any customized libraries not available via standard package repos like elpa or m
   :type 'string)
 
 ;; Ensure packages?
-(defcustom lem-package-ensure-packages nil
+(defcustom lem-package-ensure-packages t
   "Whether to ensure packages with use-package, or install manually using the list in `package-selected-packages'."
   :group 'lambda-emacs
   :type 'boolean)
