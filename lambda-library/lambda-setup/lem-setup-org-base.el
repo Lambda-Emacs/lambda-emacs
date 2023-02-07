@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-;;;; Git Org
+;;;; Org
 ;; Use Org from source rather than built in
 (use-package org
   :commands (org-mode)
@@ -97,6 +97,10 @@
   (org-M-RET-may-split-line '((default . t)))  ;; don't split line when creating a new headline, list item, or table field
   (org-yank-adjusted-subtrees t)  ;; adjust subtrees to depth when yanked
   (org-yank-folded-subtrees t) ;; fold subtrees on yank
+  (add-hook 'org-mode-hook (lambda ()  ;; don't pair < symbols
+                             (setq-local electric-pair-inhibit-predicate
+                                         `(lambda (c)
+                                            (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 
   ;; Lists
   (org-list-allow-alphabetical t) ;; allow alphabetical list
