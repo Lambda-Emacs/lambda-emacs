@@ -64,7 +64,9 @@
   ;; allow editing file permissions
   (setq wdired-allow-to-change-permissions t)
   ;; open PDF files in external viewer
-  (setq dired-guess-shell-alist-user '(("\.pdf$" . default))))
+  (setq dired-guess-shell-alist-user '(("\.pdf$" . default)))
+  ;; Allow dired, gnus, & mu4e to work together
+  (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode))
 
 ;;;; Narrow Dired to Match Filter
 (use-package dired-narrow
