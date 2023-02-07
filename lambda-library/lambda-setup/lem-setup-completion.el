@@ -74,16 +74,20 @@
   :config/el-patch
   ;; Use el-patch
   ;; Set no headerline in vertico-buffer
-  (defun vertico-buffer--setup ()
-    "Setup buffer display."
+  (cl-defmethod vertico--setup :after (&context (vertico-buffer-mode (eql t)))
     (add-hook 'pre-redisplay-functions 'vertico-buffer--redisplay nil 'local)
-    (let* ((action vertico-buffer-display-action) tmp win
+    (let* ((action vertico-buffer-display-action) tmp win old-buf
            (_ (unwind-protect
                   (progn
-                    (setq tmp (generate-new-buffer "*vertico*")
-                          ;; Temporarily select the original window such
-                          ;; that `display-buffer-same-window' works.
-                          win (with-minibuffer-selected-window (display-buffer tmp action)))
+                    (with-current-buffer (setq tmp (generate-new-buffer "*vertico-buffer*"))
+                      ;; Set a fake major mode such that `display-buffer-reuse-mode-window'
+                      ;; does not take over!
+                      (setq major-mode 'vertico-buffer-mode))
+                    ;; Temporarily select the original window such
+                    ;; that `display-buffer-same-window' works.
+                    (setq old-buf (mapcar (lambda (win) (cons win (window-buffer win))) (window-list))
+                          win (with-minibuffer-selected-window (display-buffer tmp action))
+                          old-buf (alist-get win old-buf))
                     (set-window-buffer win (current-buffer)))
                 (kill-buffer tmp)))
            (sym (make-symbol "vertico-buffer--destroy"))
@@ -93,9 +97,11 @@
       (fset sym (lambda ()
                   (when (= depth (recursion-depth))
                     (with-selected-window (active-minibuffer-window)
-                      (when (window-live-p win)
+                      (if (not (and (window-live-p win) (buffer-live-p old-buf)))
+                          (delete-window win)
                         (set-window-parameter win 'no-other-window now)
-                        (set-window-parameter win 'no-delete-other-windows ndow))
+                        (set-window-parameter win 'no-delete-other-windows ndow)
+                        (set-window-buffer win old-buf))
                       (when vertico-buffer-hide-prompt
                         (set-window-vscroll nil 0))
                       (remove-hook 'minibuffer-exit-hook sym)))))
@@ -114,9 +120,16 @@
                   (copy-tree `((mode-line-inactive mode-line)
                                ,@face-remapping-alist))
                   header-line-format nil
-                  mode-line-format nil
+                  mode-line-format
+                  (list (format " %s "
+                                (propertize
+                                 (format (if (< depth 2) "*%s*" "*%s [%s]*")
+                                         (replace-regexp-in-string
+                                          ":? *\\'" ""
+                                          (minibuffer-prompt))
+                                         depth)
+                                 'face 'mode-line-buffer-id)))
                   cursor-in-non-selected-windows 'box
-                  ;; fix window height
                   vertico-count (- (/ (window-pixel-height win)
                                       (default-line-height)) 1))))
   :config
