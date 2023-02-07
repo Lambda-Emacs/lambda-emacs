@@ -98,27 +98,7 @@
             (note ,(all-the-icons-octicon "file-text"     :face 'warning) . " ")
             (link ,(all-the-icons-octicon "link-external" :face 'org-link) . " "))))
   ;; edit notes
-  (setq citar-notes-paths `(,lem-bib-notes))
-
-  ;; Citar & Bookends
-  (defun citar-get-beref (entry)
-    (let* ((field (citar-has-a-value '(beref) entry))
-           (base-url (pcase field
-                       ('beref "bookends://sonnysoftware.com/"))))
-      (when field
-        (concat base-url (citar-get-value field entry)))))
-
-  (defun citar-open-beref (keys-entries)
-    "Open bookends link associated with the KEYS-ENTRIES in bookends.
-
-With prefix, rebuild the cache before offering candidates."
-    (interactive (list (citar-select-refs
-                        :rebuild-cache current-prefix-arg)))
-    (dolist (key-entry keys-entries)
-      (let ((link (citar-get-beref (cdr key-entry))))
-        (if link
-            (browse-url-default-browser link)
-          (message "No ref found for %s" key-entry))))))
+  (setq citar-notes-paths `(,lem-bib-notes)))
 
 (provide 'lem-setup-citation)
 ;;; lem-setup-citation.el ends here
