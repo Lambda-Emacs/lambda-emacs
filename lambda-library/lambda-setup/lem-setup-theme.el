@@ -114,7 +114,7 @@
 (use-package lambda-themes
   :ensure nil
   :init
-  (unless (custom-theme-p 'lambda-light)
+  (unless (package-installed-p 'lambda-themes)
     (package-vc-install "https://github.com/Lambda-Emacs/lambda-themes.git"))
   :custom
   ;; Custom settings. To turn any of these off just set to `nil'.

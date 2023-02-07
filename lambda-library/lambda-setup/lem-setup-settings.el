@@ -143,6 +143,9 @@
 ;;;;; Whitespace
 ;; Manage whitespace in prog modes
 (use-package ws-butler
+  :init
+  (unless (package-installed-p 'ws-butler)
+    (package-vc-install "https://github.com/lewang/ws-butler.git"))
   :hook (prog-mode . ws-butler-mode))
 
 ;; Better than the default 'just-one-space', which was M-SPC before
