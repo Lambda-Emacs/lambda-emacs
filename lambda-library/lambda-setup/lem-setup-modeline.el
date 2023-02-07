@@ -25,8 +25,9 @@
 
 ;;;; Lambda Line
 (use-package lambda-line
-  ;; :straight (:type git :host github :repo "lambda-emacs/lambda-line")
-  :load-path (lambda () (concat lem-user-elisp-dir "lambda-line"))
+  :init
+  (unless (package-installed-p 'lambda-line)
+    (package-vc-install "https://github.com/Lambda-Emacs/lambda-line.git"))
   :custom
   (lambda-line-abbrev t)
   (lambda-line-position 'top)
@@ -52,7 +53,6 @@
 
 ;;;; Hide Modeline
 (use-package hide-mode-line
-  ;; :straight (:type git :host github :repo "hlissner/emacs-hide-mode-line")
   :commands hide-mode-line-mode)
 
 ;;; Provide:

@@ -120,7 +120,9 @@
 ;; Completion Icons
 (use-package all-the-icons-completion
   :if (display-graphic-p)
-  :load-path (lambda () (concat lem-user-elisp-dir "all-the-icons-completion/"))
+  :init
+  (unless (package-installed-p 'all-the-icons-completion)
+    (package-vc-install "https://github.com/MintSoup/all-the-icons-completion"))
   :hook (emacs-startup . all-the-icons-completion-mode)
   :config
   (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))

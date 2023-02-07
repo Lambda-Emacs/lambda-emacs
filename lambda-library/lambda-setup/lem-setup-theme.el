@@ -112,7 +112,9 @@
 ;;;; Lambda Themes
 ;; Set a default theme
 (use-package lambda-themes
-  :load-path (lambda () (concat lem-custom-themes-dir "lambda-themes"))
+  :init
+  (unless (package-installed-p 'lambda-themes)
+    (package-vc-install "https://github.com/Lambda-Emacs/lambda-themes.git"))
   :custom
   ;; Custom settings. To turn any of these off just set to `nil'.
   (lambda-themes-set-variable-pitch t)

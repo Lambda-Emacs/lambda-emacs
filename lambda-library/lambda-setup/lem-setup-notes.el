@@ -42,7 +42,6 @@
 ;; See also https://systemcrafters.net/live-streams/july-15-2022/
 
 (use-package denote
-  ;; :straight (:type git :host github :repo "protesilaos/denote")
   :commands (denote denote-create-note denote-link-ol-store)
   :custom
   ;; Use org-read-date
@@ -73,6 +72,11 @@
                  :kill-buffer t
                  :jump-to-captured t)))
 
+(defun lem-denote-capture-note ()
+  "Create a new note with denote."
+  (interactive)
+  (org-capture nil "n"))
+
 ;; Example note creation function
 (defun lem-denote-workbook-create-entry ()
   "Create an entry tagged 'workbook' with the date as its title."
@@ -97,7 +101,6 @@
 ;;;; Consult Notes
 ;; Adapted from https://github.com/minad/consult/wiki/hrm-notes
 (use-package consult-notes
-  ;; :straight (:type git :host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
              consult-notes-search-in-all-notes))
 
