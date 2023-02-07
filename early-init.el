@@ -17,7 +17,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
 
 ;; This is the early-init file. Only for use with emacs 27 or higher. See
@@ -95,11 +94,11 @@
        (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/cache/eln-cache/" user-emacs-directory)))))
 
 ;; Silence nativecomp warnings popping up
-(customize-set-variable 'native-comp-async-report-warnings-errors nil)
+(setopt native-comp-async-report-warnings-errors nil)
 
 ;; Native-comp settings
-(customize-set-variable 'native-comp-speed 2)
-(customize-set-variable 'native-comp-deferred-compilation t)
+(setopt native-comp-speed 2)
+(setopt native-comp-deferred-compilation t)
 
 ;;;; Set C Directory
 ;; NOTE this assumes that the C source files are included with emacs.
@@ -154,6 +153,14 @@ straight) and by `lem-etc-dir' and `lem-cache-dir'.")
   "A sample default configuration of the personal config file to get the user started.")
 
 ;;;; User Configuration Variables
+
+;; Define customization group for Lambda Emacs.
+(defgroup lambda-emacs '()
+  "An Emacs distribution with sane defaults, pre-configured packages, and useful functions, aimed at writing and academic work in the humanities."
+  :tag "Lambda-Emacs"
+  :link '(url-link "https://github.com/Lambda-Emacs/lambda-emacs")
+  :group 'emacs)
+
 ;; Find the user configuration file
 (defconst lem-config-file (expand-file-name "config.el" lem-user-dir)
   "The user's configuration file.")
@@ -173,26 +180,40 @@ Any customized libraries not available via standard package repos like elpa or m
   :group 'lambda-emacs
   :type 'string)
 
+;; Ensure packages?
+(defcustom lem-package-ensure-packages nil
+  "Whether to ensure packages with use-package, or install manually using the list in `package-selected-packages'."
+  :group 'lambda-emacs
+  :type 'boolean)
+
 ;;;; Make System Directories
 ;; Directory paths
 (dolist (dir (list lem-library-dir lem-var-dir lem-etc-dir lem-cache-dir lem-user-dir lem-setup-dir))
   (unless (file-directory-p dir)
     (make-directory dir t)))
 
+;;;; Load Path
+;; Add all configuration files to load-path
+(eval-and-compile
+  (progn
+    (push lem-setup-dir load-path)
+    (push lem-user-dir load-path)))
+
 ;;;; Prefer Newer files
 ;; Prefer newer versions of files
-(setq load-prefer-newer t)
+(setopt load-prefer-newer t)
 
 ;;;; Byte Compile Warnings
 ;; Disable certain byte compiler warnings to cut down on the noise. This is a
 ;; personal choice and can be removed if you would like to see any and all byte
 ;; compiler warnings.
-(customize-set-variable 'byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local obsolete))
+;; NOTE: Setopt won't work here
+(setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local obsolete))
 
 ;;;; Check Errors
 ;; Don't produce backtraces when errors occur.
 ;; This can be set to `t' interactively when debugging.
-(customize-set-variable 'debug-on-error nil)
+(setopt debug-on-error nil)
 
 ;;;; When-let errors
 ;; https://github.com/alphapapa/frame-purpose.el/issues/3
@@ -207,8 +228,10 @@ Any customized libraries not available via standard package repos like elpa or m
 ;;;; Variable Binding Depth
 ;; This variable controls the number of lisp bindings that can exists at a time.
 ;; We should make it fairly large for modern machines.
+;; NOTE: Obsolete on Emacs 29+
 ;; https://www.reddit.com/r/emacs/comments/9jp9zt/anyone_know_what_variable_binding_depth_exceeds/
-(customize-set-variable 'max-specpdl-size 13000)
+(when (version< emacs-version "29")
+  (setq max-specpdl-size 13000))
 
 ;;;; Clean View
 ;; UI - Disable visual cruft
@@ -216,16 +239,16 @@ Any customized libraries not available via standard package repos like elpa or m
 ;; Resizing the Emacs frame can be an expensive part of changing the
 ;; font. By inhibiting this, we easily halve startup times with fonts that are
 ;; larger than the system default.
-(setq-default frame-inhibit-implied-resize t)
-;; HACK: Don't show size info (or anything else) in frame title
-(setq-default frame-title-format "\n")
-;; Disable start-up screen
-(setq-default inhibit-startup-screen t)
-(setq-default inhibit-startup-message t)
-;; We'll provide our own splash screen, thanks
-(setq-default inhibit-splash-screen t)
-;; No message in initial scratch buffer
-(setq-default initial-scratch-message nil)
+(setopt frame-inhibit-implied-resize t
+        ;; HACK: Don't show size info (or anything else) in frame title
+        frame-title-format "\n"
+        ;; Disable start-up screen
+        inhibit-startup-screen t
+        inhibit-startup-message t
+        ;; We'll provide our own splash screen, thanks
+        inhibit-splash-screen t
+        ;; No message in initial scratch buffer
+        initial-scratch-message nil)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
 ;; Disable tool and scrollbars. These are just clutter (the scrollbar also
@@ -238,12 +261,12 @@ Any customized libraries not available via standard package repos like elpa or m
 
 ;; And set these to nil so users don't have to toggle the modes twice to
 ;; reactivate them.
-(customize-set-variable 'tool-bar-mode nil)
-(customize-set-variable 'scroll-bar-mode nil)
+(setopt tool-bar-mode nil
+        scroll-bar-mode nil)
 
 ;; Fundamental mode at startup.
 ;; This helps with load-time since no extra libraries are loaded.
-(setq initial-major-mode 'fundamental-mode)
+(setopt initial-major-mode 'fundamental-mode)
 
 ;; Echo buffer -- don't display any message
 ;; https://emacs.stackexchange.com/a/437/11934
@@ -290,13 +313,41 @@ hook after running."
   (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background))
 
 ;;;; Bootstrap Package System
-;; Load the package-system. The user should customize the their preferred system in
-;; `early-config.el'.
-(defvar lem-bootstrap-directory (expand-file-name "lambda-bootstrap/" lem-library-dir)
-  "Package system bootstrap configuration.")
-(measure-time
- (load (expand-file-name "lem-package.el" lem-bootstrap-directory)))
-(message "Bootstrap file loaded!")
+;; Load the package-system.
+;; Enable installed packages at startup
+(setopt package-enable-at-startup t
+        ;; Allow loading from the package cache
+        package-quickstart t)
+
+;;;; Package Archives
+;; Initialize package system if not already initialized.
+(require 'package)
+;; See https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/ for discussion
+(setopt package-archives
+        '(("elpa" . "https://elpa.gnu.org/packages/")
+          ("elpa-devel" . "https://elpa.gnu.org/devel/")
+          ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+          ("melpa" . "https://melpa.org/packages/"))
+
+        ;; Highest number gets priority (what is not mentioned gets priority 0)
+        package-archive-priorities
+        '(;; Prefer development packages
+          ("elpa-devel" . 99)
+          ("melpa" . 90))
+
+        ;; Set location of package directory
+        package-user-dir (expand-file-name "elpa/" lem-var-dir)
+        package-gnupghome-dir (concat package-user-dir "gnupg"))
+
+;; Make sure the elpa/ folder exists after setting it above.
+(unless (file-exists-p package-user-dir)
+  (mkdir package-user-dir t))
+(setopt package-quickstart-file (expand-file-name "package-quickstart.el" lem-cache-dir))
+
+;; Install package-vc if not already present
+(when (and (version< emacs-version "29")
+           (not (locate-library "package-vc")))
+  (shell-command-to-string (concat "curl -o " lem-library-dir "package-vc.el " "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/emacs-lisp/package-vc.el")))
 
 ;;;; Early Config
 ;; Check if there is a user early-config file & load. If it doesn't exist, print
@@ -308,9 +359,6 @@ hook after running."
          (message "early-config.el loaded!"))
         (t
          (message "No user early-config file exists.")
-         (message "Loading default package system.")
-         (setq lem-package-system 'package)
-         (lem-package-bootstrap lem-package-system))))
-
+         (message "Loading default settings."))))
 
 ;;; early-init.el ends here

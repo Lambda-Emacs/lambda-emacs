@@ -25,46 +25,14 @@
 ;; use-package definitions.
 
 ;;; Code:
-
-;; Define customization group for Crafted Emacs.
-(defgroup lambda-emacs '()
-  "An Emacs distribution with sane defaults, pre-configured packages, and useful functions, aimed at writing and academic work in the humanities."
-  :tag "Lambda-Emacs"
-  :link '(url-link "https://github.com/Lambda-Emacs/lambda-emacs")
-  :group 'emacs)
-
 ;;;; Startup
-;;;;; Load Path
-;; Add all configuration files to load-path
-(eval-and-compile
-  (progn
-    (push lem-setup-dir load-path)
-    (push lem-user-dir load-path)))
-
-;;;;; Package Settings
-;; Check if package system for Lambda-Emacs is using package.el. Initialize
-;; system if not already initialized.
-(when (and (eq lem-package-system 'package)
-           (not package-enable-at-startup))
-  (package-initialize))
 
 ;;;;; Use-Package
 ;; Install use-package to manage package setup. If using Emacs 29 or later
 ;; use-package is built-in.
 (unless (package-installed-p 'use-package)
-  (cond ((eq lem-package-system 'package)
-         (package-refresh-contents)
-         (package-install 'use-package))
-        ((eq lem-package-system 'straight)
-         (straight-use-package 'use-package))
-        ((eq lem-package-system 'elpaca)
-         (elpaca elpaca-use-package))))
-
-;; When using elpaca load use-package integration
-(when (eq lem-package-system 'elpaca)
-  (elpaca-use-package-mode)
-  (setq elpaca-use-package-by-default t)
-  (elpaca-wait))
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 ;; Use-Package Settings
 (use-package use-package
