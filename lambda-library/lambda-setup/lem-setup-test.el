@@ -1,35 +1,55 @@
 ;; List packages for testing with clean emacs
-(use-package humanoid-themes
-  :straight t
-  :custom
-  (humanoid-themes-custom-colors '((act1 . "#ff0000")
-                                   (act2 . "#0000ff")
-                                   (base . "#0000ff")
-                                   (bg2  . "#ff0000")))
+
+(vertico-mode)
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
+
+(setq lem-user-elisp-dir "~/bin/lisp-projects/")
+(setq lem-notes-dir (concat (getenv "HOME") "/Documents/notes/"))
+
+
+(use-package consult-notes
+  :load-path (lambda () (concat lem-user-elisp-dir "consult-notes"))
+  :commands (consult-notes
+             consult-notes-search-in-all-notes)
   :config
-  (load-theme 'humanoid-dark t))
 
-;; (use-package all-the-icons
-;;   :straight t)
+  (when (locate-library "org-roam")
+    (consult-notes-org-roam-mode))
+  (require 'lem-setup-org-roam)
 
-;; (defun lem-display-time ()
-;;   "Display the time when `display-time-mode' is non-nil."
-;;   (when display-time-mode
-;;     (require 'all-the-icons)
-;;     (let* ((hour (string-to-number (format-time-string "%I")))
-;;            (icon (all-the-icons-wicon (format "time-%s" hour) :height 1.3 :v-adjust 0.0)))
-;;       (concat
-;;        (propertize
-;;         (format " %s " icon) 'face `(:height 1.0 ,(all-the-icons-wicon-family)) 'display '(raise -0.0))))))
+  ;; (when (locate-library "denote")
+  ;;   (consult-notes-denote-mode))
 
-;; (setq display-time-format (concat " " (lem-display-time) " %I:%M:%S"))
+  (setq consult-notes-file-dir-sources
+        `(("Org"             ?o "~/Dropbox/org-files/"))))
 
 
-;; (setq display-time-string-forms
-;;       '((propertize (concat (lem-display-time) " " 24-hours ":" minutes " ")
-;;  		            )))
+;; (use-package denote
+;;   :commands (denote denote-create-note denote-link-ol-store)
+;;   :custom
+;;   (denote-directory lem-notes-dir)
+;;   (denote-known-keywords '("emacs" "teaching" "unl" "workbook"))
+;;   (denote-prompts '(title keywords subdirectory))
+;;   ;; Use org-read-date
+;;   (denote-date-prompt-use-org-read-date t)
+;;   (denote-file-type 'org) ;; use org
+;;   (denote-allow-multi-word-keywords nil) ;; single word keywords only
+;;   ;; Better backlink display
+;;   (denote-link-backlinks-display-buffer-action
+;;    (quote ((display-buffer-reuse-window
+;;             display-buffer-in-side-window)
+;;            (inhibit-same-window . t)
+;;            (side . bottom)
+;;            (slot . 99)
+;;            (window-height . 10)))))
 
-;; (display-time-mode 1)
+
+
+
 
 ;;; Provide
 (provide 'lem-setup-test)

@@ -119,6 +119,7 @@
 
 ;; Completion Icons
 (use-package all-the-icons-completion
+  :ensure nil
   :if (display-graphic-p)
   :init
   (unless (package-installed-p 'all-the-icons-completion)

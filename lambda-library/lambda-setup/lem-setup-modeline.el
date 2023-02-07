@@ -25,6 +25,7 @@
 
 ;;;; Lambda Line
 (use-package lambda-line
+  :ensure nil
   :init
   (unless (package-installed-p 'lambda-line)
     (package-vc-install "https://github.com/Lambda-Emacs/lambda-line.git"))

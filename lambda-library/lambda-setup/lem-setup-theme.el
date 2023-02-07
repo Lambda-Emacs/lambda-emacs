@@ -112,6 +112,7 @@
 ;;;; Lambda Themes
 ;; Set a default theme
 (use-package lambda-themes
+  :ensure nil
   :init
   (unless (package-installed-p 'lambda-themes)
     (package-vc-install "https://github.com/Lambda-Emacs/lambda-themes.git"))
