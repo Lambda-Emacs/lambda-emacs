@@ -52,6 +52,7 @@
 ;; List recent files
 (use-package recentf
   :ensure nil
+  :defer 2
   :custom
   (recentf-save-file (concat lem-cache-dir "recentf"))
   (recentf-max-saved-items 500)
