@@ -90,6 +90,17 @@
           org-mode markdown-mode
           eval-expression-minibuffer-setup) . puni-mode))
 
+;;;;; Tree Sitter
+;; Set load-path
+(setq treesit-extra-load-path `(,(concat lem-var-dir "tree-sitter/")))
+;; Automatically install & pick between tree-sitter and default major modes in Emacs 29+
+(use-package treesit-auto
+  :unless (version< emacs-version "29.0")
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (global-treesit-auto-mode))
+
 ;;;; Multiple Cursors
 (use-package iedit
   ;; :straight (:type git :host github :repo "victorhge/iedit")
