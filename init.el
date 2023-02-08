@@ -30,7 +30,7 @@
 ;;;;; Use-Package
 ;; Install use-package to manage package setup. If using Emacs 29 or later
 ;; use-package is built-in.
-(unless (package-installed-p 'use-package)
+(when (version< emacs-version "29")
   (package-refresh-contents)
   (package-install 'use-package))
 
@@ -53,6 +53,7 @@
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
 (use-package el-patch
+  :hook (emacs-startup . el-patch-use-package-mode)
   :custom
   (el-patch-enable-use-package-integration t))
 

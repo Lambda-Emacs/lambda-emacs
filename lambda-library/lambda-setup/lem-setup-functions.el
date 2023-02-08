@@ -22,11 +22,7 @@
 
 ;;; Code:
 ;;;; 𝛌-Emacs Configuration Functions
-;;;;; Check Fonts
-;; See https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/
-(defun lem-font-available-p (font-name)
-  "Check if font is available from system installed fonts."
-  (member font-name (font-family-list)))
+
 
 ;;;;; Call an emacs instance
 ;; Call an emacs instance for testing

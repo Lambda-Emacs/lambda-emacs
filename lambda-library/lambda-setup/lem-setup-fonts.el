@@ -7,8 +7,13 @@
 ;;
 ;;; Code:
 
-;;;; Fonts
+;;;; Check Fonts
+;; See https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/
+(defun lem-font-available-p (font-name)
+  "Check if font is available from system installed fonts."
+  (member font-name (font-family-list)))
 
+;;;; Set Symbol & Emoji Fonts
 (use-package fontset
   :ensure nil
   :custom
@@ -63,7 +68,7 @@
 
 ;;;;; Scale Text
 ;; When using `text-scale-increase', this sets each 'step' to about one point size.
-(setq text-scale-mode-step 1.08)
+(setopt text-scale-mode-step 1.08)
 (bind-key* "s-=" #'text-scale-increase)
 (bind-key* "s--" #'text-scale-decrease)
 (bind-key* "s-0" #'text-scale-adjust)

@@ -30,7 +30,7 @@
 ;;;; VC
 (use-package vc
   :ensure nil
-  :hook (after-init . vc-mode)
+  :hook (emacs-startup . vc-mode)
   :custom
   (vc-follow-symlinks t)
   (vc-log-short-style '(file)))

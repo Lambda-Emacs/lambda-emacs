@@ -100,6 +100,37 @@
 (setopt native-comp-speed 2)
 (setopt native-comp-deferred-compilation t)
 
+;;;; Clean View
+;; UI - Disable visual cruft
+
+;; Resizing the Emacs frame can be an expensive part of changing the
+;; font. By inhibiting this, we easily halve startup times with fonts that are
+;; larger than the system default.
+(setopt frame-inhibit-implied-resize t
+        ;; HACK: Don't show size info (or anything else) in frame title
+        frame-title-format "\n"
+        ;; Disable start-up screen
+        inhibit-startup-screen t
+        inhibit-startup-message t
+        ;; We'll provide our own splash screen, thanks
+        inhibit-splash-screen t
+        ;; No message in initial scratch buffer
+        initial-scratch-message nil)
+
+;; And set these to nil so users don't have to toggle the modes twice to
+;; reactivate them.
+(setopt tool-bar-mode nil
+        scroll-bar-mode nil)
+
+;; Fundamental mode at startup.
+;; This helps with load-time since no extra libraries are loaded.
+(setopt initial-major-mode 'fundamental-mode)
+
+;; Echo buffer -- don't display any message
+;; https://emacs.stackexchange.com/a/437/11934
+(defun display-startup-echo-area-message ()
+  (message ""))
+
 ;;;; Set C Directory
 ;; NOTE this assumes that the C source files are included with emacs.
 ;; This depends on the build process used.
@@ -165,7 +196,7 @@ straight) and by `lem-etc-dir' and `lem-cache-dir'.")
 (defconst lem-config-file (expand-file-name "config.el" lem-user-dir)
   "The user's configuration file.")
 
-;; These next two variables are both optional, but maybe convenient.
+;; These next two variables are both optional, but may be convenient.
 ;; They are used with the functions `lem-goto-projects' and `lem-goto-elisp-library'.
 
 ;; Set user project directory
@@ -233,46 +264,6 @@ Any customized libraries not available via standard package repos like elpa or m
 (when (version< emacs-version "29")
   (setq max-specpdl-size 13000))
 
-;;;; Clean View
-;; UI - Disable visual cruft
-
-;; Resizing the Emacs frame can be an expensive part of changing the
-;; font. By inhibiting this, we easily halve startup times with fonts that are
-;; larger than the system default.
-(setopt frame-inhibit-implied-resize t
-        ;; HACK: Don't show size info (or anything else) in frame title
-        frame-title-format "\n"
-        ;; Disable start-up screen
-        inhibit-startup-screen t
-        inhibit-startup-message t
-        ;; We'll provide our own splash screen, thanks
-        inhibit-splash-screen t
-        ;; No message in initial scratch buffer
-        initial-scratch-message nil)
-
-;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-;; Disable tool and scrollbars. These are just clutter (the scrollbar also
-;; impacts performance).
-(push '(tool-bar-lines . 0)   initial-frame-alist)
-(push '(vertical-scroll-bars) initial-frame-alist)
-;; Set a minimum size for frame so that splash can easily display
-(push '(width . 175) initial-frame-alist)
-(push '(height . 60) initial-frame-alist)
-
-;; And set these to nil so users don't have to toggle the modes twice to
-;; reactivate them.
-(setopt tool-bar-mode nil
-        scroll-bar-mode nil)
-
-;; Fundamental mode at startup.
-;; This helps with load-time since no extra libraries are loaded.
-(setopt initial-major-mode 'fundamental-mode)
-
-;; Echo buffer -- don't display any message
-;; https://emacs.stackexchange.com/a/437/11934
-(defun display-startup-echo-area-message ()
-  (message ""))
-
 ;;;; Custom Settings & Default Theme
 ;; Ordinarily we might leave theme loading until later in the init process, but
 ;; this leads to the initial frame flashing either light or dark color,
@@ -289,28 +280,6 @@ Any customized libraries not available via standard package repos like elpa or m
 (defvar active-theme nil "Variable for holding light/dark value of theme appearance.")
 (defvar light-theme nil "Variable for holding light value of theme appearance.")
 (defvar dark-theme nil "Variable for holding dark value of theme appearance.")
-
-(defun lem--apply-default-background (appearance)
-  "If no other theme is set, load default background color.
-This takes current system APPEARANCE into consideration and
-avoids the frame flashing on startup. Automatically remove this
-hook after running."
-  (progn
-    (remove-hook 'ns-system-appearance-change-functions #'lem--apply-default-background)
-    (mapc #'disable-theme custom-enabled-themes)
-    (pcase appearance
-      ('light (progn
-                (setq active-theme 'light-theme)
-                (set-foreground-color "#282b35")
-                (set-background-color "#fffef9")))
-      ('dark  (progn
-                (setq active-theme 'dark-theme)
-                (set-foreground-color "#eceff1")
-                (set-background-color "#282b35"))))))
-
-;; Apply hook if on MacOS
-(when (eq system-type 'darwin)
-  (add-hook 'ns-system-appearance-change-functions #'lem--apply-default-background))
 
 ;;;; Bootstrap Package System
 ;; Load the package-system.
