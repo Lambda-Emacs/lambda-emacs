@@ -26,7 +26,7 @@
 
 ;;; Code:
 
-;; Define customization group for Crafted Emacs.
+;; Define customization.
 (defgroup lambda-emacs '()
   "An Emacs distribution with sane defaults, pre-configured packages, and useful functions, aimed at writing and academic work in the humanities."
   :tag "Lambda-Emacs"
