@@ -43,21 +43,19 @@
   (setq mac-allow-anti-aliasing t)
 
 ;;;; Delete to Trash
-  (measure-time
-   (message "*Loading delete to trash settings...*")
-   ;; delete files by moving them to the trash
-   ;; See https://christiantietze.de/posts/2021/06/emacs-trash-file-macos/
-   (setq delete-by-moving-to-trash t)
-   (setq trash-directory "~/.Trash")  ;; fallback for `move-file-to-trash'
-   (defun system-move-file-to-trash (path)
-     "Moves file at PATH to the macOS Trash according to `move-file-to-trash' convention.
+  ;; delete files by moving them to the trash
+  ;; See https://christiantietze.de/posts/2021/06/emacs-trash-file-macos/
+  (setq delete-by-moving-to-trash t)
+  (setq trash-directory "~/.Trash")  ;; fallback for `move-file-to-trash'
+  (defun system-move-file-to-trash (path)
+    "Moves file at PATH to the macOS Trash according to `move-file-to-trash' convention.
 
 Relies on the command-line utility 'trash' to be installed.
 Get it from:  <http://hasseg.org/trash/>"
-     (shell-command (concat "trash -vF \"" path "\""
-                            "| sed -e 's/^/Trashed: /'")
-                    nil ;; Name of output buffer
-                    "*Trash Error Buffer*")))
+    (shell-command (concat "trash -vF \"" path "\""
+                           "| sed -e 's/^/Trashed: /'")
+                   nil ;; Name of output buffer
+                   "*Trash Error Buffer*"))
 
 ;;;; Frames & Fullscreen
 

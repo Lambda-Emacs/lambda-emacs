@@ -36,7 +36,7 @@
 (defvar lem-file-name-handler-alist file-name-handler-alist)
 (setq file-name-handler-alist nil)
 
-;;;;; Measure Time Macro
+;;;; Measure Time Macro
 ;; Useful macro to wrap functions in for testing
 ;; See https://stackoverflow.com/q/23622296
 (defmacro measure-time (&rest body)
@@ -45,33 +45,12 @@
      ,@body
      (message "
 ;; ======================================================
-;; *Elapsed time: %.06f*
-;; ======================================================"
-              (float-time (time-since time)))))
-
-;;;; Garbage collection
-;; Defer garbage collection further back in the startup process. We'll lower
-;; this to a more reasonable number at the end of the init process (i.e. at end of
-;; init.el)
-
-(setq gc-cons-threshold most-positive-fixnum)
-
-;; Adjust garbage collection thresholds during startup, and thereafter
-;; See http://akrl.sdf.org https://gitlab.com/koral/gcmh
-
-(defmacro k-time (&rest body)
-  "Measure and return the time it takes evaluating BODY."
-  `(let ((time (current-time)))
-     ,@body
-     (float-time (time-since time))))
-
-;; When idle for 15sec run the GC no matter what.
-(defvar k-gc-timer
-  (run-with-idle-timer 15 t
-                       (lambda ()
-                         (let ((inhibit-message t))
-                           (message "Garbage Collector has run for %.06fsec"
-                                    (k-time (garbage-collect)))))))
+;; %s *Elapsed time: %.06f*
+;; ======================================================
+" (if load-file-name
+      (file-name-nondirectory (format "%s |" load-file-name))
+    "")
+(float-time (time-since time)))))
 
 ;;;; Native Comp
 
@@ -99,6 +78,30 @@
 ;; Native-comp settings
 (setopt native-comp-speed 2)
 (setopt native-comp-deferred-compilation t)
+
+;;;; Garbage collection
+;; Defer garbage collection further back in the startup process. We'll lower
+;; this to a more reasonable number at the end of the init process (i.e. at end of
+;; init.el)
+
+(setq gc-cons-threshold most-positive-fixnum)
+
+;; Adjust garbage collection thresholds during startup, and thereafter
+;; See http://akrl.sdf.org https://gitlab.com/koral/gcmh
+
+(defmacro k-time (&rest body)
+  "Measure and return the time it takes evaluating BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (float-time (time-since time))))
+
+;; When idle for 15sec run the GC no matter what.
+(defvar k-gc-timer
+  (run-with-idle-timer 15 t
+                       (lambda ()
+                         (let ((inhibit-message t))
+                           (message "Garbage Collector has run for %.06fsec"
+                                    (k-time (garbage-collect)))))))
 
 ;;;; Clean View
 ;; UI - Disable visual cruft

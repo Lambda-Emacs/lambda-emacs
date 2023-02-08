@@ -158,23 +158,21 @@
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 ;; A few more useful configurations...
-(measure-time
- (message "*Loading further vertico completion settings...*")
- ;; Add prompt indicator to `completing-read-multiple'.
- (defun crm-indicator (args)
-   (cons (concat "[CRM] " (car args)) (cdr args)))
- (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+;; Add prompt indicator to `completing-read-multiple'.
+(defun crm-indicator (args)
+  (cons (concat "[CRM] " (car args)) (cdr args)))
+(advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
- ;; Grow and shrink minibuffer
- (setq resize-mini-windows t)
+;; Grow and shrink minibuffer
+(setq resize-mini-windows t)
 
- ;; Do not allow the cursor in the minibuffer prompt
- (setq minibuffer-prompt-properties
-       '(read-only t cursor-intangible t face minibuffer-prompt))
- (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+;; Do not allow the cursor in the minibuffer prompt
+(setq minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
- ;; Enable recursive minibuffers
- (setf enable-recursive-minibuffers t))
+;; Enable recursive minibuffers
+(setf enable-recursive-minibuffers t)
 
 ;; Persist history over Emacs restarts with savehist mode. Vertico sorts by history position.
 ;; Savehist is set up in lem-setup-settings.el
@@ -511,7 +509,7 @@ targets."
 
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
-  :after corfu
+  :defer 1
   :custom
   (kind-icon-use-icons t)
   (kind-icon-default-face 'corfu-default) ; Have background color be the same as `corfu' face background
