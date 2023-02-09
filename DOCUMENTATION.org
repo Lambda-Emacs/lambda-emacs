@@ -8,12 +8,10 @@
 Lambda-Emacs (𝛌-Emacs, or LEM) is intended to serve three goals. First, as a
 useful starting point for the user's own custom configuration. Second, and
 relatedly, as providing enough commentary on configuring Emacs such that it
-might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally. Third, as
+might be useful to those new to emacs or even text-editors generally. Third, as
 a "starter-kit" for writing and academic work in the humanities. 
 
 * 𝛌-Emacs File-Directory Structure
-
--- *NOTE*: The directory structure has changed in the most recent version, so please be careful updating! --  
 
 The configuration consists of a set of files specific to the user (all stored in
 the value of =lem-user-dir= ("lambda-user" by default)) and more general files for
@@ -31,7 +29,7 @@ the value of =lem-user-dir= ("lambda-user" by default)) and more general files f
       * "Variable" directory (var) – contains files that are often changed by the system
          - Volatile storage (cache)
          - Non-volatile storage (etc)
-         - External packages (straight)
+         - External packages or lisp hacking
 - File structure:
    + early-init.el
    + early-config.el (in lambda-user, supplied by user, if any)
@@ -41,7 +39,7 @@ the value of =lem-user-dir= ("lambda-user" by default)) and more general files f
 Ideally the user will not need to do anything to the files =early-init.el=,
 =init.el=, and those in =lambda-setup=, though they should read the code to get a
 sense of what each file/module does. I have tried to annotate the code sufficiently so
-that it does not assume familiarity with elisp to understand the basics of what
+that it does not assume deep familiarity with elisp to understand the basics of what
 is going on.
 
 All personal configuration by the user should go in =config.el= in the
@@ -54,7 +52,7 @@ and bibliography and notes files.
   :END:
 | Variable                   | Purpose                                                |
 |----------------------------+--------------------------------------------------------|
-| lem-prefix                 | Prefix for personal keybinds                           |
+| lem-prefix                 | Prefix for personal keybindings                        |
 | lem-ui-default-font        | User default font                                      |
 | lem-ui-variable-width-font | Variable width font                                    |
 | lem-persistent-scratch     | Whether to make scratch buffer persist across sessions |
@@ -77,20 +75,17 @@ In any case, be sure to set these variables in your =config.el= file *before* lo
 
 
 * Package Management
-Lambda-Emacs uses [[https://github.com/radian-software/straight.el][straight.el]] to manage "[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html][packages]]" (i.e. lisp libraries that enhance and extend Emacs' functionality). This easily allows the user to add packages from any source (melpa, elpa, gituhub, gitlab, etc.). It is an /alternative/ to =package.el=, so the user should use it instead of the built-in Emacs package manager. To browse and temporarily install packages use =M-x straight-use-package= and type the name of the relevant package.
+Lambda-Emacs uses the built-in package.el and package-vc.el to manage "[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Packages.html][packages]]" (i.e. lisp libraries that enhance and extend Emacs' functionality). The new vc features of Emacs 29 easily allow the user to add packages from any source (melpa, elpa, gituhub, gitlab, etc.).
 
-Otherwise any packages you would like you can install yourself using straight. You "declare" these packages in your =config.el= file like so, integrating with use-package:
+Otherwise any packages you would like you can install yourself using =M-x package-install=. You "declare" these packages in your =config.el= file like so, integrating with use-package:
 
 #+begin_src emacs-lisp 
   (use-package my-package
-    :straight (:type git :host github :repo "my-package")
     :config
     (setq my-package-setting))
 #+end_src
 
-Straight only loads packages that are explicitly declared in your config (and in the overall Lambda-Emacs setup). You can also "freeze" your package state, which is extremely helpful if you like to update frequently and run into problems with a package. Use =M-x straight-freeze-versions=. For further details consult the [[https://github.com/radian-software/straight.el#configuration-reproducibility][manual]]. 
-
-When updating packages use =straight-pull-all= for all packages or =straight-pull-package= to update a specific package. See the [[https://github.com/radian-software/straight.el#automatic-repository-management][manual]] for further details. Before installing a package be sure it isn't already installed and configured in =lem-setup-dir=. To see if a package is already installed use =M-x find-library= and type the package name. 
+When updating packages use =package-update-all= to update all packages. See the [[info:emacs#Package Installation][info entry on package installation]] for further details. Before installing a package be sure it isn't already installed and configured in =lem-setup-dir=. To see if a package is already installed use =M-x find-library= and type the package name. By default package.el installs all packages with a ~use-package~ entry. This can be changed by setting =lem-package-ensure-packages= to nil in your user configuration file. 
 
 * Modules
 Lambda-Emacs provides a series of "modules" for allowing the user to get up and running with using Emacs productively. Each module configures a package (or set of packages) and provides some reasonable defaults. The modules should be thought of as a starting point for scaffolding the user's configuration. A module only provides such configuration if it is loaded, either in the user's =config.el= file or by default if there is no such file. 
