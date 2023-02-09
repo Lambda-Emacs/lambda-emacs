@@ -355,17 +355,6 @@ _vr_ reset      ^^                       ^^                 ^^
                           ("\\.pdf\\'" . emacs)
                           (auto-mode . emacs)))
 
-;; Bookends is a citation manager for MacOS.
-;; Allow org to open Bookends links.
-(when sys-mac
-  (with-eval-after-load 'org
-    (org-add-link-type
-     "bookends" 'lem-follow-bookends-link)
-    (defun lem-follow-bookends-link (path)
-      "Run bookends link in org files."
-      (shell-command-to-string (concat "open bookends:" path)))))
-
-
 ;;;; Org Functions
 ;;;;; Org Emphasis Functions
 ;; Adapted from https://emacs.stackexchange.com/a/14586
