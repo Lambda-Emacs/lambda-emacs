@@ -311,11 +311,6 @@ Any customized libraries not available via standard package repos like elpa or m
   (mkdir package-user-dir t))
 (setopt package-quickstart-file (expand-file-name "package-quickstart.el" lem-cache-dir))
 
-;; Install package-vc if not already present
-;; (when (and (version< emacs-version "29")
-;;            (not (locate-library "package-vc")))
-;;   (shell-command-to-string (concat "curl -o " lem-library-dir "package-vc.el " "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/emacs-lisp/package-vc.el")))
-
 ;; Enable installed packages at startup
 (setopt package-enable-at-startup t
         ;; Allow loading from the package cache
