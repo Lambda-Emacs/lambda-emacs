@@ -324,7 +324,7 @@ Any customized libraries not available via standard package repos like elpa or m
 ;;;; Early Config
 ;; Check if there is a user early-config file & load. If it doesn't exist, print
 ;; a message saying so.
-(let ((early-config-file (expand-file-name "early-config.el" "~/.emacs.d/lambda-library/lambda-user/")))
+(let ((early-config-file (expand-file-name "early-config.el" lem-user-dir)))
   (cond ((file-exists-p early-config-file)
          (measure-time
           (load early-config-file nil 'nomessage))
