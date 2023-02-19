@@ -90,7 +90,7 @@
 
   ;; Indentation
   (org-adapt-indentation t) ;; adapt indentation
-  (org-startup-indented t) ;; start with indentation of headlines
+  (org-startup-indented nil) ;; don't start with indentation of headlines
   (org-src-preserve-indentation t) ;; preserve code indentation
 
   ;; Insertion/Yanking

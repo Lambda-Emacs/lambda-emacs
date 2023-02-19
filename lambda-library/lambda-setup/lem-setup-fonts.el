@@ -56,7 +56,7 @@
 ;; open buffer
 (setq-default line-spacing 0.1)
 
-;;;;; Font Lock
+;;;; Font Lock
 (use-package font-lock
   :ensure nil
   :defer 1
@@ -66,14 +66,14 @@
   ;; No limit on font lock
   (font-lock-maximum-size nil))
 
-;;;;; Scale Text
+;;;; Scale Text
 ;; When using `text-scale-increase', this sets each 'step' to about one point size.
 (setopt text-scale-mode-step 1.08)
 (bind-key* "s-=" #'text-scale-increase)
 (bind-key* "s--" #'text-scale-decrease)
 (bind-key* "s-0" #'text-scale-adjust)
 
-;;;;; Icons
+;;;; Icons
 ;; Check for icons FIXME: this should be less verbose but haven't been able to
 ;; get a `dolist` function working ¯\_(ツ)_/¯
 (defun lem-font--icon-check ()
@@ -111,6 +111,9 @@
              all-the-icons-alltheicon)
   :init
   (add-hook 'after-setting-font-hook #'lem-font--icon-check)
+  :custom
+  ;; Adjust this as necessary per user font
+  (all-the-icons-scale-factor 1)
   :config
   (add-hook 'after-setting-font-hook #'lem-font--init-all-the-icons-fonts))
 
@@ -119,6 +122,21 @@
   :if (display-graphic-p)
   :defer t
   :commands all-the-icons-dired-mode
+  :config/el-patch
+  ;; Space icons cleanly
+  (defun all-the-icons-dired--put-icon (pos)
+    "Propertize POS with icon."
+    (let* ((file (dired-get-filename 'relative 'noerror))
+           (icon (all-the-icons-dired--icon file))
+           (image (get-text-property 0 'display icon))
+           (tab-width 1))
+      (if (or (not (eq (car image) 'image)) (member file '("." "..")))
+          (put-text-property (1- pos) pos 'display
+                             (if (member file '("." ".."))
+                                 "    "
+                               (concat " " icon "\t")))
+        (setf (image-property image :margin) (cons (/ (window-text-width nil t) (window-text-width)) 0))
+        (put-text-property (1- pos) pos 'display image))))
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 

@@ -103,7 +103,6 @@
 
 ;;;; Multiple Cursors
 (use-package iedit
-  ;; :straight (:type git :host github :repo "victorhge/iedit")
   :bind (:map lem+search-keys
          ("c" . iedit-mode)))
 

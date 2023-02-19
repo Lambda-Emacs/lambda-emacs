@@ -189,7 +189,7 @@ PWD is not in a git repo (or the git command is not found)."
 
 (defun lem-eshell-config--prompt-function ()
   "Prettify eshell prompt."
-  (let* ((os-char (cond ((string-equal system-type "darwin") "")
+  (let* ((os-char (cond ((string-equal system-type "darwin") "􀣺")
                         ((string-equal system-type "gnu/linux") "🐧")
                         ((string-equal system-type "cygwin") "🗔")
                         (t "?")))
@@ -369,7 +369,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
   :group 'all-the-icons
   :type 'number)
 
-(defcustom all-the-icons-eshell-monochrome t
+(defcustom all-the-icons-eshell-monochrome nil
   "Whether to show the icons as the same color as the text on the same line."
   :group 'all-the-icons
   :type 'boolean)

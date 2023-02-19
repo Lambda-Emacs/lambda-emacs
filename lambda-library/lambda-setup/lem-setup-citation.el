@@ -39,7 +39,6 @@
 ;; Eventually this should be a full replacement for org-ref
 (use-package oc
   :ensure nil
-  ;; :straight nil
   :after org
   :config
   (setq org-cite-global-bibliography `(,lem-bibliography))
@@ -81,9 +80,8 @@
   :config
   ;; use embark with at-point
   (setq citar-at-point-function 'embark-act)
-  (setq citar-default-action 'citar-open-beref)
   ;; add beref entry for bookends
-  (setq citar-additional-fields '("doi" "url" "beref"))
+  (setq citar-additional-fields '("doi" "url"))
   (setq citar-templates
         `((main . " ${=key= id:15} ${title:48}")
           (suffix . "${author editor:30}  ${=type=:12}  ${=beref=:12} ${tags keywords:*}")

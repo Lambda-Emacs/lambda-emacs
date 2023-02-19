@@ -417,7 +417,7 @@ targets."
   ;; auto-complete
   (corfu-auto t)
   (corfu-min-width 25)
-  (corfu-max-width 90)
+  (corfu-max-width 100)
   (corfu-count 10)
   (corfu-scroll-margin 5)
   (corfu-cycle t)

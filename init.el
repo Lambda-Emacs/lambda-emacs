@@ -28,6 +28,7 @@
 ;;;; Startup
 
 ;;;;; Use-Package
+
 ;; Install use-package to manage package setup. If using Emacs 29 or later
 ;; use-package is built-in.
 (when (version< emacs-version "29")
@@ -53,6 +54,7 @@
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
 (use-package el-patch
+  :ensure t
   :hook (emacs-startup . el-patch-use-package-mode)
   :custom
   (el-patch-enable-use-package-integration t))
@@ -61,6 +63,7 @@
 ;; Properly verify outgoing ssl connections.
 ;; See https://glyph.twistedmatrix.com/2015/11/editor-malware.html
 (use-package gnutls
+  :ensure nil
   :defer 1
   :custom
   (gnutls-verify-error t)
@@ -69,6 +72,7 @@
 ;;;;; Auto-compile
 ;; Automatically byte-recompile changed elisp libraries
 (use-package auto-compile
+  :ensure t
   :defer 1
   :custom
   (auto-compile-display-buffer nil)
@@ -125,6 +129,7 @@ emacs-version string on the kill ring."
 ;; Navigate elisp files easily. Outline is a built-in library and we can easily
 ;; configure it to treat elisp comments as headings.
 (use-package outline
+  :ensure nil
   :hook (prog-mode . outline-minor-mode)
   :bind (:map outline-minor-mode-map
          ("<tab>"   . outline-cycle)

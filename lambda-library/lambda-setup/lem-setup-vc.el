@@ -124,7 +124,6 @@
 ;; And https://github.com/jimeh/.emacs.d/blob/master/modules/version-control/siren-diff-hl.el
 
 (use-package diff-hl
-  :ensure nil
   :hook
   ((prog-mode . diff-hl-mode)
    (text-mode . diff-hl-mode)

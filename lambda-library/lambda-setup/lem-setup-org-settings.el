@@ -44,23 +44,21 @@
 (use-package org-agenda
   :ensure nil
   :commands (org-agenda)
-  :bind
-  (:map org-agenda-mode-map
-   ("j" . org-agenda-next-item)
-   ("k" . org-agenda-previous-item))
   :custom
   ;; Agenda logging
   (org-agenda-start-with-log-mode t)
 
   ;; Agenda styling
-  (org-agenda-tags-column 0)
-  (org-agenda-block-separator ?–)
+  (org-auto-align-tags nil) ;; Don't align tags
+  (org-agenda-tags-column 0) ;; Put tags next to heading
+  (org-agenda-breadcrumbs-separator "  ")
+  (org-agenda-block-separator " ") ;; No default block seperator
   (org-agenda-time-grid
    '((daily today require-timed)
      (800 1000 1200 1400 1600 1800 2000)
      " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (org-agenda-current-time-string
-   "⭠ now ─────────────────────────────────────────────────")
+   "–––––––––––––– Now")
 
   ;; Display properties
   (org-agenda-tags-column org-tags-column)

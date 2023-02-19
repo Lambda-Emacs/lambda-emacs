@@ -208,7 +208,7 @@
                                          (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face))
 
                                 ,(let ((init-info (funcall lem-splash-init-info)))
-                                   (concat "  " (propertize init-info 'face 'lem-splash-header-face)))))
+                                   (concat "   " (propertize init-info 'face 'lem-splash-header-face)))))
 
             ;; Insert header buttons
             (next-line 2)

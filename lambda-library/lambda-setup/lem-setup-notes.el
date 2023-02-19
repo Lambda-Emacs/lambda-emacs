@@ -78,6 +78,12 @@
   (org-capture nil "n"))
 
 ;; Example note creation function
+(defun lem-insert-header-and-time-property ()
+  "Insert an org heading with a created time string property."
+  (interactive)
+  (insert "* ")
+  (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %T]")))
+
 (defun lem-denote-workbook-create-entry ()
   "Create an entry tagged 'workbook' with the date as its title."
   (interactive)
@@ -85,9 +91,12 @@
    (format-time-string "%Y %A %e %B")   ; format like Tuesday 14 June 2022
    '("workbook")
    nil
-   (concat lem-notes-dir "workbook"))
-  (insert "* ")
-  (lem-insert-time))
+   (concat denote-directory "workbook")
+   nil
+   nil)
+  (lem-insert-header-and-time-property))
+
+
 
 ;;;; Citar-Denote
 ;; Integration of denote with citar

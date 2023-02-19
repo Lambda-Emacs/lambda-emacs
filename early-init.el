@@ -286,14 +286,9 @@ Any customized libraries not available via standard package repos like elpa or m
 
 ;;;; Bootstrap Package System
 ;; Load the package-system.
-;; Enable installed packages at startup
-(setopt package-enable-at-startup t
-        ;; Allow loading from the package cache
-        package-quickstart t)
+(require 'package)
 
 ;;;; Package Archives
-;; Initialize package system if not already initialized.
-(require 'package)
 ;; See https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/ for discussion
 (setopt package-archives
         '(("elpa" . "https://elpa.gnu.org/packages/")
@@ -317,9 +312,14 @@ Any customized libraries not available via standard package repos like elpa or m
 (setopt package-quickstart-file (expand-file-name "package-quickstart.el" lem-cache-dir))
 
 ;; Install package-vc if not already present
-(when (and (version< emacs-version "29")
-           (not (locate-library "package-vc")))
-  (shell-command-to-string (concat "curl -o " lem-library-dir "package-vc.el " "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/emacs-lisp/package-vc.el")))
+;; (when (and (version< emacs-version "29")
+;;            (not (locate-library "package-vc")))
+;;   (shell-command-to-string (concat "curl -o " lem-library-dir "package-vc.el " "https://raw.githubusercontent.com/emacs-mirror/emacs/master/lisp/emacs-lisp/package-vc.el")))
+
+;; Enable installed packages at startup
+(setopt package-enable-at-startup t
+        ;; Allow loading from the package cache
+        package-quickstart t)
 
 ;;;; Early Config
 ;; Check if there is a user early-config file & load. If it doesn't exist, print

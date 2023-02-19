@@ -18,11 +18,10 @@
 ;;;; Org Modern (Display properties, bullets, etc)
 ;; A nicer set of default display options
 (use-package org-modern
-  :hook (org-mode . org-modern-mode)
+  :hook ((org-mode . org-modern-mode)
+         (org-agenda-finalize . org-modern-agenda))
   :custom
   (org-modern-hide-stars 'leading)
-  ;; don't use other faces
-  (org-modern-priority nil)
   (org-modern-todo nil)
   (org-modern-tag t)
   ;; Customize this per your font
@@ -33,19 +32,19 @@
 
 ;;; Org Autolist (Smart Lists)
 ;; Better list behavior
-(use-package org-autolist
-  ;; :straight (:type git :host github :repo "calvinwyoung/org-autolist")
-  :hook (org-mode . org-autolist-mode))
+  (use-package org-autolist
+    ;; :straight (:type git :host github :repo "calvinwyoung/org-autolist")
+    :hook (org-mode . org-autolist-mode))
 
 ;;; Org Babel
-;; Avoid `org-babel-do-load-languages' since it does an eager require.
-(use-package ob-python
-  :ensure nil
-  :defer t
-  :commands (org-babel-execute:python)
-  :config
-  (progn
-    (setq org-babel-python-command "python3"))) ;Default to python 3.x
+  ;; Avoid `org-babel-do-load-languages' since it does an eager require.
+  (use-package ob-python
+    :ensure nil
+    :defer t
+    :commands (org-babel-execute:python)
+    :config
+    (progn
+      (setq org-babel-python-command "python3"))) ;Default to python 3.x
 
 (use-package ob-ditaa
   :ensure nil
