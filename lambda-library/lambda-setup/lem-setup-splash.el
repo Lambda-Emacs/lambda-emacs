@@ -244,7 +244,7 @@
 
             (next-line)
             (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-octicon "git-branch") isep "Projects" ksep "(p)")
+            (insert-text-button (concat (all-the-icons-faicon "folder") isep "Projects" ksep "(p)")
                                 'action (lambda (_)  (tabspaces-open-existing-project-and-workspace))
                                 'help-echo "Open project & workspace"
                                 'face 'lem-splash-menu-face
