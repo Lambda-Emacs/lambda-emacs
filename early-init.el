@@ -311,11 +311,6 @@ Any customized libraries not available via standard package repos like elpa or m
   (mkdir package-user-dir t))
 (setopt package-quickstart-file (expand-file-name "package-quickstart.el" lem-cache-dir))
 
-;; Enable installed packages at startup
-(setopt package-enable-at-startup t
-        ;; Allow loading from the package cache
-        package-quickstart t)
-
 ;;;; Early Config
 ;; Check if there is a user early-config file & load. If it doesn't exist, print
 ;; a message saying so.
