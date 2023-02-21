@@ -50,7 +50,7 @@
     ;; Using `insert-directory-program'
     (setq ls-lisp-use-insert-directory-program t)
     ;; list directories first
-    (setq dired-listing-switches "-laFGh1v --group-directories-first"))
+    (setq dired-listing-switches "-laFh1v --group-directories-first"))
 
   ;; Like with ls, append "@" to file names if they're symlinks
   (setq dired-ls-F-marks-symlinks t)
