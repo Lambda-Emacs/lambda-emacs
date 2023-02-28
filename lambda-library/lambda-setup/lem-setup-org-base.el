@@ -98,10 +98,6 @@
   (org-M-RET-may-split-line '((default . t)))  ;; don't split line when creating a new headline, list item, or table field
   (org-yank-adjusted-subtrees t)  ;; adjust subtrees to depth when yanked
   (org-yank-folded-subtrees t) ;; fold subtrees on yank
-  (add-hook 'org-mode-hook (lambda ()  ;; don't pair < symbols
-                             (setq-local electric-pair-inhibit-predicate
-                                         `(lambda (c)
-                                            (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
 
   ;; Lists
   (org-list-allow-alphabetical t) ;; allow alphabetical list
@@ -137,6 +133,10 @@
   (org-enforce-todo-checkbox-dependencies t)
 
   :config
+  (add-hook 'org-mode-hook (lambda ()  ;; don't pair < symbols
+                             (setq-local electric-pair-inhibit-predicate
+                                         `(lambda (c)
+                                            (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
   ;; Setup further org config
   (require 'lem-setup-org-settings)
   (require 'lem-setup-org-extensions))
