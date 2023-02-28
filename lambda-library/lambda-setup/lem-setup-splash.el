@@ -214,7 +214,7 @@
 
             ;; Position point
             (goto-char (point-min))
-            (forward-line (/ (window-height) 18))
+            (forward-line (/ (window-height) 12))
             (move-to-column (/ (window-width) 11))
 
             ;; Insert header text
@@ -348,9 +348,7 @@
         truncate-lines nil
         inhibit-startup-message t
         inhibit-startup-echo-area-message t)
-  (goto-char (point-min))
-  (forward-button 1)
-  (end-of-line))
+  (goto-char (point-min)))
 
 ;;;; Splash Setup & Refresh Functions 
 (defun lem-splash-refresh ()
