@@ -122,21 +122,6 @@
   :if (display-graphic-p)
   :defer t
   :commands all-the-icons-dired-mode
-  :config/el-patch
-  ;; Space icons cleanly
-  (defun all-the-icons-dired--put-icon (pos)
-    "Propertize POS with icon."
-    (let* ((file (dired-get-filename 'relative 'noerror))
-           (icon (all-the-icons-dired--icon file))
-           (image (get-text-property 0 'display icon))
-           (tab-width 1))
-      (if (or (not (eq (car image) 'image)) (member file '("." "..")))
-          (put-text-property (1- pos) pos 'display
-                             (if (member file '("." ".."))
-                                 "    "
-                               (concat " " icon "\t")))
-        (setf (image-property image :margin) (cons (/ (window-text-width nil t) (window-text-width)) 0))
-        (put-text-property (1- pos) pos 'display image))))
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
