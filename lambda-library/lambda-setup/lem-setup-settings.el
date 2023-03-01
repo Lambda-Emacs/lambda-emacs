@@ -73,12 +73,16 @@
   :hook (after-init . global-subword-mode))
 
 ;; Allow visual lines
+;; Set Mark ring max
 (use-package simple
   :ensure nil
   :hook (after-init . global-visual-line-mode)
   :custom
   ;; move via visual lines
-  (line-move-visual t))
+  (line-move-visual t)
+  ;; reduce mark ring
+  (global-mark-ring-max 8)
+  (mark-ring-max 8))
 
 ;;;;; Line Numbers
 (use-package display-line-numbers
