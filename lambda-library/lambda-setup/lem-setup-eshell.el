@@ -454,7 +454,7 @@ If open and in eshell, toggle closed."
 
     (if (project-current)
         (setq eshell-buffer-name (concat "*eshell • " (file-name-nondirectory (directory-file-name (project-root (project-current)))) "*"))
-      default-directory (project-root (project-current)))
+      default-directory)
     (setq eshell-buffer-name (concat "*eshell • " (file-name-nondirectory (directory-file-name default-directory)) "*"))
 
     (dolist (buffer (buffer-list) eshell-exists)
