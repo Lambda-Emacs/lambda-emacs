@@ -149,7 +149,7 @@ PWD is not in a git repo (or the git command is not found)."
            (git-branch (s-trim git-output))
            (git-icon  "\xe0a0")
            (git-icon2 (propertize "\xf020" 'face `(:family "octicons")))
-           (git-sep (propertize "" 'face 'lambda-meek)))
+           (git-sep (propertize "" 'face 'lambda-meek)))
       (concat (propertize " (" 'face 'lambda-mild)
               (propertize git-repo 'face `(:inherit lambda-meek :weight light))
               git-sep
@@ -205,7 +205,7 @@ PWD is not in a git repo (or the git command is not found)."
             (propertize (format "%s" os-char) 'face 'lambda-meek)
             (propertize " ─ "  'face 'lambda-mild)
             (propertize (format-time-string "%H:%M:%S" (current-time))  'face 'lambda-meek)
-            (propertize " ─ "  'face 'lambda-mild) (propertize "\xf07c  "  'face 'lambda-meek)
+            (propertize " ─ "  'face 'lambda-mild)
             (propertize parent 'face 'lambda-meek)
             (propertize name 'face `(:inherit lambda-meek :weight bold))
             "\n"
