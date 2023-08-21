@@ -16,7 +16,6 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 ;;; Commentary:
 
 ;; All packages and setup related to the dashboard replacement of the splash screen. Further options or defaults may be overridden in the user's config.
@@ -24,6 +23,10 @@
 ;;; Code:
 
 ;;;; Dependencies
+;; Load dependencies from Lambda-Emacs. Note these packages are usually deferred
+;; but they must be loaded with dashboard since it requires icons.
+(require 'all-the-icons)
+
 ;; dashboard dependency
 (use-package page-break-lines
   :defer t
@@ -34,7 +37,6 @@
 
 ;;;; Dashboard
 (use-package dashboard
-  :straight t
   ;; Use only with GUI emacs
   :if (display-graphic-p)
   :if (< (length command-line-args) 2)

@@ -26,7 +26,7 @@
 
 ;;;; Dired Settings
 (use-package dired
-  :straight nil
+  :ensure nil
   :commands (dired dired-jump dired-jump-other-window)
   :bind (:map dired-mode-map
          ("l" . dired-find-alternate-file)
@@ -50,7 +50,7 @@
     ;; Using `insert-directory-program'
     (setq ls-lisp-use-insert-directory-program t)
     ;; list directories first
-    (setq dired-listing-switches "-laFGh1v --group-directories-first"))
+    (setq dired-listing-switches "-laFh1v --group-directories-first"))
 
   ;; Like with ls, append "@" to file names if they're symlinks
   (setq dired-ls-F-marks-symlinks t)
@@ -64,7 +64,9 @@
   ;; allow editing file permissions
   (setq wdired-allow-to-change-permissions t)
   ;; open PDF files in external viewer
-  (setq dired-guess-shell-alist-user '(("\.pdf$" . default))))
+  (setq dired-guess-shell-alist-user '(("\.pdf$" . default)))
+  ;; Allow dired, gnus, & mu4e to work together
+  (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode))
 
 ;;;; Narrow Dired to Match Filter
 (use-package dired-narrow
@@ -78,11 +80,11 @@
 
 ;;;; Dired Colors
 (use-package diredfl
-  :straight t
   :hook (dired-mode . diredfl-global-mode))
 
 ;;;; Peep Dired
 (use-package peep-dired
+  :after dired
   :commands (peep-dired)
   :bind* (:map dired-mode-map
           ("P" . peep-dired)

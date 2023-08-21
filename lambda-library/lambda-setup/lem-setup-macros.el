@@ -28,7 +28,7 @@
 ;; temporary variables which can be referred to during the expression. This
 ;; technique can improve clarity in certain cases. It also enables recursion for
 ;; anonymous functions.
-(use-package anaphora :straight t :defer 1)
+(use-package anaphora :defer 1)
 
 ;;;; Toggle macro
 

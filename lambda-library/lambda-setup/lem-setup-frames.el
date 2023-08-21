@@ -26,7 +26,7 @@
 
 ;;;; Frame defaults
 (use-package frame
-  :straight (:type built-in)
+  :ensure nil
   :config
   ;; Make a clean & minimalist frame
   ;; To modify initial frame set `initial-frame-alist`

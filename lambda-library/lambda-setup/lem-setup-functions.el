@@ -21,12 +21,8 @@
 ;; Useful functions
 
 ;;; Code:
-;;;; 𝛌-Emacs Configuration Functions
-;;;;; Check Fonts
-;; See https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/
-(defun lem-font-available-p (font-name)
-  "Check if font is available from system installed fonts."
-  (member font-name (font-family-list)))
+;;;; λ-Emacs Configuration Functions
+
 
 ;;;;; Call an emacs instance
 ;; Call an emacs instance for testing
@@ -67,24 +63,22 @@
 				               (directory-files dir nil "[^.].*[.].+")))
       :action   ,(lambda (f) (find-file f)))))
 
-;;;###autoload
 (defun lem-find-lambda-file ()
-  "Find a file from list of 𝛌-Emacs configuration files."
+  "Find a file from list of λ-Emacs configuration files."
   (interactive)
   (require 'consult)
   (consult--multi (mapcar #'(lambda (s) (apply 'lem--files-make-source s))
 			              lem-files-sources-data)
-		          :prompt "𝛌-files: "
+		          :prompt "λ-files: "
 		          :history 'file-name-history))
 
-;;;###autoload
 (defun lem-search-lambda-files ()
-  "Search all configuration files in 𝛌-Emacs with consult-ripgrep."
+  "Search all configuration files in λ-Emacs with consult-ripgrep."
   (interactive)
   (require 'consult)
   (let ((consult-ripgrep-args
          "rg --null --line-buffered --max-columns=1000 --path-separator /\
-   --smart-case --no-heading --line-number --hidden --glob=!straight --glob=!var --glob=!.git/ ."))
+   --smart-case --no-heading --line-number --hidden --glob=lambda-library/** --glob=!straight --glob=!var --glob=!.git/ ."))
     (if (executable-find "rg")
         (consult-ripgrep lem-emacs-dir)
       (message "Please install `rg' first."))))
@@ -119,7 +113,6 @@
 ;; bunch of utility commands that are just very useful to have (e.g.
 ;; crux-open-with and crux-reopen-as-root). Originally part of Emacs Prelude.
 (use-package crux
-  :straight (:type git :host github :repo "bbatsov/crux")
   :defer 1
   :bind
   ("C-k"   . crux-smart-kill-line)
@@ -147,20 +140,21 @@
 ;; have these functions available for server
 (defun lem-activate-capture-frame ()
   "run org-capture in capture frame"
-  (require 'org)
-  (select-frame-by-name "capture")
-  (switch-to-buffer (get-buffer-create "*scratch*"))
-  (org-capture))
+  (progn
+    (require 'org)
+    (select-frame-by-name "capture")
+    (switch-to-buffer (get-buffer-create "new"))
+    (org-capture)))
 
 ;;;;; Weather Capture Frame
 (defun lem-weather-journal-capture ()
   (interactive)
-  (require 'org)
-  (select-frame-by-name "capture")
-  (switch-to-buffer (get-buffer-create "*scratch*"))
-  (lem-org-journal)
-  (lem-insert-weather)
-  (goto-char (point-max)))
+  (progn
+    (require 'org)
+    (select-frame-by-name "capture")
+    (switch-to-buffer (get-buffer-create "new"))
+    (lem-org-journal)
+    (lem-insert-weather)))
 
 ;;;; Window Functions
 ;;;;; Toggle Dedicated Window
@@ -289,15 +283,25 @@
 
 ;;;;; Create new buffer
 (defun lem-create-new-buffer ()
+  "Create a new buffer in the default major mode."
   (interactive)
   (let ((buffer (generate-new-buffer "*new*")))
     (set-window-buffer nil buffer)
     (with-current-buffer buffer
       (funcall (default-value 'major-mode)))))
 
+;;;;; Create New Elisp Buffer
+(defun lem-create-new-elisp-buffer ()
+  "Create a new buffer in `'emacs-lisp-mode'."
+  (interactive)
+  (let ((buffer (generate-new-buffer "*elisp*")))
+    (set-window-buffer nil buffer)
+    (with-current-buffer buffer
+      (emacs-lisp-mode))))
+
 ;;;;; Make Temp Buffer
 (defun lem-tmp-buffer()
-  "Make a temporary buffer and switch to it"
+  "Make a temporary buffer and switch to it."
   (interactive)
   (switch-to-buffer (get-buffer-create (concat "tmp-" (format-time-string "%m.%dT%H.%M.%S"))))
   (delete-other-windows))
@@ -571,8 +575,9 @@ will be killed."
 ;;;;; Insert Weather
 ;; From [[https://www.baty.blog/2019/insert-weather-into-emacs-buffer][Jack Baty]] with some slight modifications for formatting. See also [[https://github.com/chubin/wttr.in][wttr.in]].
 (defun lem-insert-weather ()
+  "Insert `'wttr.in' weather forecast in buffer."
   (interactive)
-  (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT'")))
+  (let ((w (shell-command-to-string "curl -s 'wttr.in/?0qT' | head -n10")))
     (insert (mapconcat (function (lambda (x) (format ": %s" x)))
                        (split-string w "\n")
                        "\n")))
@@ -618,13 +623,13 @@ will be killed."
 (defun lem-cite-to-org ()
   "convert clipboard contents from markdown to org with citations and paste"
   (interactive)
-  (kill-new (shell-command-to-string "pbpaste | pandoc --bibliography=/Users/Roambot/Dropbox/Work/Master.bib -s -t markdown-native_divs-raw_html-citations | pandoc -f markdown -t org"))
+  (kill-new (shell-command-to-string (concat "pbpaste | pandoc --bibliography=" lem-bibliography " -s -t markdown-native_divs-raw_html-citations | pandoc -f markdown -t org")))
   (yank))
 
 (defun lem-cite-to-markdown ()
   "convert clipboard contents to markdown with citations and paste"
   (interactive)
-  (kill-new (shell-command-to-string "pbpaste | pandoc --bibliography=/Users/Roambot/Dropbox/Work/bibfile.bib -s -t markdown-native_divs-raw_html-citations --markdown-headings=atx"))
+  (kill-new (shell-command-to-string (concat "pbpaste | pandoc --bibliography=" lem-bibliography " -s -t markdown-native_divs-raw_html-citations --markdown-headings=atx")))
   (yank))
 
 (defun lem-bibtex-to-yaml-reference ()

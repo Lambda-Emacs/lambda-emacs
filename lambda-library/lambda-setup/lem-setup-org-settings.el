@@ -42,25 +42,23 @@
 ;;;; Org Agenda
 ;;;;; Agenda Settings
 (use-package org-agenda
-  :straight nil
+  :ensure nil
   :commands (org-agenda)
-  :bind
-  (:map org-agenda-mode-map
-   ("j" . org-agenda-next-item)
-   ("k" . org-agenda-previous-item))
   :custom
   ;; Agenda logging
   (org-agenda-start-with-log-mode t)
 
   ;; Agenda styling
-  (org-agenda-tags-column 0)
-  (org-agenda-block-separator ?–)
+  (org-auto-align-tags nil) ;; Don't align tags
+  (org-agenda-tags-column 0) ;; Put tags next to heading
+  (org-agenda-breadcrumbs-separator "  ")
+  (org-agenda-block-separator " ") ;; No default block seperator
   (org-agenda-time-grid
    '((daily today require-timed)
      (800 1000 1200 1400 1600 1800 2000)
      " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
   (org-agenda-current-time-string
-   "⭠ now ─────────────────────────────────────────────────")
+   "–––––––––––––– Now")
 
   ;; Display properties
   (org-agenda-tags-column org-tags-column)
@@ -241,7 +239,7 @@ _vr_ reset      ^^                       ^^                 ^^
 
 ;;;; Org Contrib
 (use-package org-contrib
-  :straight t
+  :ensure t
   :after org
   :config
   ;; ignore export of headlines marked with :ignore: tag
@@ -251,7 +249,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;;;; Org Export
 ;; Useful base export settings
 (use-package ox
-  :straight (:type built-in)
+  :ensure nil
   :after org
   :custom
   ;; Don't use bad hyperref value
@@ -280,7 +278,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;;;; Org ID
 ;; Use org ids for reference
 (use-package org-id
-  :straight nil
+  :ensure nil
   :after org
   :custom
   (org-id-locations-file (concat lem-cache-dir ".org-id-locations"))
@@ -303,7 +301,7 @@ _vr_ reset      ^^                       ^^                 ^^
                           (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELED(c@/!)")))
 
 ;;;; Org Inline Tasks
-(use-package org-inlinetask :straight nil
+(use-package org-inlinetask :ensure nil
   :commands org-inlinetask-insert-task)
 
 ;;;; Org Archive
@@ -336,7 +334,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;; files in org-agenda-files. You can also refile to the top header in a
 ;; document and create new parents.
 (use-package org-refile
-  :straight nil
+  :ensure nil
   :after org
   :custom
   (org-refile-targets '((nil :maxlevel . 9)
@@ -354,17 +352,6 @@ _vr_ reset      ^^                       ^^                 ^^
                           ("\\.x?html?\\'" . default)
                           ("\\.pdf\\'" . emacs)
                           (auto-mode . emacs)))
-
-;; Bookends is a citation manager for MacOS.
-;; Allow org to open Bookends links.
-(when sys-mac
-  (with-eval-after-load 'org
-    (org-add-link-type
-     "bookends" 'lem-follow-bookends-link)
-    (defun lem-follow-bookends-link (path)
-      "Run bookends link in org files."
-      (shell-command-to-string (concat "open bookends:" path)))))
-
 
 ;;;; Org Functions
 ;;;;; Org Emphasis Functions

@@ -63,7 +63,10 @@
 (defcustom lem-splash-init-info
   (lambda ()
     (let ((package-count 0) (time (emacs-init-time)))
-      (setq package-count (- (length load-path) (length (get 'load-path 'initial-value))))
+      (cond ((bound-and-true-p package-alist)
+             (setq package-count (length package-activated-list)))
+            ((boundp 'straight--profile-cache)
+             (setq package-count (+ (hash-table-count straight--profile-cache) package-count))))
       (if (zerop package-count)
           (format "Emacs started in %s" time)
         (format "%d packages loaded in %s" package-count time))))
@@ -72,52 +75,9 @@
   :group 'lambda-splash)
 
 ;; Banner
-(defcustom lem-splash-banner
-  "
-              ``                                         
-        :oyhdmmmmdhs+-                                   
-        sMMMMMMMMMMMMNdo.                                
-        .NMMMMMMMMMMMMMMm+                               
-         oMNNNMMMMMMMMMMMMh.                             
-         n:sdMMMMMMMMMMMMMMd.                            
-                 `+NMMMMMMMMm.                           
-                   -mMMMMMMMMm.                          
-                    -NMMMMMMMMd`                         
-                     :NMMMMMMMMy                         
-                      oMMMMMMMMM+                        
-                       hMMMMMMMMN-                       
-                       .mMMMMMMMMm`                      
-                        :MMMMMMMMMy                      
-                         sMMMMMMMMM+                     
-                         `NMMMMMMMMN-                    
-                        `yMMMMMMMMMMd`                   
-                        yMMMMMMMMMMMMy                   
-                       oMMMMMMMMMMMMMM/                  
-                      oMMMMMMMMMMMMMMMN.                 
-                     /MMMMMMMMdMMMMMMMMd`                
-                    /MMMMMMMMd`dMMMMMMMMs                
-                   :NMMMMMMMN. :MMMMMMMMM/               
-                  -NMMMMMMMM/   yMMMMMMMMN.              
-                 .NMMMMMMMM+    .NMMMMMMMMd              
-                .mMMMMMMMMs      /MMMMMMMMMs             
-               `dMMMMMMMMh`       yMMMMMMMMM:            
-              `dMMMMMMMMd`        `mMMMMMMMMN.           
-             `hMMMMMMMMm.          :MMMMMMMMMh           
-             yMMMMMMMMN-            oMMMMMMMMMo          
-            sMMMMMMMMN:             `dMMMMMMMMN:         
-           oMMMMMMMMM/               -NMMMMMMMMm`        
-          +MMMMMMMMMo                 +MMMMMMMMMh        
-         /NMMMMMMMMs                   yMMMMMMMMM+       
-        :NMMMMMMMMy`                   .mMMMMMMMMN-      
-       -NMMMMMMMMd`                     :MMMMMMMMMm`     
-      -mMMMMMMMMm.                       sMMMMMMMMMy     
-     .mMMMMMMMMm-                        `dMMMMMMMMM+    
-    .dMMMMMMMMN:                          -NMMMMMMMMN-   
-   `dMMMMMMMMN/                            +MMMMMMMMMd`  
-  `hMMMMMMMMM+                              hMMMMMMMMMy  
-  yMMMMMMMMMs                               .NMMMMMMMMM/ 
- `//////////                                 -/////////: 
-"
+
+;; Banner
+(defcustom lem-splash-banner nil
   "Banner picture for splash-screen"
   :type '(string)
   :group 'lambda-splash)
@@ -135,6 +95,71 @@
     (get-buffer "*splash*")
     (switch-to-buffer "*splash*")
     (erase-buffer)))
+
+(defun lem-splash-terminal ()
+  "A custom splash screen for terminal Emacs"
+  (interactive)
+  ;; Switch to or create splash buffer
+  (or (when (get-buffer "*splash*")
+        (switch-to-buffer "*splash*"))
+      ;; Hide modeline before window-body-height is computed
+      (let* ((splash-buffer (get-buffer-create "*splash*")))
+        (with-current-buffer splash-buffer
+          (setq header-line-format nil)
+          (setq mode-line-format nil)
+          (erase-buffer))
+
+        (let* ((buffer-read-only t)
+               (midp  (/ (point-max) 2))
+               (padding-top 3)
+               (height (/ (window-height) 2))
+	           (width (/ (window-width) 2))
+               ;; Original ascii image from here:
+               ;; https://github.com/Triagle/emax/blob/master/boot.txt
+               (banner (lem-get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
+
+          (with-current-buffer splash-buffer
+            ;; Buffer local settings
+            (if (one-window-p)
+                (setq mode-line-format nil))
+            (setq-local cursor-type nil)
+            (setq vertical-scroll-bar nil)
+            (setq horizontal-scroll-bar nil)
+            (setq fill-column width)
+            (face-remap-add-relative 'link :underline nil)
+            (unless (and (display-graphic-p) sys-mac) (menu-bar-mode 0))
+            ;; Set margin padding locally
+            (setq-local left-margin-width (/ width 6)
+                        right-margin-width (/ width 6))
+            (set-window-buffer nil (current-buffer))
+            ;; Add padding at top
+            (insert-char ?\n 1)
+            (unless lem-splash-banner
+              ;; Insert text banner
+              (insert banner))
+            ;; Position point
+            (goto-char (point-min))
+            (forward-line (- (/ (window-height) 2) 10))
+            (end-of-line)
+            ;; Insert header text
+            (insert-rectangle `(,(propertize "           Welcome to 𝛌-Emacs"  'face 'lem-splash-title-face)
+                                ,(concat (propertize "         GNU Emacs version" 'face 'lem-splash-header-face)
+                                         " "
+                                         (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face))
+                                ,(let ((init-info (funcall lem-splash-init-info)))
+                                   (concat " " (propertize init-info 'face 'lem-splash-header-face)))))
+            ;; ;; Vertical padding to bottom
+            (goto-char (point-max))
+            ;; Footer text
+            (defvar lem-splash-footer "   " "Footer text.")
+            (save-excursion (insert-char ?\n 2)
+                            (insert-char ?\s (- (/ (window-width) 4) 10))
+                            (insert
+                             (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
+            (goto-char (point-min))
+            (display-buffer-same-window splash-buffer nil))
+          (switch-to-buffer "*splash*"))
+        (lem-splash-mode))))
 
 (defun lem-splash-screen ()
   "A custom splash screen for Emacs"
@@ -154,22 +179,12 @@
                (padding-top 3)
                (height (/ (window-height) 2))
 	           (width (/ (window-width) 2))
+               (image-scaling-factor 2.2)
                ;; scale icons
                (all-the-icons-scale-factor 1.10)
-               (all-the-icons-default-adjust -0.02)
-               ;; Original ascii image from here:
-               ;; https://github.com/Triagle/emax/blob/master/boot.txt
-               (image (lem-get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
+               (all-the-icons-default-adjust -0.02))
 
           (with-current-buffer splash-buffer
-            ;; (erase-buffer)
-            ;; (when-let (windows (get-buffer-window-list "*splash*" nil t))
-            ;;   (dolist (win windows)
-            ;;     (set-window-start win 0)
-            ;;     (set-window-fringes win 0 0)
-            ;;     (set-window-margins
-            ;;      win (max 0 (/ (- (window-total-width win) width))))))
-
             ;; Buffer local settings
             (if (one-window-p)
                 (setq mode-line-format nil))
@@ -181,41 +196,49 @@
             (unless (and (display-graphic-p) sys-mac) (menu-bar-mode 0))
 
             ;; Set margin padding locally
-            (setq-local left-margin-width (/ width 6)
+            (setq-local left-margin-width 0
                         right-margin-width (/ width 6))
             (set-window-buffer nil (current-buffer))
 
             ;; Add padding at top
-            (insert-char ?\n padding-top)
+            (insert-char ?\n 1)
 
+            ;; Add image 
             (when (and (> (window-width) 59)
                        (> (window-height) 44))
-              (insert (propertize lem-splash-banner 'face 'lem-splash-image-face)))
+              (if (eq active-theme 'dark-theme)
+                  (insert-sliced-image (create-image (concat lem-library-dir "lambda-logo-white.png") 'png) " " nil 20 20)
+                (insert-sliced-image (create-image (concat lem-library-dir "lambda-logo-black.png") 'png) " " nil 20 20)))
+
+
+
 
             ;; Position point
             (goto-char (point-min))
-            ;; subtract 10 to account for padding
-            (forward-line (- (/ (window-height) 2) 10))
-            (end-of-line)
+            (forward-line (/ (window-height) 12))
+            (move-to-column (/ (window-width) 11))
 
             ;; Insert header text
-            (insert-rectangle `(,(propertize "           Welcome to 𝛌-Emacs"  'face 'lem-splash-title-face)
+            (insert-rectangle `(,(propertize "           Welcome to λ-Emacs"  'face 'lem-splash-title-face)
                                 ,(concat (propertize "         GNU Emacs version" 'face 'lem-splash-header-face)
                                          " "
                                          (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face))
-
                                 ,(let ((init-info (funcall lem-splash-init-info)))
-                                   (concat "  " (propertize init-info 'face 'lem-splash-header-face)))))
+                                   (concat " " (propertize init-info 'face 'lem-splash-header-face)))))
 
             ;; Insert header buttons
-            (next-line 2)
+            (forward-line)
+            (move-to-column (/ (window-width) 11))
+            ;; (end-of-line)
             (insert-char ?\s 11)
             (insert-text-button (concat (all-the-icons-faicon "calendar") isep "Agenda" ksep "(a)")
                                 'action (lambda (_) (lem-open-agenda-in-workspace))
                                 'help-echo "Open Agenda"
                                 'face 'lem-splash-menu-face
                                 'follow-link t)
-            (next-line)
+            (forward-line)
+            (move-to-column (/ (window-width) 11))
+            ;; (end-of-line)
             (insert-char ?\s 11)
             (insert-text-button (concat (all-the-icons-faicon "code") isep "Config" ksep "(c)")
                                 'action (lambda (_) (lem-open-emacsd-in-workspace))
@@ -223,7 +246,9 @@
                                 'face 'lem-splash-menu-face
                                 'follow-link t)
 
-            (next-line)
+            (forward-line)
+            (move-to-column (/ (window-width) 11))
+            ;; (end-of-line)
             (insert-char ?\s 11)
             (insert-text-button (concat (all-the-icons-faicon "envelope-o") isep "Mail" ksep "(m)")
                                 'action (lambda (_)  (lem-open-email-in-workspace))
@@ -231,7 +256,9 @@
                                 'face 'lem-splash-menu-face
                                 'follow-link t)
 
-            (next-line)
+            (forward-line)
+            (move-to-column (/ (window-width) 11))
+            ;; (end-of-line)
             (insert-char ?\s 11)
             (insert-text-button (concat (all-the-icons-faicon "book") isep "Notes" ksep "(n)")
                                 'action (lambda (_)  (lem-open-notes-in-workspace))
@@ -239,9 +266,11 @@
                                 'face 'lem-splash-menu-face
                                 'follow-link t)
 
-            (next-line)
+            (forward-line)
+            (move-to-column (/ (window-width) 11))
+            ;; (end-of-line)
             (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-octicon "git-branch") isep "Projects" ksep "(p)")
+            (insert-text-button (concat (all-the-icons-faicon "folder") isep "Projects" ksep "(p)")
                                 'action (lambda (_)  (tabspaces-open-existing-project-and-workspace))
                                 'help-echo "Open project & workspace"
                                 'face 'lem-splash-menu-face
@@ -249,7 +278,8 @@
 
 
             ;; see https://blog.lambda.cx/posts/emacs-align-columns/
-            (align-regexp (point-min) (point-max) "\\(\\s(*\\)\\S(+" -1 1 t)
+            ;; Note that we need the `+' in order to avoid deleting lines of the image
+            (align-regexp (point-min) (point-max) "\\(\\s(+\\)\\S(+" -1 1 t)
 
             ;; ;; Vertical padding to bottom
             (goto-char (point-max))
@@ -257,7 +287,7 @@
             ;; Footer text
             (defvar lem-splash-footer "   " "Footer text.")
             (save-excursion (insert-char ?\n 2)
-                            (insert-char ?\s (- (/ (window-width) 4) 10))
+                            (insert-char ?\s (/ (window-width) 4))
                             (insert
                              (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
 
@@ -319,9 +349,7 @@
         truncate-lines nil
         inhibit-startup-message t
         inhibit-startup-echo-area-message t)
-  (goto-char (point-min))
-  (forward-button 1)
-  (end-of-line))
+  (goto-char (point-min)))
 
 ;;;; Splash Setup & Refresh Functions 
 (defun lem-splash-refresh ()
@@ -336,7 +364,9 @@
 (defun lem-splash--setup-splash-hooks ()
   "Initialize splash and setup hooks."
   (progn
-    (lem-splash-screen)
+    (if (display-graphic-p)
+        (lem-splash-screen)
+      (lem-splash-terminal)) 
     (add-hook 'window-state-change-hook #'lem-splash-refresh)
     (add-hook 'window-configuration-change-hook  #'lem-splash-refresh)
     (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh)))
@@ -353,6 +383,3 @@
 
 ;;; lem-setup-splash.el ends here
 
-;; Local Variables:
-;; eval: (ws-butler-mode -1)
-;; End:

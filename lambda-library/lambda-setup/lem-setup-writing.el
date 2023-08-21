@@ -24,6 +24,7 @@
 ;;; Code:
 ;;;; Spelling
 (use-package ispell
+  :ensure nil
   :commands (ispell-word ispell-region ispell-buffer)
   :config
   (when (executable-find "aspell")
@@ -32,6 +33,7 @@
     (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))))
 
 (use-package flyspell
+  :ensure nil
   :config
   (setq flyspell-abbrev-p t
         flyspell-use-global-abbrev-table-p t
@@ -43,7 +45,6 @@
 
 ;; completion of spellings
 (use-package flyspell-correct
-  :straight t
   :after flyspell
   :bind (:map flyspell-mode-map
          ("C-;" . flyspell-correct-previous)
@@ -73,9 +74,6 @@
 
 ;; Completion of misspelled words in buffer
 (use-package consult-flyspell
-  :straight (consult-flyspell :type git :host gitlab
-                              :repo "OlMon/consult-flyspell"
-                              :branch "master")
   :after flyspell
   :config
   (setq consult-flyspell-set-point-after-word t
@@ -96,7 +94,7 @@
 
 ;;;; Abbrev
 (use-package abbrev
-  :straight (:type built-in)
+  :ensure nil
   :defer 2
   :config
   ;; (add-hook 'text-mode-hook #'abbrev-mode)
@@ -144,7 +142,7 @@
     "settings for markdown mode"
     (progn
       (turn-on-flyspell)
-      (auto-fill-mode)
+      ;; (auto-fill-mode)
       (hl-todo-mode)))
 
   ;; markdown hooks
@@ -163,40 +161,6 @@
   :after markdown
   :hook (markdown-mode . markdown-toc))
 
-;;;; Pandoc
-(use-package pandoc-mode
-  :commands (lem-pandoc-convert-to-pdf run-pandoc pandoc-convert-to-pdf)
-  :config
-  (setq pandoc-use-async t)
-  ;; stop pandoc from just hanging forever and not completing conversion
-  ;; see https://github.com/joostkremers/pandoc-mode/issues/44
-  (setq pandoc-process-connection-type nil)
-  (progn
-    (defun run-pandoc ()
-      "Start pandoc for the buffer and open the menu"
-      (interactive)
-      (pandoc-mode)
-      (pandoc-main-hydra/body))
-    (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings)
-
-    (defun lem-pandoc-convert-to-pdf ()
-      (interactive)
-      (cond
-       ((eq major-mode 'org-mode)
-        (call-interactively 'org-pandoc-export-to-latex-pdf-and-open))
-       (t
-        (call-interactively 'pandoc-convert-to-pdf) (lem-pandoc-pdf-open))))
-
-    (defun lem-pandoc-pdf-open ()
-      "Open created PDF file"
-      (interactive)
-      (find-file-other-window (concat (file-name-sans-extension buffer-file-name) ".pdf"))))
-  :init
-  (progn
-    (setq pandoc-data-dir (concat lem-etc-dir "pandoc-mode/"))
-    ;; help pandoc find xelatex
-    (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin"))))
-
 ;;;; Writeroom
 (use-package writeroom-mode
   :commands (writeroom-mode)
@@ -204,11 +168,17 @@
   (setq writeroom-fullscreen-effect 'maximized)
   (setq writeroom-width 95)
   (setq writeroom-mode-line t)
-  (setq writeroom-bottom-divider-width 0))
+  (setq writeroom-bottom-divider-width 0)
+  ;; better scrolling while writing
+  (add-hook 'writeroom-mode-hook #'lem-writing-mode-scroll-settings))
 
-;;;; Interleave (Notes)
-(use-package interleave
-  :commands interleave-mode)
+(defun lem-writing-mode-scroll-settings ()
+  "Center cursor for typewriter-like scrolling during writing."
+  (progn
+    (setq-local scroll-preserve-screen-position t
+                scroll-conservatively 0
+                maximum-scroll-margin 0.25
+                scroll-margin 99999)))
 
 ;;;; Lorem Ipsum
 (use-package lorem-ipsum
@@ -245,7 +215,7 @@
     (setq-default TeX-master nil)))
 
 (use-package preview
-  :straight nil
+  :ensure nil
   :after auctex
   :commands LaTeX-preview-setup
   :init
@@ -254,11 +224,13 @@
                   preview-scale-function '(lambda () (* (/ 10.0 (preview-document-pt)) preview-scale)))))
 
 (use-package reftex
+  :ensure nil
   :commands turn-on-reftex
   :init
   (setq reftex-plug-into-AUCTeX t))
 
 (use-package bibtex
+  :ensure nil
   :defer t
   :mode ("\\.bib" . bibtex-mode)
   :init
@@ -322,24 +294,13 @@
       (substring fname-or-url 7)
     fname-or-url))
 
-;;;; Word Repetition Finder
-;; Via https://irreal.org/blog/?p=10235
-(use-package repetition_error_finder
-  :straight (:type git :host github :repo "ioah86/repetition_error_finder")
-  :commands (find-reperr-whole-buffer find-reperr-from-point))
-
 ;;;; Dictionary
 (use-package define-word
   :commands (define-word define-word-at-point))
 
 (use-package osx-dictionary
-  :straight (:type git :host github :repo "xuchunyang/osx-dictionary.el")
+  ;; :straight (:type git :host github :repo "xuchunyang/osx-dictionary.el")
   :commands (osx-dictionary-search-word-at-point osx-dictionary-search-input))
-
-(use-package sdcv-mode
-  :straight (:type git :host github :repo "gucong/emacs-sdcv")
-  :bind (:map lem+search-keys
-         ("w" . sdcv-search)))
 
 ;;;; Narrow/Widen
 (defun lem-narrow-or-widen-dwim (p)

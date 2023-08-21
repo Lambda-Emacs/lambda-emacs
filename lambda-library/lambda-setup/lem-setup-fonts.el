@@ -7,41 +7,11 @@
 ;;
 ;;; Code:
 
-;;;; Fonts
-
-(use-package fontset
-  :straight (:type built-in)
-  :custom
-  ;; Set this to nil to set symbols entirely separately
-  ;; Need it set to `t` in order to display org-modern-indent faces properly
-  (use-default-font-for-symbols t)
-  :config
-  ;; Use symbola for proper symbol glyphs, but have some fallbacks
-  (cond ((lem-font-available-p "Symbola")
-         (set-fontset-font
-          t 'symbol "Symbola" nil))
-        ((lem-font-available-p "Apple Symbols")
-         (set-fontset-font
-          t 'symbol "Apple Symbols" nil))
-        ((lem-font-available-p "Symbol")
-         (set-fontset-font
-          t 'symbol "Symbol" nil))
-        ((lem-font-available-p "Segoe UI Symbol")
-         (set-fontset-font
-          t 'symbol "Segoe UI Symbol" nil)))
-  ;; Use Apple emoji
-  ;; NOTE that emoji here may need to be set to unicode to get color emoji
-  (when (and (>= emacs-major-version 28)
-             (lem-font-available-p "Apple Color Emoji"))
-    (set-fontset-font t 'emoji
-                      '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
-  ;; Fall back font for missing glyph
-  (defface fallback '((t :family "Fira Code"
-                         :inherit fringe)) "Fallback")
-  (set-display-table-slot standard-display-table 'truncation
-                          (make-glyph-code ?… 'fallback))
-  (set-display-table-slot standard-display-table 'wrap
-                          (make-glyph-code ?↩ 'fallback)))
+;;;; Check Fonts
+;; See https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/
+(defun lem-font-available-p (font-name)
+  "Check if font is available from system installed fonts."
+  (member font-name (font-family-list)))
 
 ;;;; Set Default & Variable Pitch Fonts
 (defun lem-ui--set-default-font (spec)
@@ -86,6 +56,42 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
            (when (and val (not (eq val prev-val)))
              (lem-ui--set-variable-width-font val)))))
 
+;;;; Set Symbol & Emoji Fonts
+(use-package fontset
+  :ensure nil
+  :custom
+  ;; Set this to nil to set symbols entirely separately
+  ;; Need it set to `t` in order to display org-modern-indent faces properly
+  (use-default-font-for-symbols t)
+  :config
+  ;; Use symbola for proper symbol glyphs, but have some fallbacks
+  (cond ((lem-font-available-p "Symbola")
+         (set-fontset-font
+          t 'symbol "Symbola" nil))
+        ((lem-font-available-p "Apple Symbols")
+         (set-fontset-font
+          t 'symbol "Apple Symbols" nil))
+        ((lem-font-available-p "Symbol")
+         (set-fontset-font
+          t 'symbol "Symbol" nil))
+        ((lem-font-available-p "Segoe UI Symbol")
+         (set-fontset-font
+          t 'symbol "Segoe UI Symbol" nil)))
+  ;; Use Apple emoji
+  ;; NOTE that emoji here may need to be set to unicode to get color emoji
+  (when (and (>= emacs-major-version 28)
+             (lem-font-available-p "Apple Color Emoji"))
+    (set-fontset-font t 'emoji
+                      '("Apple Color Emoji" . "iso10646-1") nil 'prepend))
+  ;; Fall back font for missing glyph
+  (defface fallback '((t :family "Fira Code"
+                         :inherit fringe)) "Fallback")
+  (set-display-table-slot standard-display-table 'truncation
+                          (make-glyph-code ?… 'fallback))
+  (set-display-table-slot standard-display-table 'wrap
+                          (make-glyph-code ?↩ 'fallback)))
+
+
 ;; Set default line spacing. If the value is an integer, it indicates
 ;; the number of pixels below each line. A decimal number is a scaling factor
 ;; relative to the current window's default line height. The setq-default
@@ -93,9 +99,9 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
 ;; open buffer
 (setq-default line-spacing 0.1)
 
-;;;;; Font Lock
+;;;; Font Lock
 (use-package font-lock
-  :straight (:type built-in)
+  :ensure nil
   :defer 1
   :custom
   ;; Max font lock decoration (set nil for less)
@@ -103,14 +109,14 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
   ;; No limit on font lock
   (font-lock-maximum-size nil))
 
-;;;;; Scale Text
+;;;; Scale Text
 ;; When using `text-scale-increase', this sets each 'step' to about one point size.
-(setq text-scale-mode-step 1.08)
+(setopt text-scale-mode-step 1.08)
 (bind-key* "s-=" #'text-scale-increase)
 (bind-key* "s--" #'text-scale-decrease)
 (bind-key* "s-0" #'text-scale-adjust)
 
-;;;;; Icons
+;;;; Icons
 ;; Check for icons FIXME: this should be less verbose but haven't been able to
 ;; get a `dolist` function working ¯\_(ツ)_/¯
 (defun lem-font--icon-check ()
@@ -148,11 +154,11 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
              all-the-icons-alltheicon)
   :init
   (add-hook 'after-setting-font-hook #'lem-font--icon-check)
+  :custom
+  ;; Adjust this as necessary per user font
+  (all-the-icons-scale-factor 1)
   :config
   (add-hook 'after-setting-font-hook #'lem-font--init-all-the-icons-fonts))
-
-(use-package font-lock+
-  :defer 1)
 
 ;; icons for dired
 (use-package all-the-icons-dired
@@ -162,12 +168,18 @@ Use a plist with the same key names as accepted by `set-face-attribute'."
   :init
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
 
-(use-package wid-edit
-  :straight (:type built-in)
-  :defer 1
-  :custom
-  ;; No ugly button for checkboxes
-  (widget-image-enable nil))
+;; Completion Icons
+(use-package all-the-icons-completion
+  :ensure nil
+  :if (display-graphic-p)
+  :init
+  ;; NOTE: This is a fork -- install original once these changes have been merged
+  (unless (package-installed-p 'all-the-icons-completion)
+    (package-vc-install "https://github.com/MintSoup/all-the-icons-completion"))
+  :hook (emacs-startup . all-the-icons-completion-mode)
+  :config
+  (add-hook 'marginalia-mode-hook #'all-the-icons-completion-marginalia-setup))
+
 
 (provide 'lem-setup-fonts)
 ;;; lem-setup-fonts.el ends here

@@ -27,27 +27,35 @@
 ;;; Code:
 
 ;; Built in libraries; lots of packages depend on these
-(use-package subr-x   :straight (:type built-in) :defer 1)
-(use-package cl-lib   :straight (:type built-in) :defer t)
+(use-package subr-x
+  :ensure nil
+  :defer 1)
+(use-package cl-lib
+  :ensure nil
+  :defer t)
 ;; Include this only for compatibility purposes
-(use-package cl       :straight (:type built-in) :defer t)
+(use-package cl
+  :ensure nil
+  :defer t)
 
 ;; Asynchronous commands. Adds the ability to call asynchronous functions and
 ;; process with ease. See the documentation for `async-start' and
 ;; `async-start-process'.
 (use-package async
-  :straight t
   :defer
   :config
   (dired-async-mode 1)
   (setq dired-async--modeline-mode nil))
 
 ;; A modern list API for Emacs. No 'cl required.
-(use-package dash     :straight t :defer 2)
+(use-package dash
+  :defer 2)
 ;; String manipulation
-(use-package s        :straight t :defer 2)
+(use-package s
+  :defer 2)
 ;; APIs for files & directories
-(use-package f        :straight t :defer 2)
+(use-package f
+  :defer 2)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-libraries)

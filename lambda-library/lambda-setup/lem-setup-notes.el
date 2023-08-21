@@ -42,10 +42,11 @@
 ;; See also https://systemcrafters.net/live-streams/july-15-2022/
 
 (use-package denote
-  :straight (:type git :host github :repo "protesilaos/denote")
   :commands (denote denote-create-note denote-link-ol-store)
   :custom
-  (denote-file-type nil) ;; use org
+  ;; Use org-read-date
+  (denote-date-prompt-use-org-read-date t)
+  (denote-file-type 'org) ;; use org
   (denote-allow-multi-word-keywords nil) ;; single word keywords only
   ;; Better backlink display
   (denote-link-backlinks-display-buffer-action
@@ -56,10 +57,9 @@
            (slot . 99)
            (window-height . 10))))
   ;; Set default prompts for note creation
-  ;; (denote-prompts '(title keywords))
+  (denote-prompts '(title keywords subdirectory))
   ;; Set multiple keywords as a list of strings
-  ;; (denote-known-keywords '("workbook" "projects" "ideas"))
-  )
+  (denote-known-keywords '("workbook" "project" "idea")))
 
 ;; Org-capture note creation with Denote
 (with-eval-after-load 'org-capture
@@ -72,7 +72,18 @@
                  :kill-buffer t
                  :jump-to-captured t)))
 
+(defun lem-denote-capture-note ()
+  "Create a new note with denote."
+  (interactive)
+  (org-capture nil "n"))
+
 ;; Example note creation function
+(defun lem-insert-header-and-time-property ()
+  "Insert an org heading with a created time string property."
+  (interactive)
+  (insert "* ")
+  (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %T]")))
+
 (defun lem-denote-workbook-create-entry ()
   "Create an entry tagged 'workbook' with the date as its title."
   (interactive)
@@ -80,14 +91,25 @@
    (format-time-string "%Y %A %e %B")   ; format like Tuesday 14 June 2022
    '("workbook")
    nil
-   (concat lem-notes-dir "workbook"))
-  (insert "* ")
-  (lem-insert-time))
+   (concat denote-directory "workbook")
+   nil
+   nil)
+  (lem-insert-header-and-time-property))
+
+
+
+;;;; Citar-Denote
+;; Integration of denote with citar
+(use-package citar-denote
+  :commands (citar-create-note
+             citar-open-notes
+             citar-denote-add-citekey)
+  :config
+  (citar-denote-mode))
 
 ;;;; Consult Notes
 ;; Adapted from https://github.com/minad/consult/wiki/hrm-notes
 (use-package consult-notes
-  :straight (:type git :host github :repo "mclear-tools/consult-notes")
   :commands (consult-notes
              consult-notes-search-in-all-notes))
 

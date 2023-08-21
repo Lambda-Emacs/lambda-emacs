@@ -26,7 +26,7 @@
 
 ;;;; Icomplete
 (use-package icomplete-vertical
-  :straight (:type built-in)
+  :ensure nil
   :hook (after-init . icomplete-vertical-mode)
   :bind
   (:map icomplete-minibuffer-map

@@ -1,6 +1,6 @@
 ;; Additions & modifications to org functionality
 ;; NOTE: some org-extensions are set in other setup files:
-;; - org roam setup is in setup-notes
+;; - org roam setup is in lem-setup-org-roam
 ;; - org citations setup is in setup-citation
 ;; - some org export functions are in setup-teaching
 
@@ -8,8 +8,6 @@
 ;;;; Org-Appear (Show Markup/Pretty Entities)
 ;; show markup at point -- this should be part of org!
 (use-package org-appear
-  :straight (:type git :host github :repo "awth13/org-appear"
-             :branch "master")
   :commands (org-appear-mode)
   :custom
   (org-appear-autoemphasis  t)
@@ -20,12 +18,10 @@
 ;;;; Org Modern (Display properties, bullets, etc)
 ;; A nicer set of default display options
 (use-package org-modern
-  :straight (:type git :host github :repo "minad/org-modern")
-  :hook (org-mode . org-modern-mode)
+  :hook ((org-mode . org-modern-mode)
+         (org-agenda-finalize . org-modern-agenda))
   :custom
-  (org-modern-hide-stars nil) ;; compatibility w/org-indent
-  ;; don't use other faces
-  (org-modern-priority nil)
+  (org-modern-hide-stars 'leading)
   (org-modern-todo nil)
   (org-modern-tag t)
   ;; Customize this per your font
@@ -34,32 +30,24 @@
   ;; "①" "②" "③" "④" "⑤" "⑥" "⑦"
   (org-modern-star ["⦶" "⦷" "⦹" "⊕" "⍟" "⊛" "⏣" "❂"]))
 
-;;;; Org Modern Indent
-;; Make org-modern work better with org-indent
-(use-package org-modern-indent
-  :straight (:type git :host github :repo "jdtsmith/org-modern-indent")
-  :hook (org-indent-mode . org-modern-indent-mode)
-  :custom-face
-  (org-modern-indent-line ((t (:height 1.0 :inherit lem-ui-default-font :inherit lambda-meek)))))
-
 ;;; Org Autolist (Smart Lists)
 ;; Better list behavior
-(use-package org-auto-list
-  :straight (:type git :host github :repo "calvinwyoung/org-autolist")
-  :hook (org-mode . org-autolist-mode))
+  (use-package org-autolist
+    ;; :straight (:type git :host github :repo "calvinwyoung/org-autolist")
+    :hook (org-mode . org-autolist-mode))
 
 ;;; Org Babel
-;; Avoid `org-babel-do-load-languages' since it does an eager require.
-(use-package ob-python
-  :straight nil
-  :defer t
-  :commands (org-babel-execute:python)
-  :config
-  (progn
-    (setq org-babel-python-command "python3"))) ;Default to python 3.x
+  ;; Avoid `org-babel-do-load-languages' since it does an eager require.
+  (use-package ob-python
+    :ensure nil
+    :defer t
+    :commands (org-babel-execute:python)
+    :config
+    (progn
+      (setq org-babel-python-command "python3"))) ;Default to python 3.x
 
 (use-package ob-ditaa
-  :straight nil
+  :ensure nil
   :defer t
   :config
   (progn
@@ -69,7 +57,7 @@
                               (concat user-emacs-directory "software/")))))
 
 (use-package ob-plantuml
-  :straight nil
+  :ensure nil
   :defer t
   :config
   (progn
@@ -90,7 +78,7 @@ Instead it's simpler to use bash."
     (advice-add 'org-babel-execute:plantuml :around #'lem-advice-org-babel-execute:plantuml)))
 
 (use-package ob-shell
-  :straight nil
+  :ensure nil
   :defer t
   :commands
   (org-babel-execute:sh
@@ -99,19 +87,19 @@ Instead it's simpler to use bash."
    org-babel-expand-body:bash))
 
 (use-package ob-lisp
-  :straight nil
+  :ensure nil
   :defer t
   :commands (org-babel-execute:lisp))
 
 (use-package ob-latex
-  :straight nil
+  :ensure nil
   :defer t
   :commands
   (org-babel-execute:latex))
 
 ;;; Org Babel Tangle
 (use-package ob-tangle
-  :straight nil
+  :ensure nil
   :defer t
   :config
   (progn
@@ -132,17 +120,10 @@ Instead it's simpler to use bash."
   (org-download-image-latex-width 500)
   (org-download-timestamp "%Y-%m-%d"))
 
-;;; Org Devonthink Integration
-(use-package org-devonthink
-  :when sys-mac
-  :straight (:type git :host github :repo "lasvice/org-devonthink")
-  :commands (org-insert-dtp-link org-dtp-store-link))
-
 ;;; Org Export Extensions
 ;;;; Ox-Pandoc
 ;; Export w/pandoc
 (use-package ox-pandoc
-  :straight (:type git :host github :repo "a-fent/ox-pandoc")
   :if (executable-find "pandoc")
   :after ox
   :custom
@@ -282,7 +263,12 @@ Instead it's simpler to use bash."
 ;;;; Ox-Hugo
 ;; Export to Hugo with Org
 ;; https://github.com/kaushalmodi/ox-hugo
-(use-package ox-hugo :after ox)
+(use-package ox-hugo
+  :after ox
+  :config
+  ;; https://ox-hugo.scripter.co/doc/org-cite-citations/
+  ;; Modify this to have a different header for references
+  (plist-put org-hugo-citations-plist :bibliography-section-heading "References"))
 
 ;;;;; Batch Export Files with Org-Hugo
 ;; mark files and then batch export them with this command
@@ -310,14 +296,6 @@ Instead it's simpler to use bash."
 (use-package htmlize
   :commands (htmlize-buffer))
 
-;;; Org Menu
-;; A menu for editing org-mode documents and exploring it’s features in a
-;; discoverable way via transient menus.
-(use-package org-menu
-  :straight (:type git :host github :repo "sheijk/org-menu")
-  :bind* (:map org-mode-map
-          ("C-c m" . org-menu)))
-
 ;;; Org Pomodoro
 ;; Helps with time tracking
 (use-package org-pomodoro
@@ -328,3 +306,4 @@ Instead it's simpler to use bash."
 
 ;;; Provide Org Extensions
 (provide 'lem-setup-org-extensions)
+;;; lem-setup-org-extensions.el ends here

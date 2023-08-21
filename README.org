@@ -1,9 +1,7 @@
 #+html: <a href="https://www.gnu.org/software/emacs/"><img alt="GNU Emacs" src="https://github.com/minad/corfu/blob/screenshots/emacs.svg?raw=true"/></a>
 #+html: <a href="https://discord.gg/NtYcrRtTxg"><img alt="Discord Server" src="https://img.shields.io/badge/Lambda-Discord-1004037022824013905?style=flat&logo=discord&logoColor=lightgrey"/></a>
 
-Lambda-Emacs (𝛌-Emacs) is intended to serve as a useful, if opinionated, starting point for your own custom configuration of [[https://www.gnu.org/software/emacs/][Emacs]]. The design of this configuration is aimed at writing and academic work in the humanities (for discussion of my view of the use of text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]), rather than opposed to, e.g., a programming language emphasis, though I've tried to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is to provide enough commentary on the configuration such that it might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally.
-
-*NOTE*: Once Emacs 29 is released, Lambda-Emacs will depend on that version (or higher) going forward. This is due to changes in the way Lambda-Emacs installs packages (using the built-in package.el and package-vc.el rather than straight). If you want to try the new system (which also has a number of other improvements) use the branch =package-el=. This branch will be merged to master once Emacs 29 is released. If you're interested in building Emacs 29 from source, see my shell script to easily do so: https://github.com/mclear-tools/build-emacs-macos. 
+Lambda-Emacs (𝛌-Emacs) is intended to serve as a useful starting point for your own custom configuration. The design of this configuration is aimed at writing and academic work in the humanities (for discussion of my view of the use of text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]), rather than opposed to, e.g., a programming language emphasis, though I've tried to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is to provide enough commentary on the configuration such that it might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally. *Note* that Lambda-Emacs is only compatible with Emacs 29+. However, parts of the configuration may easily be backported to older versions of Emacs. 
 
 #+BEGIN_HTML
 <div>
@@ -26,7 +24,7 @@ Why choose this configuration over any of the other amazing Emacs "distros" out 
 
 1. Short start up time -- emacs-init-time < 1 sec (though this may vary somewhat
    depending on your system)
-2. Uses [[https://github.com/raxod502/straight.el][straight.el]] for package management
+2. Uses the built-in package.el and package-vc.el for package management
 3. Comprehensive keybindings using [[https://github.com/jwiegley/use-package/blob/master/bind-key.el][bind-key]] 
 4. Sensible defaults
 5. Dired with sensible colors and settings 
@@ -38,7 +36,7 @@ Why choose this configuration over any of the other amazing Emacs "distros" out 
     and tab-bar, with [[https://github.com/mclear-tools/tabspaces][buffer-isolated tab/workspaces]]
 11. A configurable splash page
 12. A writing-centric configuration with great citation support, markdown, [[https://github.com/jgm/pandoc][pandoc]],
-    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]] and notetaking (using [[https://github.com/protesilaos/denote][denote]]), and settings for org-mode 
+    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]] and note-taking (using [[https://github.com/protesilaos/denote][denote]]), and settings for org-mode 
 
 * 𝛌-Emacs Modules
 
@@ -73,15 +71,19 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
 See the [[file:DOCUMENTATION.org][documentation]] (WIP) for further details.
 
 * Getting Started
-1. Clone lambda-emacs as emacs.d: =git clone
-   https://github.com/Lambda-Emacs/lambda-emacs.git ~/.emacs.d= 
+
+1. Clone lambda-emacs as emacs.d (NOTE: you should back-up your current emacs
+   config if you have one!): =git clone
+   https://github.com/Lambda-Emacs/lambda-emacs.git ~/.emacs.d=
 2. Run Emacs -- it will ask at startup if you want to generate a user
    configuration file, if you do it will generate that file and start up with
-   some basic packages (this will take a little while to do). Otherwise Emacs
-   will start with all the default packages in Lambda-Emacs (which will take
-   even longer to do).
+   some basic packages (this requires an internet connection and may take a
+   little while to complete). If you do not create a config file Emacs will
+   start with all the default packages in Lambda-Emacs (which will take time to
+   fully download).
 3. Put whatever settings you prefer in your config file. This should include
    things like the font you prefer and whatever other variable settings you
    might like. For some hints see my [[https://github.com/mclear-tools/dotemacs/blob/master/config.el][configuration file]] and the list of
-   variables in the [[id:20220720T151238.406634][docs]]. Or ask a question on the [[https://discord.gg/NtYcrRtTxg][Lambda-Emacs discord]].
+   variables in the [[id:20220623T011222.999171][docs]]. 
+4. For further questions please look at the [[id:20220623T011222.999171][documentation]] or ask a question on the [[https://discord.gg/NtYcrRtTxg][Lambda-Emacs discord]].
 

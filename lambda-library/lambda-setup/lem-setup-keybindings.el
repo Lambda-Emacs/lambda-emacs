@@ -31,9 +31,9 @@
 ;;;; Bind Key
 ;; Note that bind-key comes with use-package
 (use-package bind-key
-  :straight t
+  :ensure nil
   :config
-  (setq bind-key-describe-special-forms t))
+  (setq bind-key-describe-special-forms nil))
 
 ;;;; Personal Keybindings Prefix
 (defcustom lem-prefix "C-c C-SPC"
@@ -60,13 +60,15 @@
            ("b" . consult-buffer)
            ("c" . lem-copy-whole-buffer-to-clipboard )
            ("d" . kill-buffer-and-window             )
+           ("e" . lem-create-new-elisp-buffer        )
            ("E" . erase-buffer                       )
            ("f" . reveal-in-osx-finder               )
            ("i" . consult-imenu                      )
            ("j" . lem-jump-in-buffer                 )
            ("k" . lem-kill-this-buffer               )
            ("K" . crux-kill-other-buffers            )
-           ("m" . consult-global-mark                )
+           ("m" . consult-mark                       )
+           ("M" . consult-global-mark                )
            ("n" . lem-create-new-buffer              )
            ("N" . lem-new-buffer-new-frame           )
            ("p" . consult-project-buffer             )
@@ -157,11 +159,27 @@
            ("c" . mu4e-compose-new           )
            ("e" . lem-email-save-and-kill    )
            ("i" . lem-go-to-mail-inbox       )
-           ("k" . lem-mu-kill-server         )
+           ("k" . mu4e-kill-update-mail      )
            ("m" . lem-open-email-in-workspace)
            ("s" . mu4e-update-mail-and-index )
            ("S" . lem-swiftbar-email-update  )
            ("u" . lem-go-to-mail-unread      ))
+
+;;;;; Notes
+;; General notes
+(bind-keys :prefix-map lem+notes-keys
+           :prefix (concat lem-prefix " n")
+           ("d"  .  denote)
+           ("n"  .  consult-notes)
+           ("s"  .  consult-notes-search-in-all-notes)
+           ("w"  .  lem-denote-workbook-create-entry))
+;; Biblio notes
+(bind-keys :prefix-map lem+bib-keys
+           :prefix (concat lem-prefix " n b")
+           ("a"  .  citar-denote-add-citekey)
+           ("c"  .  citar-create-note)
+           ("o"  .  citar-open-notes)
+           ("O"  .  citar-denote-dwim))
 
 ;;;;; Quit Keybindings
 (bind-keys :prefix-map lem+quit-keys
@@ -251,11 +269,6 @@
 ;;;;; Window Keybindings
 (bind-keys :prefix-map lem+window-keys
            :prefix (concat lem-prefix " w")
-           ("0" .  winum-select-window-0           )
-           ("1" .  winum-select-window-1           )
-           ("2" .  winum-select-window-2           )
-           ("3" .  winum-select-window-3           )
-           ("4" .  winum-select-window-4           )
            ("a" .  ace-window                      )
            ("f" .  lem-toggle-window-split         )
            ("c" .  delete-window                   )
@@ -271,7 +284,7 @@
            ("U" .  winner-redo                     )
            ("v" .  lem-split-window-right-and-focus)
            ("V" .  split-window-right              )
-           ("w" .  lem-other-window                )
+           ("w" .  ace-window                      )
            ("x" .  lem-window-exchange-buffer      )
            ("-" .  split-window-below              )
            ("_" .  lem-split-window-below-and-focus))
@@ -289,24 +302,8 @@
            ("R"  .  tabspaces-remove-selected-buffer)
            ("s"  .  tabspaces-switch-or-create-workspace))
 
-;;;;; Zettelkasten/Notes/Wiki
-(bind-keys :prefix-map lem+notes-keys
-           :prefix (concat lem-prefix " n")
-           ("a"  .  consult-notes           )
-           ("c"  .  org-roam-capture        )
-           ("i"  .  org-roam-node-insert    )
-           ("f"  .  org-roam-node-find      )
-           ("g"  .  org-roam-graph          )
-           ("n"  .  consult-notes           )
-           ("N"  .  org-roam--new-file-named)
-           ("r"  .  citar-open-notes        )
-           ("R"  .  consult-notes-org-roam-cited)
-           ("s"  .  consult-notes-search-in-all-notes)
-           ("t"  .  org-roam-buffer-toggle))
-
 ;;;; Which Key
 (use-package which-key
-  ;; :after general
   :defer 1
   :diminish ""
   :config

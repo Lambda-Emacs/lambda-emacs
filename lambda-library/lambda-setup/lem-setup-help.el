@@ -39,15 +39,23 @@
 (setq-default pop-up-frames nil)
 
 ;;;;; Hydra Menus
-(use-package hydra :defer 1)
+(use-package hydra
+  :defer 1
+  :config
+  ;; Remove this advice as it breaks xref jump to definition, and thus all helpful functions
+  (advice-remove 'find-function-search-for-symbol #'hydra--around-find-function-search-for-symbol-advice))
 
 ;;;;; Transient Menus
 (use-package transient
+  :ensure nil
   :defer 1
   :custom
   (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
   (transient-values-file (concat lem-cache-dir "transient/values.el"))
   (transient-history-file (concat lem-cache-dir "transient/history.el"))
+  (transient-detect-key-conflicts t)
+  (transient-force-fixed-pitch t)
+  (transient-show-popup t)
   ;; set transient popop to top of window
   (transient-display-buffer-action '(display-buffer-in-side-window
                                      (side . top)
@@ -66,14 +74,16 @@
 
 ;;;;; Help Focus
 (use-package help
-  :straight (:type built-in)
+  :ensure nil
+  ;; :straight (:type built-in)
   :custom
   ;; Always focus on help window/buffer
   (help-window-select 't))
 
 ;;;;; Help At Point
 (use-package help-at-pt
-  :straight (:type built-in)
+  :ensure nil
+  ;; :straight (:type built-in)
   :custom
   (help-at-pt-timer-delay 0.1)
   (help-at-pt-display-when-idle '(flymake-diagnostic)))
@@ -82,7 +92,6 @@
 ;; Better help info
 ;; Much better lookup both in details and headings/aesthetics
 (use-package helpful
-  :defer t
   :bind (;; Remap standard commands.
          ([remap display-local-help] . helpful-at-point)
          ([remap describe-function]  . helpful-callable)
@@ -105,7 +114,6 @@
 ;;;;; Better Info
 ;; Better looking info pages
 (use-package info-colors
-  :straight (:host github :repo "ubolonton/info-colors")
   :hook (Info-selection . info-colors-fontify-node))
 
 ;;;;; Help Transient
@@ -364,7 +372,7 @@ If TOP-NODE is provided, then just select from its sub-nodes."
   (completing-read-info "(org)"))
 
 ;; Bind keys for completing-read-info
-(bind-key "C-h i" #'completing-read-info)
+(bind-key "C-h I" #'completing-read-info)
 
 
 ;;; Provide

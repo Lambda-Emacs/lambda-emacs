@@ -13,7 +13,6 @@
 
 ;;;; Elfeed
 (use-package elfeed
-  :straight (:type git :host github :repo "skeeto/elfeed")
   :commands (elfeed-load-db-and-open)
   :bind (:map elfeed-search-mode-map
          ("a" . elfeed-show-all)
@@ -70,7 +69,7 @@
 ;; using Elfeed, the RSS feed reader for Emacs.
 
 (use-package elfeed-tube
-  :straight (:type git :host github :repo "karthink/elfeed-tube")
+  ;; :straight (:type git :host github :repo "karthink/elfeed-tube")
   :after elfeed
   :demand t
   :bind (:map elfeed-show-mode-map

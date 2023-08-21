@@ -37,6 +37,7 @@
 ;;;; Save place
 ;; Everyone remember where we parked.
 (use-package saveplace
+  :ensure nil
   :hook (emacs-startup . save-place-mode)
   :config
   (setq save-place-file (concat lem-cache-dir "saved-places"))
@@ -45,17 +46,19 @@
 ;;;; Go To Change
 ;; Easily go to last change
 (use-package goto-last-change
-  :straight (:type git :host github :repo "camdez/goto-last-change.el")
   :bind (("C-\"" . #'goto-last-change)))
 
 ;;;; Recent files
 ;; List recent files
 (use-package recentf
-  :hook (emacs-startup . recentf-mode)
+  :ensure nil
+  :defer 2
   :custom
   (recentf-save-file (concat lem-cache-dir "recentf"))
   (recentf-max-saved-items 500)
-  (recentf-max-menu-items 10))
+  (recentf-max-menu-items 10)
+  :config
+  (recentf-mode 1))
 
 ;;;; Goto Address
 ;; This package allows you to click or hit a key sequence while on a
@@ -63,6 +66,7 @@
 ;; your choice using the browse-url package, or if it's an e-mail
 ;; address, to send an e-mail to that address.
 (use-package goto-addr
+  :ensure nil
   :hook ((compilation-mode . goto-address-mode)
          (prog-mode . goto-address-prog-mode)
          (eshell-mode . goto-address-mode)

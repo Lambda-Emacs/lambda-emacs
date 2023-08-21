@@ -30,10 +30,13 @@
 ;;;; Emacs Profiling
 ;; might be worth checking this out more closely
 ;; https://github.com/raxod502/radian/blob/c4246176155873d3937ff997965279048dabbc01/emacs/radian.el#L4423-L4476
+;; Use fork of esup (original is unmaintained)
 (use-package esup
-  :commands esup
-  :config
-  (setq esup-depth 0))
+  :ensure nil
+  :init
+  (unless (package-installed-p 'esup)
+    (package-vc-install "https://github.com/kiennq/esup.git"))
+  :commands esup)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-debug)

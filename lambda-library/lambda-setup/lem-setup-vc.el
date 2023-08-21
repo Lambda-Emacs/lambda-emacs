@@ -29,20 +29,22 @@
 
 ;;;; VC
 (use-package vc
-  :straight (:type built-in)
-  :hook (after-init . vc-mode)
-  :custom (vc-follow-symlinks t))
+  :ensure nil
+  :hook (emacs-startup . vc-mode)
+  :custom
+  (vc-follow-symlinks t)
+  (vc-log-short-style '(file)))
 
 (use-package vc-git
-  :straight (:type built-in)
-  :defer
+  :ensure nil
+  :after vc
   :config
   (setq vc-git-diff-switches "--patch-with-stat")
   (setq vc-git-print-log-follow t))
 
 (use-package vc-annotate
-  :straight (:type built-in)
-  :defer
+  :ensure nil
+  :after vc
   :config
   (setq vc-annotate-display-mode 'scale))
 
@@ -65,10 +67,6 @@
   :config
   (setq magit-log-margin '(t "%Y-%m-%d.%H:%M:%S "  magit-log-margin-width nil 18))
   (setq magit-refresh-status-buffer t)
-  ;; Set git for macos & homebrew
-  (if (and sys-mac homebrew-bin)
-      (setq magit-git-executable (concat homebrew-bin "/git"))
-    (setq magit-git-executable "/usr/bin/git"))
   ;; Fine grained diffs
   (setq magit-diff-refine-hunk t)
   ;; control magit initial visibility
@@ -119,19 +117,6 @@
     (add-hook 'git-commit-mode-hook
               (lambda ()
                 (meow-insert-mode)))))
-
-;; add todos in magit, but don't automatically display them as it can be slow to load
-(use-package magit-todos
-  :commands (magit-todos-list magit-todos-mode)
-  :config
-  (setq magit-todos-depth 2))
-
-;;;; Git Navigation
-;; Go back in Git time
-(use-package git-timemachine :commands git-timemachine)
-
-;; Give git projects branches the dired treatment
-(use-package gited :commands (gited-list gited-list-branches))
 
 ;;;; Git Gutter HL (Diff-HL)
 ;; Nice vc highlighting in margin/fringe

@@ -29,10 +29,10 @@
 
 ;;; Code:
 
-;;;; Git Org
+;;;; Org
 ;; Use Org from source rather than built in
 (use-package org
-  :straight t ;; let straight handle this
+  :ensure nil
   :commands (org-mode)
   :mode (("\\.org$" . org-mode))
   :bind
@@ -70,7 +70,7 @@
 
   :custom
   ;; Aesthetics & UI
-  (org-adapt-indentation 'headline-data) ;; adapt indentation only for data lines
+  (org-auto-align-tags nil) ;; don't auto-align tags
   (org-catch-invisible-edits 'smart) ;; prevent editing invisible area
   (org-cycle-separator-lines 0) ;; no empty lines in collapsed view
   (org-ellipsis "…") ;; nicer elipses "↷" "↴" "▼"
@@ -78,26 +78,29 @@
   (org-hide-emphasis-markers t)  ;; hide emph markers
   (org-hide-leading-stars t)  ;; hide leading stars
   (org-image-actual-width  500) ;; show all images at 500px using imagemagik
-  (org-insert-heading-respect-content t) ;; insert new headings after subtree
-  (org-list-allow-alphabetical t) ;; allow alphabetical list
   (org-pretty-entities t) ;; make latex look good, etc.
   (org-pretty-entities-include-sub-superscripts t) ;; prettify sub/superscripts
   (org-read-date-prefer-future 'time) ;; Incomplete dates refer to future dates & times
-  (org-startup-folded t) ;; start org in outline
-  (org-startup-indented t) ;; start with indentation of headlines
-  (org-auto-align-tags nil) ;; don't auto-align tags
+  (org-startup-folded nil) ;; Don't start org in outline
   (org-tags-column 0) ;; place tags directly next to headline text
 
   ;; Footnotes
   (org-footnote-section nil) ;; place footnotes locally
   (org-footnote-auto-adjust t) ;; renumber footnotes
 
+  ;; Indentation
+  (org-adapt-indentation t) ;; adapt indentation
+  (org-startup-indented t) ;; start with indentation of headlines
+  (org-src-preserve-indentation t) ;; preserve code indentation
+
   ;; Insertion/Yanking
+  (org-insert-heading-respect-content t) ;; insert new headings after subtree
   (org-M-RET-may-split-line '((default . t)))  ;; don't split line when creating a new headline, list item, or table field
   (org-yank-adjusted-subtrees t)  ;; adjust subtrees to depth when yanked
   (org-yank-folded-subtrees t) ;; fold subtrees on yank
 
   ;; Lists
+  (org-list-allow-alphabetical t) ;; allow alphabetical list
   ;; Demote sequence for list bullets
   (org-list-demote-modify-bullet '(("+" . "-") ("-" . "+") ("*" . "+")))
   (org-list-indent-offset 1) ;; increase sub-item indentation
@@ -130,6 +133,10 @@
   (org-enforce-todo-checkbox-dependencies t)
 
   :config
+  (add-hook 'org-mode-hook (lambda ()  ;; don't pair < symbols
+                             (setq-local electric-pair-inhibit-predicate
+                                         `(lambda (c)
+                                            (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
   ;; Setup further org config
   (require 'lem-setup-org-settings)
   (require 'lem-setup-org-extensions))

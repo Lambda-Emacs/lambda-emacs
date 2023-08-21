@@ -31,7 +31,7 @@
 ;;;; Tab Bar
 ;; Use tab-bar for window grouping and configuration within a project (replaces eyebrowse)
 (use-package tab-bar
-  :straight (:type built-in)
+  :ensure nil
   :after (project)
   :commands (tab-bar-new-tab
              tab-bar-switch-to-tab
@@ -49,12 +49,13 @@
   (tab-bar-tab-name-format-function #'lem--tab-bar-tab-name-format)
   (tab-bar-new-button nil)
   (tab-bar-close-button nil)
+  (tab-bar-auto-width nil)
   (tab-bar-format '(tab-bar-format-history
                     tab-bar-format-tabs
                     lem--tab-bar-suffix
                     tab-bar-format-add-tab))
   :config
-  ;; Tab bar numbers
+
   ;; https://christiantietze.de/posts/2022/02/emacs-tab-bar-numbered-tabs/
   (defvar lem-tab-bar--circle-numbers-alist
     '((0 . "⓪")
@@ -75,7 +76,6 @@
       (15 . "⑮"))
 
     "Alist of integers to strings of circled unicode numbers.")
-
   (defun lem--tab-bar-tab-name-format (tab i)
     (let ((current-p (eq (car tab) 'current-tab))
           (tab-num (if (and tab-bar-tab-hints (< i 16))
@@ -93,6 +93,7 @@
             "")
         (propertize " " 'display '(space :width (4))))
        'face (funcall tab-bar-tab-face-function tab))))
+
 
   ;; See https://github.com/rougier/nano-modeline/issues/33
   (defun lem--tab-bar-suffix ()
@@ -122,7 +123,6 @@ questions.  Otherwise use completion to select the tab."
 
 ;;;; Tab Workspaces
 (use-package tabspaces
-  :straight (:type git :host github :repo "mclear-tools/tabspaces")
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
          ("p" . tabspaces-open-or-create-project-and-workspace))
@@ -145,6 +145,9 @@ questions.  Otherwise use completion to select the tab."
 
 ;;;;; Consult Isolated Workspace Buffers
 ;; Filter Buffers for Consult-Buffer
+(defun lem-buff-filter (buffer)
+  (let ((blst (cl-remove (buffer-name) (frame-parameter nil 'buffer-list))))
+    (memq buffer blst)))
 
 (with-eval-after-load 'consult
   ;; hide full buffer list (still available with "b" prefix)

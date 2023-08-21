@@ -25,7 +25,7 @@
 
 ;;;; Window Setup
 (use-package window
-  :straight (:type built-in)
+  :ensure nil
   :custom
   ;; Emacs often opens buffers in new windows. Make window splitting and
   ;; placement more predictable.
@@ -42,7 +42,7 @@
 ;;;; Window Division
 ;; Vertical window divider
 (use-package frame
-  :straight (:type built-in)
+  :ensure nil
   :custom
   (window-divider-default-right-width 1)
   (window-divider-default-bottom-width 1)
@@ -64,25 +64,10 @@
   (other-window 1))
 (bind-key* "C-c C-o" 'lem-other-window)
 
-;; Move by window numbers
-(use-package emacs-winum
-  :straight (winum :type git :host github :repo "deb0ch/emacs-winum")
-  :hook (after-init . winum-mode)
-  :custom
-  ;; seems to require being set in custom to take effect
-  (winum-auto-setup-mode-line nil)
-  :config
-  (setq window-numbering-scope            'global
-        winum-reverse-frame-list          nil
-        winum-auto-assign-0-to-minibuffer t
-        ;; winum-format                      " %s
-        ;; winum-mode-line-position          1
-        winum-ignored-buffers             '(" *which-key*")
-        winum-ignored-buffers-regexp      '(" \\*Treemacs-.*")))
 
 ;; Easy window movement by key
 (use-package windmove
-  :straight (:type built-in)
+  :ensure nil
   :commands (windmove-up
              windmove-down
              windmove-left
@@ -98,7 +83,7 @@
 ;; Winner mode is a built-in package for restoring window configurations
 ;; https://www.emacswiki.org/emacs/WinnerMode
 (use-package winner
-  :straight nil
+  :ensure nil
   :hook (after-init . winner-mode))
 
 

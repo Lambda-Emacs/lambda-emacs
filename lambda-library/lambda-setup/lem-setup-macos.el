@@ -43,21 +43,19 @@
   (setq mac-allow-anti-aliasing t)
 
 ;;;; Delete to Trash
-  (measure-time
-   (message "*Loading delete to trash settings...*")
-   ;; delete files by moving them to the trash
-   ;; See https://christiantietze.de/posts/2021/06/emacs-trash-file-macos/
-   (setq delete-by-moving-to-trash t)
-   (setq trash-directory "~/.Trash")  ;; fallback for `move-file-to-trash'
-   (defun system-move-file-to-trash (path)
-     "Moves file at PATH to the macOS Trash according to `move-file-to-trash' convention.
+  ;; delete files by moving them to the trash
+  ;; See https://christiantietze.de/posts/2021/06/emacs-trash-file-macos/
+  (setq delete-by-moving-to-trash t)
+  (setq trash-directory "~/.Trash")  ;; fallback for `move-file-to-trash'
+  (defun system-move-file-to-trash (path)
+    "Moves file at PATH to the macOS Trash according to `move-file-to-trash' convention.
 
 Relies on the command-line utility 'trash' to be installed.
 Get it from:  <http://hasseg.org/trash/>"
-     (shell-command (concat "trash -vF \"" path "\""
-                            "| sed -e 's/^/Trashed: /'")
-                    nil ;; Name of output buffer
-                    "*Trash Error Buffer*")))
+    (shell-command (concat "trash -vF \"" path "\""
+                           "| sed -e 's/^/Trashed: /'")
+                   nil ;; Name of output buffer
+                   "*Trash Error Buffer*"))
 
 ;;;; Frames & Fullscreen
 
@@ -103,12 +101,10 @@ Get it from:  <http://hasseg.org/trash/>"
   (global-set-key (kbd "<C-s-268632070>") 'ns-toggle-fullscreen))
 
 ;;;; Reveal in Finder
-(use-package reveal-in-osx-finder
-  :defer 2)
+(use-package reveal-in-osx-finder :defer 2)
 
 ;;;; Get mac links from safari
-(use-package grab-mac-link
-  :defer 1)
+(use-package grab-mac-link :defer 1)
 
 (with-eval-after-load 'org-mac-link
   (defun org-mac-message-open (message-id)
@@ -116,13 +112,6 @@ Get it from:  <http://hasseg.org/trash/>"
 This will use the command `open' with the message URL."
     (start-process (concat "open message:" message-id) nil
                    "open" (concat "message://" (substring message-id 2) ""))))
-
-;;;; Homebrew
-(use-package homebrew
-  :when sys-mac
-  :straight (homebrew :host github :repo "jdormit/homebrew.el")
-  :commands
-  (homebrew-install homebrew-upgrade homebrew-update homebrew-edit homebrew-info homebrew-package-info))
 
 ;;;; Security Keychain
 ;; Seehttps://www.reddit.com/r/emacs/comments/ew75ib/emacs_mu4e_and_mbsync_setup_for_fastmail_on_macos/fg23tcj?utm_source=share&utm_medium=web2x&context=3
@@ -134,9 +123,7 @@ This will use the command `open' with the message URL."
 ;;;; OSX Lib
 ;; useful library of functions
 ;; https://melpa.org/#/osx-lib
-(use-package osx-lib
-  :straight (:type git :host github :repo "raghavgautam/osx-lib")
-  :defer t)
+(use-package osx-lib :defer t)
 
 
 ;;; Provide

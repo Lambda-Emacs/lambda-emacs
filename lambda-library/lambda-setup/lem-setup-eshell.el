@@ -12,7 +12,7 @@
 
 ;;;; Eshell Settings
 (use-package esh-mode
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-directory-name (concat lem-etc-dir "eshell/"))
@@ -22,47 +22,47 @@
   (eshell-scroll-to-bottom-on-output 'all))
 
 (use-package em-dirs
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-list-files-after-cd nil)
   (eshell-last-dir-ring-file-name (concat lem-etc-dir "eshell/lastdir")))
 
 (use-package em-ls
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-ls-use-colorls t)
   (eshell-ls-use-in-dired nil))
 
 (use-package em-cmpl
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-cmpl-ignore-case t)
   (eshell-cmpl-cycle-completions t))
 
 (use-package em-prompt
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-highlight-prompt t)
   (eshell-prompt-regexp "^[^λ]+ λ "))
 
 (use-package em-term
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-destroy-buffer-when-process-dies t))
 
 (use-package em-banner
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-banner-message ""))
 
 (use-package em-hist
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-history-file-name (concat lem-etc-dir "eshell/history"))
@@ -70,14 +70,14 @@
   (eshell-hist-ignoredups t))
 
 (use-package em-glob
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-glob-case-insensitive t)
   (eshell-error-if-no-glob t))
 
 (use-package em-term
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :config
   ;; Visual commands
@@ -90,32 +90,26 @@
 ;;;; Eshell Pcomplete
 
 (use-package pcmpl-homebrew
-  :after eshell
-  :straight t)
+  :after eshell)
 
 (use-package pcmpl-git
-  :after eshell
-  :straight t)
+  :after eshell)
 
 (use-package pcmpl-args
-  :after eshell
-  :straight t)
+  :after eshell)
 
 (use-package pcomplete-extension
-  :after eshell
-  :straight t)
+  :after eshell)
 
 ;; Provide help support -- see also the info function below
 (use-package esh-help
   :after eshell
-  :straight t
   :config
   ;; Eldoc support.
   (setup-esh-help-eldoc))
 
 ;; Dir navigation -- see also dir jumping below
 (use-package eshell-up
-  :straight t
   :commands (eshell-up)
   :config
   (defalias 'eshell/up #'eshell-up))
@@ -155,7 +149,7 @@ PWD is not in a git repo (or the git command is not found)."
            (git-branch (s-trim git-output))
            (git-icon  "\xe0a0")
            (git-icon2 (propertize "\xf020" 'face `(:family "octicons")))
-           (git-sep (propertize "" 'face 'lambda-meek)))
+           (git-sep (propertize "" 'face 'lambda-meek)))
       (concat (propertize " (" 'face 'lambda-mild)
               (propertize git-repo 'face `(:inherit lambda-meek :weight light))
               git-sep
@@ -195,7 +189,7 @@ PWD is not in a git repo (or the git command is not found)."
 
 (defun lem-eshell-config--prompt-function ()
   "Prettify eshell prompt."
-  (let* ((os-char (cond ((string-equal system-type "darwin") "")
+  (let* ((os-char (cond ((string-equal system-type "darwin") "􀣺")
                         ((string-equal system-type "gnu/linux") "🐧")
                         ((string-equal system-type "cygwin") "🗔")
                         (t "?")))
@@ -211,7 +205,7 @@ PWD is not in a git repo (or the git command is not found)."
             (propertize (format "%s" os-char) 'face 'lambda-meek)
             (propertize " ─ "  'face 'lambda-mild)
             (propertize (format-time-string "%H:%M:%S" (current-time))  'face 'lambda-meek)
-            (propertize " ─ "  'face 'lambda-mild) (propertize "\xf07c  "  'face 'lambda-meek)
+            (propertize " ─ "  'face 'lambda-mild)
             (propertize parent 'face 'lambda-meek)
             (propertize name 'face `(:inherit lambda-meek :weight bold))
             "\n"
@@ -293,7 +287,7 @@ You should use `lem-set-eshell-alias' to change this.")
 ;; Define a var to backup aliases that may already exist
 (defvar lem-eshell--default-aliases nil)
 
-;;;###autodef
+;;;###autoload
 (defun lem-set-eshell-alias (&rest aliases)
   "Define aliases for eshell.
 ALIASES is a flat list of alias -> command pairs. e.g.
@@ -317,7 +311,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
         (setq eshell-command-aliases-list lem-eshell-aliases)))))
 
 (use-package em-alias
-  :straight (:type built-in)
+  :ensure nil
   :after eshell
   :custom
   (eshell-aliases-file (concat lem-etc-dir "eshell/alias"))
@@ -331,7 +325,6 @@ ALIASES is a flat list of alias -> command pairs. e.g.
 ;;;; Syntax Highlighting
 (use-package eshell-syntax-highlighting
   :after eshell
-  :straight t
   :config
   ;; Enable in all Eshell buffers.
   (eshell-syntax-highlighting-global-mode +1))
@@ -376,7 +369,7 @@ ALIASES is a flat list of alias -> command pairs. e.g.
   :group 'all-the-icons
   :type 'number)
 
-(defcustom all-the-icons-eshell-monochrome t
+(defcustom all-the-icons-eshell-monochrome nil
   "Whether to show the icons as the same color as the text on the same line."
   :group 'all-the-icons
   :type 'boolean)
@@ -422,7 +415,7 @@ This function is meant to be used as advice around
 
 ;;;; Useful Functions
 
-;;;;; Call Eshell
+;;;;; Toggle Eshell
 ;; Open eshell in $HOME
 (defun lem-eshell-home ()
   "Open eshell in home dir."
@@ -431,15 +424,64 @@ This function is meant to be used as advice around
     (require 'eshell)
     (eshell)))
 
-;; Open an eshell in current dir, with project as name.
-;; If called with universal arg, open in home dir.
-(defun lem-call-eshell (&optional arg)
+(defun lem-is-eshell-toggled ()
+  "Checks if eshell is toggled."
+  (let ((eshell-buffer-name nil)
+        (result nil))
+    (if (project-current)
+        (setq eshell-buffer-name (concat "*eshell " (project-root (project-current)) "*"))
+      (setq eshell-buffer-name (concat "*eshell " default-directory "*")))
+    (dolist (elmnt (window-list) result)
+      (if (string= eshell-buffer-name (buffer-name (window-buffer elmnt)))
+          (setq result t)))
+    result))
+
+;; Open an eshell in current dir, with project as name. If called with universal
+;; arg, open in home dir. With popper this allows for a popup eshell buffer
+(defun lem-toggle-eshell (&optional arg)
   "Open `eshell' in current dir, with project as name.
-If called with universal arg, open in home dir."
+If called with universal arg ARG, open in home dir.
+
+If closed, toggle open and jump to buffer.
+If open, and not in eshell, jump to eshell.
+If open and in eshell, toggle closed."
   (interactive "P")
-  (if arg
-      (lem-eshell-home)
-    (eshell)))
+  (require 'eshell)
+  (let ((eshell-exists nil)
+        (eshell-buffer-name nil)
+        (eshell-buffer nil)
+        (default-directory default-directory))
+
+    (if (project-current)
+        (setq eshell-buffer-name (concat "*eshell • " (file-name-nondirectory (directory-file-name (project-root (project-current)))) "*"))
+      default-directory)
+    (setq eshell-buffer-name (concat "*eshell • " (file-name-nondirectory (directory-file-name default-directory)) "*"))
+
+    (dolist (buffer (buffer-list) eshell-exists)
+      (if (string= (buffer-name buffer) eshell-buffer-name)
+          (progn (setq eshell-exists t)
+                 (setq eshell-buffer buffer))))
+
+    (cond ((and (get-buffer-window eshell-buffer-name)
+                (derived-mode-p 'eshell-mode))
+           (pop-to-buffer eshell-buffer-name)
+           (delete-window))
+          ((and (get-buffer-window eshell-buffer-name)
+                (not (derived-mode-p 'eshell-mode)))
+           (pop-to-buffer eshell-buffer-name))
+          (arg
+           (lem-eshell-home))
+          (t
+           (eshell)))))
+
+;; Make old call obsolete
+(define-obsolete-function-alias 'lem-call-eshell 'lem-toggle-eshell "Lambda-Emacs 0.4")
+
+;;;;; New Eshell
+(defun lem-new-eshell()
+  "Open a new instance of eshell."
+  (interactive)
+  (eshell 'N))
 
 ;;;;; Clear Eshell
 ;; Make eshell act like a standard unix terminal.

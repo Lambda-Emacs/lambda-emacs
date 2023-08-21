@@ -10,7 +10,7 @@
 ;; Skeleton depends on auto-insert, so set that up first.
 
 (use-package auto-insert
-  :straight (:type built-in)
+  :ensure nil
   :hook (after-init . auto-insert-mode))
 
 ;;;; Package/Library Setup Skeleton

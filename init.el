@@ -25,188 +25,37 @@
 ;; use-package definitions.
 
 ;;; Code:
-
 ;;;; Startup
-;;;;; System Variables
-;; Check the system used
-(defconst sys-linux   (eq system-type 'gnu/linux))
-(defconst sys-mac     (eq system-type 'darwin))
-(defconst sys-bsd     (or sys-mac (eq system-type 'berkeley-unix)))
-(defconst sys-win     (memq system-type '(cygwin windows-nt ms-dos)))
-
-;;;;; Directory Variables
-;;  We're going to define a number of directories that are used throughout this
-;;  configuration to store different types of files. This is a bit like the
-;;  `no-littering' package, and allows us to keep `user-emacs-directory' tidy.
-
-(defconst lem-emacs-dir (expand-file-name user-emacs-directory)
-  "The path to the emacs.d directory.")
-
-;; (defconst lem-local-dir (concat lem-emacs-dir ".local/")
-;;   "The root directory for local Emacs files.
-;; This contains all elisp libraries as well as non-essential and/or
-;; ephemeral files. There are two main directories --
-;; lem-library-dir, which contains all libraries and packages, and
-;; lem-var-dir, which contains non-essential files and emphemera.")
-
-
-(defconst lem-library-dir (concat lem-emacs-dir "lambda-library/")
-  "The directory for 𝛌-Emacs Lisp libraries.
-This will house all setup libraries and external libraries or packages.")
-
-(defconst lem-user-dir (concat lem-library-dir "lambda-user/")
-  "Storage for personal elisp, scripts, and any other private files.")
-
-(defconst lem-setup-dir (concat lem-library-dir "lambda-setup/")
-  "The storage location of the setup-init files.")
-
-(defconst lem-var-dir (concat lem-emacs-dir "var/")
-  "The directory for non-essential file storage.
-Contents are subject to change. Used by `lem-etc-dir' and
-`lem-cache-dir'.")
-
-(defconst lem-etc-dir (concat lem-var-dir "etc/")
-  "The directory for non-volatile storage.
-  These are not deleted or tampered with by emacs functions. Use
-  this for dependencies like servers or config files that are
-  stable (i.e. it should be unlikely that you need to delete them
-               if something goes wrong).")
-
-(defconst lem-cache-dir (concat lem-var-dir "cache/")
-  "The directory for volatile storage.
-  Use this for transient files that are generated on the fly like
-  caches and ephemeral/temporary files. Anything that may need to
-  be cleared if there are problems.")
-
-(defconst lem-default-config-file (concat lem-library-dir "lem-default-config.el")
-  "A sample default configuration of the personal config file to get the user started.")
-
-;;;;; User Configuration Variables
-;; Find the user configuration file
-(defconst lem-config-file (expand-file-name "config.el" lem-user-dir)
-  "The user's configuration file.")
-
-;; These next two variables are both optional, but maybe convenient.
-;; They are used with the functions `lem-goto-projects' and `lem-goto-elisp-library'.
-
-;; Set user project directory
-(defcustom lem-project-dir nil "Set the directory for user projects."
-  :group 'lambda-emacs
-  :type 'string)
-
-;; Set user elisp project dir
-(defcustom lem-user-elisp-dir nil
-  "Directory for personal elisp projects."
-  :group 'lambda-emacs
-  :type 'string)
-
-;;;;; Path Settings
-;; Directory paths
-(dolist (dir (list lem-library-dir lem-var-dir lem-etc-dir lem-cache-dir lem-user-dir lem-setup-dir))
-  (unless (file-directory-p dir)
-    (make-directory dir t)))
-
-;;;;; Load Path
-;; Add all configuration files to load-path
-(eval-and-compile
-  (progn
-    (push lem-setup-dir load-path)
-    (push lem-user-dir load-path)))
-
-;;;;; Exec Path
-;; Set PATH properly for emacs. This should make a package like
-;; `exec-path-from-shell' unnecessary
-
-;; If on a mac using homebrew set path correctly
-;; NOTE: the location of homebrew depends on whether we're on mac silicon
-(when (and sys-mac
-           (shell-command-to-string "command -v brew"))
-  (defconst homebrew-bin (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/bin" "/usr/local/bin") "Path to homebrew bin packages.")
-  (defconst homebrew-sbin (if (string= (shell-command-to-string "arch") "arm64") "/opt/homebrew/sbin" "/usr/local/sbin") "Path to homebrew sbin packages."))
-
-;; Define the system local bins
-(defconst usr-local-bin "/usr/local/bin" "System bin.")
-(defconst usr-local-sbin "/usr/local/sbin" "System sbin.")
-
-;; Set paths
-(setenv "PATH" (concat (when sys-mac (concat homebrew-bin ":" homebrew-sbin ":")) (getenv "PATH") ":" usr-local-bin ":" usr-local-sbin))
-(setq exec-path (append exec-path (list (when sys-mac homebrew-bin) (when sys-mac homebrew-sbin) usr-local-bin usr-local-sbin)))
-
-;;;;; Package Settings
-;; Use straight to manage package installation and use-package to manage
-;; settings. Defer package loading as much as possible to either the
-;; after-init-hook or after some number of seconds of idle. This should produce
-;; shorter startup times, which helps especially when doing, e.g., a quick
-;; restart-and-check of something in emacs.
-
-;;;;; Straight
-;;;;;; Straight settings
-;; Use straight.el to install all packages
-;; https://github.com/raxod502/straight.el
-;; Don't check packages on startup
-(customize-set-variable 'straight-check-for-modifications '(check-on-save find-when-checking))
-;; Set branch
-(customize-set-variable 'straight-repository-branch "develop")
-;; Set dir
-(customize-set-variable 'straight-base-dir lem-var-dir)
-;; Use use-package
-(customize-set-variable 'straight-use-package-by-default t)
-;; Check updates manually
-(customize-set-variable 'straight-vc-git-auto-fast-forward nil)
-;; Avoid problems with straight building with native-comp
-;; See https://github.com/raxod502/straight.el/issues/757
-(customize-set-variable 'native-comp-deferred-compilation-deny-list nil)
-;; Tell straight.el about the profiles we are going to be using.
-(customize-set-variable 'straight-profiles
-                        '((nil . "default.el")
-                          ;; Packages which are pinned to a specific commit.
-                          (pinned . "pinned.el")))
-
-;;;;;; Bootstrap straight
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" straight-base-dir))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-
-;;;;;; Straight-X
-;; Use experimental straight commands
-(require 'straight-x)
-;; https://github.com/raxod502/straight.el#how-do-i-pin-package-versions-or-use-only-tagged-releases
-(autoload #'straight-x-freeze-versions "straight-x")
-;; package updates
-;; use this workflow?
-;; https://github.com/raxod502/straight.el/issues/354#issuecomment-465305063
-(autoload #'straight-x-pull-all "straight-x")
-;; async fetch
-(autoload #'straight-x-fetch-all "straight-x")
 
 ;;;;; Use-Package
-;; Install use package
-(straight-use-package 'use-package)
-;; Settings
+
+;; Install use-package to manage package setup. If using Emacs 29 or later
+;; use-package is built-in.
+(when (version< emacs-version "29")
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+;; Use-Package Settings
 (use-package use-package
   :custom
+  ;; Don't automatically defer
   (use-package-always-defer nil)
+  ;; Report loading details
   (use-package-verbose t)
   ;; This is really helpful for profiling
   (use-package-minimum-reported-time 0)
-  (use-package-enable-imenu-support t)
+  ;; Expand normally
   (use-package-expand-minimally nil)
-  ;; Let straight handle package install
-  (use-package-always-ensure nil))
+  ;; Unless otherwise set, manually handle package install -- see early-config.el
+  (use-package-always-ensure (if lem-package-ensure-packages t nil))
+  ;; Navigate use-package declarations w/imenu
+  (use-package-enable-imenu-support t))
 
 ;;;;; El-Patch
 ;; Package for helping advise/modify features of other packages
 (use-package el-patch
-  :straight t
+  :ensure t
+  :hook (emacs-startup . el-patch-use-package-mode)
   :custom
   (el-patch-enable-use-package-integration t))
 
@@ -214,7 +63,7 @@ Contents are subject to change. Used by `lem-etc-dir' and
 ;; Properly verify outgoing ssl connections.
 ;; See https://glyph.twistedmatrix.com/2015/11/editor-malware.html
 (use-package gnutls
-  :straight nil
+  :ensure nil
   :defer 1
   :custom
   (gnutls-verify-error t)
@@ -223,6 +72,7 @@ Contents are subject to change. Used by `lem-etc-dir' and
 ;;;;; Auto-compile
 ;; Automatically byte-recompile changed elisp libraries
 (use-package auto-compile
+  :ensure t
   :defer 1
   :custom
   (auto-compile-display-buffer nil)
@@ -279,7 +129,7 @@ emacs-version string on the kill ring."
 ;; Navigate elisp files easily. Outline is a built-in library and we can easily
 ;; configure it to treat elisp comments as headings.
 (use-package outline
-  :straight (:type built-in)
+  :ensure nil
   :hook (prog-mode . outline-minor-mode)
   :bind (:map outline-minor-mode-map
          ("<tab>"   . outline-cycle)
@@ -302,19 +152,6 @@ emacs-version string on the kill ring."
                             (";;;;; " . 3)
                             (";;;;;; " . 4)
                             (";;;;;;; " . 5))))))
-
-;;;;; Measure Time Macro
-;; Useful macro to wrap functions in for testing
-;; See https://stackoverflow.com/q/23622296
-(defmacro measure-time (&rest body)
-  "Measure the time it takes to evaluate BODY."
-  `(let ((time (current-time)))
-     ,@body
-     (message "
-;; ======================================================
-;; *Elapsed time: %.06f*
-;; ======================================================"
-              (float-time (time-since time)))))
 
 ;;;;; Load Configuration Modules
 ;; Lambda-Emacs loads a series of lisp-libraries or 'modules'. Which modules are
@@ -360,19 +197,21 @@ emacs-version string on the kill ring."
                     'lem-setup-projects
                     'lem-setup-tabs
 
+                    ;; Org modules
+                    'lem-setup-org-base
+                    'lem-setup-org-settings
+
                     ;; Writing modules
                     'lem-setup-writing
-                    ;; 'lem-setup-notes ;; coming soon!
+                    'lem-setup-notes
                     'lem-setup-citation
+
+                    ;; Shell & Terminal
+                    'lem-setup-shell
+                    'lem-setup-eshell
 
                     ;; Programming modules
                     'lem-setup-programming
-                    'lem-setup-debug
-                    'lem-setup-shell
-
-                    ;; Org modules (coming soon!)
-                    ;; 'lem-setup-org
-                    ;; 'lem-setup-org-extensions
 
                     ;; Productivity
                     'lem-setup-pdf))

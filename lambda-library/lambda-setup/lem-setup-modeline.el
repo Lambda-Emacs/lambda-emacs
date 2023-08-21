@@ -25,7 +25,10 @@
 
 ;;;; Lambda Line
 (use-package lambda-line
-  :straight (:type git :host github :repo "lambda-emacs/lambda-line")
+  :ensure nil
+  :init
+  (unless (package-installed-p 'lambda-line)
+    (package-vc-install "https://github.com/Lambda-Emacs/lambda-line.git"))
   :custom
   (lambda-line-abbrev t)
   (lambda-line-position 'top)
@@ -36,6 +39,7 @@
   (lambda-line-gui-ro-symbol  " ⨂")  ;; ⬤◯⨂
   (lambda-line-gui-mod-symbol " ⬤") ;; ⨀⬤
   (lambda-line-gui-rw-symbol  " ◯")  ;; ◉ ◎ ⬤◯
+  (lambda-line-vc-symbol "")
   (lambda-line-space-top +.50)
   (lambda-line-space-bottom -.50)
   (lambda-line-symbol-position 0.1)
@@ -50,8 +54,7 @@
     (setq mode-line-format (list "%_"))))
 
 ;;;; Hide Modeline
-(use-package emacs-hide-mode-line
-  :straight (:type git :host github :repo "hlissner/emacs-hide-mode-line")
+(use-package hide-mode-line
   :commands hide-mode-line-mode)
 
 ;;; Provide:
