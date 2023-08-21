@@ -20,6 +20,7 @@
                              (project-find-dir "Find directory")
                              (project-vc-dir "VC-Dir")
                              (project-magit-dir "Magit status")))
+  (project-vc-extra-root-markers '(".dir-locals.el" ".project.el" "package.json" "requirements.txt" "autogen.sh"))
   :config
   ;; Use Ripgrep if installed
   (when (shell-command-to-string "command rg --version")

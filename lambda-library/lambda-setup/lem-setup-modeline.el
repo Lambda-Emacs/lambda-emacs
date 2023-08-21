@@ -39,6 +39,7 @@
   (lambda-line-gui-ro-symbol  " ⨂")  ;; ⬤◯⨂
   (lambda-line-gui-mod-symbol " ⬤") ;; ⨀⬤
   (lambda-line-gui-rw-symbol  " ◯")  ;; ◉ ◎ ⬤◯
+  (lambda-line-vc-symbol "")
   (lambda-line-space-top +.50)
   (lambda-line-space-bottom -.50)
   (lambda-line-symbol-position 0.1)

@@ -145,6 +145,9 @@ questions.  Otherwise use completion to select the tab."
 
 ;;;;; Consult Isolated Workspace Buffers
 ;; Filter Buffers for Consult-Buffer
+(defun lem-buff-filter (buffer)
+  (let ((blst (cl-remove (buffer-name) (frame-parameter nil 'buffer-list))))
+    (memq buffer blst)))
 
 (with-eval-after-load 'consult
   ;; hide full buffer list (still available with "b" prefix)

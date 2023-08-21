@@ -142,7 +142,7 @@
     "settings for markdown mode"
     (progn
       (turn-on-flyspell)
-      (auto-fill-mode)
+      ;; (auto-fill-mode)
       (hl-todo-mode)))
 
   ;; markdown hooks
@@ -177,7 +177,7 @@
   (progn
     (setq-local scroll-preserve-screen-position t
                 scroll-conservatively 0
-                maximum-scroll-margin 0.5
+                maximum-scroll-margin 0.25
                 scroll-margin 99999)))
 
 ;;;; Lorem Ipsum

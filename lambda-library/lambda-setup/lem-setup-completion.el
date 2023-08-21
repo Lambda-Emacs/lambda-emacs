@@ -350,13 +350,7 @@ targets."
         xref-show-definitions-function #'consult-xref)
 
   ;; search settings
-  (setq consult-grep-args
-        "grep --null --line-buffered --color=never --ignore-case\
-   --exclude-dir=.git --line-number -I -R -S .")
-
-  (setq consult-ripgrep-args
-        "rg --multiline --null --line-buffered --color=never --max-columns=1000 --path-separator /\
-  --smart-case --no-heading --line-number --hidden --glob=!.git/ -L .")
+  (setq consult-ripgrep-args "rg --null --line-buffered --color=never --max-columns=1000 --path-separator /   --smart-case --no-heading --with-filename --line-number --search-zip")
 
   ;; Make consult locate work with macos spotlight
   (setq consult-locate-args "mdfind -name")
@@ -496,7 +490,7 @@ targets."
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
   (add-to-list 'completion-at-point-functions #'cape-symbol)
-  (add-to-list 'completion-at-point-functions #'cape-ispell)
+  ;; (add-to-list 'completion-at-point-functions #'cape-ispell)
   ;; (add-to-list 'completion-at-point-functions #'cape-dict)
   ;; (add-to-list 'completion-at-point-functions #'cape-line)
   ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)

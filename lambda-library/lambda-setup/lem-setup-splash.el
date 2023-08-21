@@ -212,6 +212,7 @@
 
 
 
+
             ;; Position point
             (goto-char (point-min))
             (forward-line (/ (window-height) 12))

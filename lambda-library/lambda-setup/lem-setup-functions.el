@@ -21,7 +21,7 @@
 ;; Useful functions
 
 ;;; Code:
-;;;; 𝛌-Emacs Configuration Functions
+;;;; λ-Emacs Configuration Functions
 
 
 ;;;;; Call an emacs instance
@@ -64,16 +64,16 @@
       :action   ,(lambda (f) (find-file f)))))
 
 (defun lem-find-lambda-file ()
-  "Find a file from list of 𝛌-Emacs configuration files."
+  "Find a file from list of λ-Emacs configuration files."
   (interactive)
   (require 'consult)
   (consult--multi (mapcar #'(lambda (s) (apply 'lem--files-make-source s))
 			              lem-files-sources-data)
-		          :prompt "𝛌-files: "
+		          :prompt "λ-files: "
 		          :history 'file-name-history))
 
 (defun lem-search-lambda-files ()
-  "Search all configuration files in 𝛌-Emacs with consult-ripgrep."
+  "Search all configuration files in λ-Emacs with consult-ripgrep."
   (interactive)
   (require 'consult)
   (let ((consult-ripgrep-args
@@ -623,13 +623,13 @@ will be killed."
 (defun lem-cite-to-org ()
   "convert clipboard contents from markdown to org with citations and paste"
   (interactive)
-  (kill-new (shell-command-to-string "pbpaste | pandoc --bibliography=/Users/Roambot/Dropbox/Work/Master.bib -s -t markdown-native_divs-raw_html-citations | pandoc -f markdown -t org"))
+  (kill-new (shell-command-to-string (concat "pbpaste | pandoc --bibliography=" lem-bibliography " -s -t markdown-native_divs-raw_html-citations | pandoc -f markdown -t org")))
   (yank))
 
 (defun lem-cite-to-markdown ()
   "convert clipboard contents to markdown with citations and paste"
   (interactive)
-  (kill-new (shell-command-to-string "pbpaste | pandoc --bibliography=/Users/Roambot/Dropbox/Work/bibfile.bib -s -t markdown-native_divs-raw_html-citations --markdown-headings=atx"))
+  (kill-new (shell-command-to-string (concat "pbpaste | pandoc --bibliography=" lem-bibliography " -s -t markdown-native_divs-raw_html-citations --markdown-headings=atx")))
   (yank))
 
 (defun lem-bibtex-to-yaml-reference ()
