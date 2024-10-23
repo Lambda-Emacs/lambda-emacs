@@ -92,9 +92,6 @@
 (use-package pcmpl-homebrew
   :after eshell)
 
-(use-package pcmpl-git
-  :after eshell)
-
 (use-package pcmpl-args
   :after eshell)
 
@@ -149,7 +146,7 @@ PWD is not in a git repo (or the git command is not found)."
            (git-branch (s-trim git-output))
            (git-icon  "\xe0a0")
            (git-icon2 (propertize "\xf020" 'face `(:family "octicons")))
-           (git-sep (propertize "" 'face 'lambda-meek)))
+           (git-sep (propertize "" 'face 'lambda-meek)))
       (concat (propertize " (" 'face 'lambda-mild)
               (propertize git-repo 'face `(:inherit lambda-meek :weight light))
               git-sep
