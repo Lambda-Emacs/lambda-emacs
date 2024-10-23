@@ -1,4 +1,4 @@
-#+html: <a href="https://www.gnu.org/software/emacs/"><img alt="GNU Emacs" src="https://github.com/minad/corfu/blob/screenshots/emacs.svg?raw=true"/></a>
+#+html: <a href="https://www.gnu.org/software/emacs/"><img alt="GNU Emacs" src="https://raw.githubusercontent.com/jcs-emacs/badges/refs/heads/master/elpa/emacs.svg"/></a>
 #+html: <a href="https://discord.gg/NtYcrRtTxg"><img alt="Discord Server" src="https://img.shields.io/badge/Lambda-Discord-1004037022824013905?style=flat&logo=discord&logoColor=lightgrey"/></a>
 #+html: <a href="https://www.buymeacoffee.com/fxpy8fzgyxg" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 23px !important;width: 120px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
