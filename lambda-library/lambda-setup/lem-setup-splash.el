@@ -169,7 +169,7 @@
             (goto-char (point-min))
             (display-buffer-same-window splash-buffer nil))
           (switch-to-buffer "*splash*"))
-        (lem-splash-mode))
+        (lem-splash-mode))))
 
 (defun lem-splash-screen ()
   "A custom splash screen for Emacs"
@@ -212,92 +212,79 @@
             ;; Add padding at top
             (insert-char ?\n padding-top)
 
-            ;; Create a layout with lambda on the left and text on the right
-            (when (and (> window-width 80)
-                       (> window-height 20))
-              (let* ((image-file (if (eq active-theme 'dark-theme)
-                                     (concat lem-library-dir "lambda-logo-white.png")
-                                   (concat lem-library-dir "lambda-logo-black.png")))
-                     (image (create-image image-file 'png nil :width 300 :height 300))
-                     (content-start-col (max 10 (/ (- window-width 60) 2)))
-                     (image-col (max 0 (- content-start-col 20)))
-                     (text-col (+ content-start-col 15)))
+            ;; Simple centered layout
+            (let* ((center-col (max 0 (/ (- window-width 60) 2))))
+              
+              ;; Add the lambda image, centered and reasonably sized
+              (when (and (> window-width 80) (> window-height 20))
+                (let* ((image-file (if (eq active-theme 'dark-theme)
+                                       (concat lem-library-dir "lambda-logo-white.png")
+                                     (concat lem-library-dir "lambda-logo-black.png")))
+                       (image (create-image image-file 'png nil :width 150 :height 150)))
+                  (insert-char ?\s (+ center-col 20))
+                  (insert-image image)
+                  (insert-char ?\n 3)))
+              
+              ;; Add header text, all centered
+              (let ((welcome-text "Welcome to λ-Emacs")
+                    (version-text (format "GNU Emacs version %d.%d" emacs-major-version emacs-minor-version))
+                    (init-info (funcall lem-splash-init-info)))
                 
-                ;; Position and insert the lambda image
-                (insert-char ?\s image-col)
-                (insert-image image)
+                ;; Welcome text
+                (insert-char ?\s (+ center-col (/ (- 60 (length welcome-text)) 2)))
+                (insert (propertize welcome-text 'face 'lem-splash-title-face))
+                (insert-char ?\n 2)
                 
-                ;; Move cursor to same line as image for text
-                (forward-line -8)  ; Move up to align with middle of image
-                (end-of-line)
+                ;; Version text
+                (insert-char ?\s (+ center-col (/ (- 60 (length version-text)) 2)))
+                (insert (propertize version-text 'face 'lem-splash-header-face))
+                (insert-char ?\n 1)
                 
-                ;; Insert header text centered relative to available space
-                (let ((welcome-text "Welcome to λ-Emacs")
-                      (version-text (format "GNU Emacs version %d.%d" emacs-major-version emacs-minor-version))
-                      (init-info (funcall lem-splash-init-info)))
-                  
-                  ;; Calculate centering for each line
-                  (let ((welcome-padding (max 0 (/ (- 40 (length welcome-text)) 2)))
-                        (version-padding (max 0 (/ (- 40 (length version-text)) 2)))
-                        (init-padding (max 0 (/ (- 40 (length init-info)) 2))))
-                    
-                    ;; Welcome text
-                    (insert-char ?\s (+ welcome-padding 5))
-                    (insert (propertize welcome-text 'face 'lem-splash-title-face))
-                    (insert-char ?\n 2)
-                    
-                    ;; Version text  
-                    (insert-char ?\s text-col)
-                    (insert-char ?\s version-padding)
-                    (insert (propertize version-text 'face 'lem-splash-header-face))
-                    (insert-char ?\n 2)
-                    
-                    ;; Init info
-                    (insert-char ?\s text-col)
-                    (insert-char ?\s init-padding)
-                    (insert (propertize init-info 'face 'lem-splash-header-face))
-                    (insert-char ?\n 4))))
+                ;; Init info
+                (insert-char ?\s (+ center-col (/ (- 60 (length init-info)) 2)))
+                (insert (propertize init-info 'face 'lem-splash-header-face))
+                (insert-char ?\n 4)))
 
             ;; Insert menu buttons centered
             (goto-char (point-max))
-            (let ((menu-center (max 0 (/ (- window-width 25) 2)))
-                  (menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
-                                ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")
-                                ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
-                                ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
-                                ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace"))))
-              (dolist (item menu-items)
-                (let ((icon (nth 0 item))
-                      (label (nth 1 item))
-                      (key (nth 2 item))
-                      (action (nth 3 item))
-                      (help (nth 4 item)))
-                  (insert-char ?\s menu-center)
-                  (insert-text-button (concat (if (fboundp 'all-the-icons-faicon)
-                                                   (all-the-icons-faicon icon)
-                                                 "•") isep label ksep "(" key ")")
-                                      'action (lambda (_) (call-interactively action))
-                                      'help-echo help
-                                      'face 'lem-splash-menu-face
-                                      'follow-link t)
-                  (insert-char ?\n 1))))
+            (let ((menu-center (+ center-col 10))
+                    (menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
+                                  ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")
+                                  ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
+                                  ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
+                                  ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace"))))
+                (dolist (item menu-items)
+                  (let ((icon (nth 0 item))
+                        (label (nth 1 item))
+                        (key (nth 2 item))
+                        (action (nth 3 item))
+                        (help (nth 4 item)))
+                    (insert-char ?\s menu-center)
+                    (insert-text-button (concat (if (fboundp 'all-the-icons-faicon)
+                                                    (all-the-icons-faicon icon)
+                                                  "•") isep label ksep "(" key ")")
+                                        'action (lambda (_) (call-interactively action))
+                                        'help-echo help
+                                        'face 'lem-splash-menu-face
+                                        'follow-link t)
+                    (insert-char ?\n 1))))
 
 
-            ;; Add footer with proper spacing
-            (goto-char (point-max))
-            (let ((footer-padding (max 1 (- window-height (line-number-at-pos) 3))))
-              (insert-char ?\n footer-padding))
-            
-            ;; Footer text centered
-            (defvar lem-splash-footer "   " "Footer text.")
-            (let ((footer-center (max 0 (/ (- window-width (length lem-splash-footer)) 2))))
-              (insert-char ?\s footer-center)
-              (insert (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
+              ;; Add footer with proper spacing
+              (goto-char (point-max))
+              (let ((footer-padding (max 1 (- window-height (line-number-at-pos) 3))))
+                (insert-char ?\n footer-padding))
 
-            (goto-char (point-min))
-            (display-buffer-same-window splash-buffer nil)))
+              ;; Footer text centered
+              (defvar lem-splash-footer "   " "Footer text.")
+              (let ((footer-center (max 0 (/ (- window-width (length lem-splash-footer)) 2))))
+                (insert-char ?\s footer-center)
+                (insert (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
+
+              (goto-char (point-min))
+              (display-buffer-same-window splash-buffer nil)))
           (switch-to-buffer "*splash*"))
-        (lem-splash-mode))))))
+        (lem-splash-mode))))
 
 (defun lem-splash-screen-bury ()
   "Bury the splash screen buffer (immediately)."
