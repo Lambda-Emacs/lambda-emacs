@@ -110,10 +110,9 @@
           (erase-buffer))
 
         (let* ((buffer-read-only t)
-               (midp  (/ (point-max) 2))
-               (padding-top 3)
-               (height (/ (window-height) 2))
-	           (width (/ (window-width) 2))
+               (window-height (window-height))
+               (window-width (window-width))
+               (padding-top (max 1 (/ window-height 8)))
                ;; Original ascii image from here:
                ;; https://github.com/Triagle/emax/blob/master/boot.txt
                (banner (lem-get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
@@ -125,15 +124,15 @@
             (setq-local cursor-type nil)
             (setq vertical-scroll-bar nil)
             (setq horizontal-scroll-bar nil)
-            (setq fill-column width)
+            (setq fill-column window-width)
             (face-remap-add-relative 'link :underline nil)
             (unless (and (display-graphic-p) sys-mac) (menu-bar-mode 0))
-            ;; Set margin padding locally
-            (setq-local left-margin-width (/ width 6)
-                        right-margin-width (/ width 6))
+            ;; Set margin padding locally for better centering
+            (setq-local left-margin-width (max 0 (/ (- window-width 80) 2))
+                        right-margin-width (max 0 (/ (- window-width 80) 2)))
             (set-window-buffer nil (current-buffer))
             ;; Add padding at top
-            (insert-char ?\n 1)
+            (insert-char ?\n padding-top)
             (unless lem-splash-banner
               ;; Insert text banner
               (insert banner))
@@ -175,10 +174,9 @@
           (erase-buffer))
 
         (let* ((buffer-read-only t)
-               (midp  (/ (point-max) 2))
-               (padding-top 3)
-               (height (/ (window-height) 2))
-	           (width (/ (window-width) 2))
+               (window-height (window-height))
+               (window-width (window-width))
+               (padding-top (max 1 (/ window-height 8)))
                (image-scaling-factor 2.2)
                ;; scale icons
                (all-the-icons-scale-factor 1.10)
@@ -191,105 +189,79 @@
             (setq-local cursor-type nil)
             (setq vertical-scroll-bar nil)
             (setq horizontal-scroll-bar nil)
-            (setq fill-column width)
+            (setq fill-column window-width)
             (face-remap-add-relative 'link :underline nil)
             (unless (and (display-graphic-p) sys-mac) (menu-bar-mode 0))
 
-            ;; Set margin padding locally
-            (setq-local left-margin-width 0
-                        right-margin-width (/ width 6))
+            ;; Set margin padding locally for better centering
+            (setq-local left-margin-width (max 0 (/ (- window-width 80) 2))
+                        right-margin-width (max 0 (/ (- window-width 80) 2)))
             (set-window-buffer nil (current-buffer))
 
             ;; Add padding at top
-            (insert-char ?\n 1)
+            (insert-char ?\n padding-top)
 
-            ;; Add image 
-            (when (and (> (window-width) 59)
-                       (> (window-height) 44))
-              (if (eq active-theme 'dark-theme)
-                  (insert-sliced-image (create-image (concat lem-library-dir "lambda-logo-white.png") 'png) " " nil 20 20)
-                (insert-sliced-image (create-image (concat lem-library-dir "lambda-logo-black.png") 'png) " " nil 20 20)))
+            ;; Add image centered
+            (when (and (> window-width 59)
+                       (> window-height 44))
+              (let* ((image-file (if (eq active-theme 'dark-theme)
+                                     (concat lem-library-dir "lambda-logo-white.png")
+                                   (concat lem-library-dir "lambda-logo-black.png")))
+                     (image (create-image image-file 'png nil :width 200 :height 200))
+                     (image-width 200)
+                     (center-col (max 0 (/ (- window-width image-width) 2))))
+                (insert-char ?\s center-col)
+                (insert-image image)
+                (insert-char ?\n 2)))
 
-
-
-
-            ;; Position point
-            (goto-char (point-min))
-            (forward-line (/ (window-height) 12))
-            (move-to-column (/ (window-width) 11))
+            ;; Position point for text content
+            (let ((center-col (max 0 (/ (- window-width 40) 2))))
+              (goto-char (point-max))
+              (insert-char ?\s center-col))
 
             ;; Insert header text
-            (insert-rectangle `(,(propertize "           Welcome to λ-Emacs"  'face 'lem-splash-title-face)
-                                ,(concat (propertize "         GNU Emacs version" 'face 'lem-splash-header-face)
-                                         " "
-                                         (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face))
-                                ,(let ((init-info (funcall lem-splash-init-info)))
-                                   (concat " " (propertize init-info 'face 'lem-splash-header-face)))))
+            (insert (propertize "Welcome to λ-Emacs" 'face 'lem-splash-title-face))
+            (insert-char ?\n 1)
+            (insert-char ?\s center-col)
+            (insert (concat (propertize "GNU Emacs version " 'face 'lem-splash-header-face)
+                            (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face)))
+            (insert-char ?\n 1)
+            (insert-char ?\s center-col)
+            (let ((init-info (funcall lem-splash-init-info)))
+              (insert (propertize init-info 'face 'lem-splash-header-face)))
+            (insert-char ?\n 2)
 
-            ;; Insert header buttons
-            (forward-line)
-            (move-to-column (/ (window-width) 11))
-            ;; (end-of-line)
-            (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-faicon "calendar") isep "Agenda" ksep "(a)")
-                                'action (lambda (_) (lem-open-agenda-in-workspace))
-                                'help-echo "Open Agenda"
-                                'face 'lem-splash-menu-face
-                                'follow-link t)
-            (forward-line)
-            (move-to-column (/ (window-width) 11))
-            ;; (end-of-line)
-            (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-faicon "code") isep "Config" ksep "(c)")
-                                'action (lambda (_) (lem-open-emacsd-in-workspace))
-                                'help-echo "Visit config directory"
-                                'face 'lem-splash-menu-face
-                                'follow-link t)
-
-            (forward-line)
-            (move-to-column (/ (window-width) 11))
-            ;; (end-of-line)
-            (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-faicon "envelope-o") isep "Mail" ksep "(m)")
-                                'action (lambda (_)  (lem-open-email-in-workspace))
-                                'help-echo "Open Email in Mu4e"
-                                'face 'lem-splash-menu-face
-                                'follow-link t)
-
-            (forward-line)
-            (move-to-column (/ (window-width) 11))
-            ;; (end-of-line)
-            (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-faicon "book") isep "Notes" ksep "(n)")
-                                'action (lambda (_)  (lem-open-notes-in-workspace))
-                                'help-echo "Open notes directory"
-                                'face 'lem-splash-menu-face
-                                'follow-link t)
-
-            (forward-line)
-            (move-to-column (/ (window-width) 11))
-            ;; (end-of-line)
-            (insert-char ?\s 11)
-            (insert-text-button (concat (all-the-icons-faicon "folder") isep "Projects" ksep "(p)")
-                                'action (lambda (_)  (tabspaces-open-existing-project-and-workspace))
-                                'help-echo "Open project & workspace"
-                                'face 'lem-splash-menu-face
-                                'follow-link t)
+            ;; Insert menu buttons centered
+            (let ((menu-items `(("calendar" "Agenda" "a" ,(lambda (_) (lem-open-agenda-in-workspace)) "Open Agenda")
+                                ("code" "Config" "c" ,(lambda (_) (lem-open-emacsd-in-workspace)) "Visit config directory")
+                                ("envelope-o" "Mail" "m" ,(lambda (_) (lem-open-email-in-workspace)) "Open Email in Mu4e")
+                                ("book" "Notes" "n" ,(lambda (_) (lem-open-notes-in-workspace)) "Open notes directory")
+                                ("folder" "Projects" "p" ,(lambda (_) (tabspaces-open-existing-project-and-workspace)) "Open project & workspace"))))
+              (dolist (item menu-items)
+                (let ((icon (nth 0 item))
+                      (label (nth 1 item))
+                      (key (nth 2 item))
+                      (action (nth 3 item))
+                      (help (nth 4 item)))
+                  (insert-char ?\s center-col)
+                  (insert-text-button (concat (all-the-icons-faicon icon) isep label ksep "(" key ")")
+                                      'action action
+                                      'help-echo help
+                                      'face 'lem-splash-menu-face
+                                      'follow-link t)
+                  (insert-char ?\n 1))))
 
 
-            ;; see https://blog.lambda.cx/posts/emacs-align-columns/
-            ;; Note that we need the `+' in order to avoid deleting lines of the image
-            (align-regexp (point-min) (point-max) "\\(\\s(+\\)\\S(+" -1 1 t)
-
-            ;; ;; Vertical padding to bottom
+            ;; Add footer with proper spacing
             (goto-char (point-max))
-
-            ;; Footer text
+            (let ((footer-padding (max 1 (- window-height (line-number-at-pos) 3))))
+              (insert-char ?\n footer-padding))
+            
+            ;; Footer text centered
             (defvar lem-splash-footer "   " "Footer text.")
-            (save-excursion (insert-char ?\n 2)
-                            (insert-char ?\s (/ (window-width) 4))
-                            (insert
-                             (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
+            (let ((footer-center (max 0 (/ (- window-width (length lem-splash-footer)) 2))))
+              (insert-char ?\s footer-center)
+              (insert (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
 
             (goto-char (point-min))
             (display-buffer-same-window splash-buffer nil))
