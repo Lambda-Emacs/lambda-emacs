@@ -91,10 +91,10 @@
 
 (defun lem-splash--erase ()
   ;; check if splash exists and switch if so
-  (when-let ((inhibit-read-only t)) 
-    (get-buffer "*splash*")
-    (switch-to-buffer "*splash*")
-    (erase-buffer)))
+  (when-let ((buf (get-buffer "*splash*")))
+    (let ((inhibit-read-only t))
+      (switch-to-buffer "*splash*")
+      (erase-buffer))))
 
 (defun lem-splash-terminal ()
   "A custom splash screen for terminal Emacs"
@@ -141,12 +141,13 @@
             (forward-line (- (/ (window-height) 2) 10))
             (end-of-line)
             ;; Insert header text
-            (insert-rectangle `(,(propertize "           Welcome to 𝛌-Emacs"  'face 'lem-splash-title-face)
-                                ,(concat (propertize "         GNU Emacs version" 'face 'lem-splash-header-face)
-                                         " "
-                                         (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face))
-                                ,(let ((init-info (funcall lem-splash-init-info)))
-                                   (concat " " (propertize init-info 'face 'lem-splash-header-face)))))
+            (let ((welcome-line (propertize "           Welcome to 𝛌-Emacs"  'face 'lem-splash-title-face))
+                  (version-line (concat (propertize "         GNU Emacs version" 'face 'lem-splash-header-face)
+                                        " "
+                                        (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face)))
+                  (init-line (let ((init-info (funcall lem-splash-init-info)))
+                               (concat " " (propertize init-info 'face 'lem-splash-header-face)))))
+              (insert-rectangle (list welcome-line version-line init-line)))
             ;; ;; Vertical padding to bottom
             (goto-char (point-max))
             ;; Footer text
@@ -158,7 +159,7 @@
             (goto-char (point-min))
             (display-buffer-same-window splash-buffer nil))
           (switch-to-buffer "*splash*"))
-        (lem-splash-mode))))
+        (lem-splash-mode))
 
 (defun lem-splash-screen ()
   "A custom splash screen for Emacs"
@@ -250,11 +251,11 @@
             ;; Insert menu buttons centered
             (goto-char (point-max))
             (let ((menu-center (max 0 (/ (- window-width 25) 2)))
-                  (menu-items `(("calendar" "Agenda" "a" ,(lambda (_) (lem-open-agenda-in-workspace)) "Open Agenda")
-                                ("code" "Config" "c" ,(lambda (_) (lem-open-emacsd-in-workspace)) "Visit config directory")
-                                ("envelope-o" "Mail" "m" ,(lambda (_) (lem-open-email-in-workspace)) "Open Email in Mu4e")
-                                ("book" "Notes" "n" ,(lambda (_) (lem-open-notes-in-workspace)) "Open notes directory")
-                                ("folder" "Projects" "p" ,(lambda (_) (tabspaces-open-existing-project-and-workspace)) "Open project & workspace"))))
+                  (menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
+                                ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")
+                                ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
+                                ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
+                                ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace"))))
               (dolist (item menu-items)
                 (let ((icon (nth 0 item))
                       (label (nth 1 item))
@@ -263,7 +264,7 @@
                       (help (nth 4 item)))
                   (insert-char ?\s menu-center)
                   (insert-text-button (concat (all-the-icons-faicon icon) isep label ksep "(" key ")")
-                                      'action action
+                                      'action (lambda (_) (call-interactively action))
                                       'help-echo help
                                       'face 'lem-splash-menu-face
                                       'follow-link t)
@@ -284,7 +285,7 @@
             (goto-char (point-min))
             (display-buffer-same-window splash-buffer nil)))
           (switch-to-buffer "*splash*"))
-        (lem-splash-mode))
+        (lem-splash-mode))))))
 
 (defun lem-splash-screen-bury ()
   "Bury the splash screen buffer (immediately)."
@@ -318,7 +319,7 @@
   :global nil
   :keymap lem-splash-mode-map
   :group 'lambda-emacs
-  :require 'lem-setup-splash.el
+  :require 'lem-setup-splash
   (buffer-disable-undo)
   (auto-revert-mode -1)
   (whitespace-mode -1)
