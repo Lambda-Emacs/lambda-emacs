@@ -302,8 +302,9 @@
            ("R"  .  tabspaces-remove-selected-buffer)
            ("s"  .  tabspaces-switch-or-create-workspace))
 
-;;;; Which Key
+;;;; Which Key - Built-in since Emacs 30
 (use-package which-key
+  :ensure nil
   :defer 1
   :diminish ""
   :config

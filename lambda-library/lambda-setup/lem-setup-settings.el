@@ -132,10 +132,8 @@
   ;; configurations with `(advice-remove 'yes-or-no-p #'y-or-n-p)'
   ;;
   ;; N.B. Emacs 28 has a variable for using short answers, which should
-  ;; be preferred if using that version or higher.
-  (if (boundp 'use-short-answers)
-      (setq use-short-answers t)
-    (advice-add 'yes-or-no-p :override #'y-or-n-p)))
+  ;; use-short-answers is built-in since Emacs 28
+  (setq use-short-answers t))
 
 (use-package advice
   :ensure nil
@@ -325,10 +323,8 @@
 
 ;;;; Restart Emacs
 
-;; Versions of Emacs lower than 29 don't have a restart command, so add that.
-(use-package restart-emacs
-  :when (version< emacs-version "29")
-  :commands restart-emacs)
+;; restart-emacs command is built-in since Emacs 29
+;; No external package needed for Emacs 30+
 
 ;;;; Undo
 (use-package emacs

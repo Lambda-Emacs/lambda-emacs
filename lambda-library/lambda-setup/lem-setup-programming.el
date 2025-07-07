@@ -26,10 +26,14 @@
 
 ;;; Code:
 
+;;;; Load LSP and LLM support
+;; Load modern programming features
+(require 'lem-setup-lsp nil t)
+(require 'lem-setup-llm nil t)
+
 ;;;; Show Pretty Symbols
 (use-package prog-mode
   :ensure nil
-  ;; :straight (:type built-in)
   :defer t
   :custom
   ;; Show markup at point
@@ -123,7 +127,6 @@
 (setq major-mode-remap-alist
       '((yaml-mode . yaml-ts-mode)
         (bash-mode . bash-ts-mode)
-        (js2-mode . js-ts-mode)
         (typescript-mode . typescript-ts-mode)
         (json-mode . json-ts-mode)
         (css-mode . css-ts-mode)
@@ -341,8 +344,9 @@ Lisp function does not specify a special indentation."
    (js-mode . aggressive-indent-mode)
    (sgml-mode . aggressive-indent-mode))
   :config
-  (setq-default aggressive-indent-comments-too t)
-  (add-to-list 'aggressive-indent-protected-commands 'comment-dwim))
+  (setq-default aggressive-indent-comments-too nil)
+  (add-to-list 'aggressive-indent-protected-commands 'comment-dwim)
+  (add-to-list 'aggressive-indent-protected-commands 'comment-box))
 
 (use-package highlight-indent-guides
   :hook (prog-mode . highlight-indent-guides-mode)
