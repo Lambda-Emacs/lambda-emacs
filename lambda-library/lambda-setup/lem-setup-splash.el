@@ -28,7 +28,15 @@
 
 ;;; Code:
 (require 'cl-lib)
-(require 'all-the-icons)
+(require 'all-the-icons nil t)
+
+;; Ensure dependencies are available
+(declare-function lem-get-string-from-file "lem-setup-functions")
+(declare-function lem-open-agenda-in-workspace "lem-setup-functions")
+(declare-function lem-open-emacsd-in-workspace "lem-setup-functions")
+(declare-function lem-open-email-in-workspace "lem-setup-functions")
+(declare-function lem-open-notes-in-workspace "lem-setup-functions")
+(declare-function tabspaces-open-existing-project-and-workspace "tabspaces")
 
 (defgroup lem-splash nil
   "Extensible splash screen."
@@ -115,7 +123,8 @@
                (padding-top (max 1 (/ window-height 8)))
                ;; Original ascii image from here:
                ;; https://github.com/Triagle/emax/blob/master/boot.txt
-               (banner (lem-get-string-from-file (concat lem-library-dir "lambda-splash.txt"))))
+               (banner (when (fboundp 'lem-get-string-from-file)
+                         (lem-get-string-from-file (concat lem-library-dir "lambda-splash.txt")))))
 
           (with-current-buffer splash-buffer
             ;; Buffer local settings
@@ -135,7 +144,8 @@
             (insert-char ?\n padding-top)
             (unless lem-splash-banner
               ;; Insert text banner
-              (insert banner))
+              (when (and (fboundp 'lem-get-string-from-file) banner)
+                (insert banner)))
             ;; Position point
             (goto-char (point-min))
             (forward-line (- (/ (window-height) 2) 10))
@@ -263,7 +273,9 @@
                       (action (nth 3 item))
                       (help (nth 4 item)))
                   (insert-char ?\s menu-center)
-                  (insert-text-button (concat (all-the-icons-faicon icon) isep label ksep "(" key ")")
+                  (insert-text-button (concat (if (fboundp 'all-the-icons-faicon)
+                                                   (all-the-icons-faicon icon)
+                                                 "•") isep label ksep "(" key ")")
                                       'action (lambda (_) (call-interactively action))
                                       'help-echo help
                                       'face 'lem-splash-menu-face
@@ -354,7 +366,8 @@
 
 (defun lem-splash--setup-splash-hooks ()
   "Initialize splash and setup hooks."
-  (progn
+  (when (and (fboundp 'lem-splash-screen)
+             (fboundp 'lem-splash-terminal))
     (if (display-graphic-p)
         (lem-splash-screen)
       (lem-splash-terminal)) 
