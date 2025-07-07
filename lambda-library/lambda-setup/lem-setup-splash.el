@@ -282,9 +282,9 @@
               (insert (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
 
             (goto-char (point-min))
-            (display-buffer-same-window splash-buffer nil))
+            (display-buffer-same-window splash-buffer nil)))
           (switch-to-buffer "*splash*"))
-        (lem-splash-mode))))
+        (lem-splash-mode))
 
 (defun lem-splash-screen-bury ()
   "Bury the splash screen buffer (immediately)."
