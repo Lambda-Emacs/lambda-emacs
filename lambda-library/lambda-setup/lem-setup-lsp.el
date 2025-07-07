@@ -204,29 +204,34 @@
   (add-hook 'python-ts-mode-hook #'eglot-ensure)
   
   ;; Configure Python LSP servers (in order of preference)
-  (add-to-list 'eglot-server-programs
-               '((python-mode python-ts-mode) . ("pylsp" "--"))))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode) . ("pylsp" "--")))))
 
 ;; JavaScript/TypeScript
 (with-eval-after-load 'js
-  (add-to-list 'eglot-server-programs
-               '((js-mode js-ts-mode tsx-ts-mode typescript-mode typescript-ts-mode)
-                 . ("typescript-language-server" "--stdio"))))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '((js-mode js-ts-mode tsx-ts-mode typescript-mode typescript-ts-mode)
+                   . ("typescript-language-server" "--stdio")))))
 
 ;; Rust
 (with-eval-after-load 'rust-mode
-  (add-to-list 'eglot-server-programs
-               '((rust-mode rust-ts-mode) . ("rust-analyzer"))))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '((rust-mode rust-ts-mode) . ("rust-analyzer")))))
 
 ;; Go
 (with-eval-after-load 'go-mode
-  (add-to-list 'eglot-server-programs
-               '((go-mode go-ts-mode) . ("gopls"))))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs
+                 '((go-mode go-ts-mode) . ("gopls")))))
 
 ;; C/C++
-(add-to-list 'eglot-server-programs
-             '((c-mode c-ts-mode c++-mode c++-ts-mode)
-               . ("clangd" "--header-insertion=never" "--completion-style=detailed")))
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode)
+                 . ("clangd" "--header-insertion=never" "--completion-style=detailed"))))
 
 ;;;; Debugging Support
 (use-package dap-mode

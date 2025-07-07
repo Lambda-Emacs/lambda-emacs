@@ -22,6 +22,11 @@
 ;; All packages related to core narrowing and completion functions
 
 ;;; Code:
+;;;; Compatibility Layer
+;; Load compat early for modern Emacs packages
+(use-package compat
+  :demand t)
+
 ;;;; Narrowing Completion
 
 ;;;;; Vertico
