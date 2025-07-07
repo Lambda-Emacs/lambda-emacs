@@ -127,9 +127,9 @@
             (setq fill-column window-width)
             (face-remap-add-relative 'link :underline nil)
             (unless (and (display-graphic-p) sys-mac) (menu-bar-mode 0))
-            ;; Set margin padding locally for better centering
-            (setq-local left-margin-width (max 0 (/ (- window-width 80) 2))
-                        right-margin-width (max 0 (/ (- window-width 80) 2)))
+            ;; Remove margins to avoid interference with centering
+            (setq-local left-margin-width 0
+                        right-margin-width 0)
             (set-window-buffer nil (current-buffer))
             ;; Add padding at top
             (insert-char ?\n padding-top)
@@ -193,9 +193,9 @@
             (face-remap-add-relative 'link :underline nil)
             (unless (and (display-graphic-p) sys-mac) (menu-bar-mode 0))
 
-            ;; Set margin padding locally for better centering
-            (setq-local left-margin-width (max 0 (/ (- window-width 80) 2))
-                        right-margin-width (max 0 (/ (- window-width 80) 2)))
+            ;; Remove margins to avoid interference with centering
+            (setq-local left-margin-width 0
+                        right-margin-width 0)
             (set-window-buffer nil (current-buffer))
 
             ;; Add padding at top
@@ -214,42 +214,47 @@
                 (insert-image image)
                 (insert-char ?\n 2)))
 
-            ;; Position point for text content
-            (let ((center-col (max 0 (/ (- window-width 40) 2))))
-              (goto-char (point-max))
-              (insert-char ?\s center-col))
+            ;; Position point and insert content centered
+            (goto-char (point-max))
+            
+            ;; Calculate center position for text (approximately 30 chars wide)
+            (let ((text-center (max 0 (/ (- window-width 30) 2))))
+              
+              ;; Insert header text
+              (insert-char ?\s text-center)
+              (insert (propertize "Welcome to λ-Emacs" 'face 'lem-splash-title-face))
+              (insert-char ?\n 1)
+              
+              (insert-char ?\s text-center)
+              (insert (concat (propertize "GNU Emacs version " 'face 'lem-splash-header-face)
+                              (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face)))
+              (insert-char ?\n 1)
+              
+              (insert-char ?\s text-center)
+              (let ((init-info (funcall lem-splash-init-info)))
+                (insert (propertize init-info 'face 'lem-splash-header-face)))
+              (insert-char ?\n 2)
 
-            ;; Insert header text
-            (insert (propertize "Welcome to λ-Emacs" 'face 'lem-splash-title-face))
-            (insert-char ?\n 1)
-            (insert-char ?\s center-col)
-            (insert (concat (propertize "GNU Emacs version " 'face 'lem-splash-header-face)
-                            (propertize (format "%d.%d" emacs-major-version emacs-minor-version) 'face 'lem-splash-header-face)))
-            (insert-char ?\n 1)
-            (insert-char ?\s center-col)
-            (let ((init-info (funcall lem-splash-init-info)))
-              (insert (propertize init-info 'face 'lem-splash-header-face)))
-            (insert-char ?\n 2)
-
-            ;; Insert menu buttons centered
-            (let ((menu-items `(("calendar" "Agenda" "a" ,(lambda (_) (lem-open-agenda-in-workspace)) "Open Agenda")
-                                ("code" "Config" "c" ,(lambda (_) (lem-open-emacsd-in-workspace)) "Visit config directory")
-                                ("envelope-o" "Mail" "m" ,(lambda (_) (lem-open-email-in-workspace)) "Open Email in Mu4e")
-                                ("book" "Notes" "n" ,(lambda (_) (lem-open-notes-in-workspace)) "Open notes directory")
-                                ("folder" "Projects" "p" ,(lambda (_) (tabspaces-open-existing-project-and-workspace)) "Open project & workspace"))))
-              (dolist (item menu-items)
-                (let ((icon (nth 0 item))
-                      (label (nth 1 item))
-                      (key (nth 2 item))
-                      (action (nth 3 item))
-                      (help (nth 4 item)))
-                  (insert-char ?\s center-col)
-                  (insert-text-button (concat (all-the-icons-faicon icon) isep label ksep "(" key ")")
-                                      'action action
-                                      'help-echo help
-                                      'face 'lem-splash-menu-face
-                                      'follow-link t)
-                  (insert-char ?\n 1))))
+              ;; Insert menu buttons centered (approximately 20 chars wide)
+              (let ((menu-center (max 0 (/ (- window-width 20) 2)))
+                    (menu-items `(("calendar" "Agenda" "a" ,(lambda (_) (lem-open-agenda-in-workspace)) "Open Agenda")
+                                  ("code" "Config" "c" ,(lambda (_) (lem-open-emacsd-in-workspace)) "Visit config directory")
+                                  ("envelope-o" "Mail" "m" ,(lambda (_) (lem-open-email-in-workspace)) "Open Email in Mu4e")
+                                  ("book" "Notes" "n" ,(lambda (_) (lem-open-notes-in-workspace)) "Open notes directory")
+                                  ("folder" "Projects" "p" ,(lambda (_) (tabspaces-open-existing-project-and-workspace)) "Open project & workspace"))))
+                (dolist (item menu-items)
+                  (let ((icon (nth 0 item))
+                        (label (nth 1 item))
+                        (key (nth 2 item))
+                        (action (nth 3 item))
+                        (help (nth 4 item)))
+                    (insert-char ?\s menu-center)
+                    (insert-text-button (concat (all-the-icons-faicon icon) isep label ksep "(" key ")")
+                                        'action action
+                                        'help-echo help
+                                        'face 'lem-splash-menu-face
+                                        'follow-link t)
+                    (insert-char ?\n 1)))))
 
 
             ;; Add footer with proper spacing
