@@ -270,6 +270,7 @@ Any customized libraries not available via standard package repos like elpa or m
 ;; Load the package-system.
 (require 'package)
 
+
 ;;;; Package Archives
 ;; See https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/ for discussion
 (setopt package-archives
@@ -292,6 +293,11 @@ Any customized libraries not available via standard package repos like elpa or m
 (unless (file-exists-p package-user-dir)
   (mkdir package-user-dir t))
 (setopt package-quickstart-file (expand-file-name "package-quickstart.el" lem-cache-dir))
+
+;; Initialize packages and load compat early
+(package-initialize)
+(when (package-installed-p 'compat)
+  (require 'compat nil t))
 
 ;;;; Early Config
 ;; Check if there is a user early-config file & load. If it doesn't exist, print
