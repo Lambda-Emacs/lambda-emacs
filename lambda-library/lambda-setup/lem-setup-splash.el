@@ -247,44 +247,44 @@
 
             ;; Insert menu buttons centered
             (goto-char (point-max))
-            (let ((menu-center (+ center-col 10))
-                    (menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
-                                  ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")
-                                  ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
-                                  ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
-                                  ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace"))))
-                (dolist (item menu-items)
-                  (let ((icon (nth 0 item))
-                        (label (nth 1 item))
-                        (key (nth 2 item))
-                        (action (nth 3 item))
-                        (help (nth 4 item)))
-                    (insert-char ?\s menu-center)
-                    (insert-text-button (concat (if (fboundp 'all-the-icons-faicon)
-                                                    (all-the-icons-faicon icon)
-                                                  "•") isep label ksep "(" key ")")
-                                        'action (lambda (_) (call-interactively action))
-                                        'help-echo help
-                                        'face 'lem-splash-menu-face
-                                        'follow-link t)
-                    (insert-char ?\n 1))))
+            (let ((menu-center (+ (max 0 (/ (- window-width 60) 2)) 10))
+                  (menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
+                                ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")
+                                ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
+                                ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
+                                ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace"))))
+              (dolist (item menu-items)
+                (let ((icon (nth 0 item))
+                      (label (nth 1 item))
+                      (key (nth 2 item))
+                      (action (nth 3 item))
+                      (help (nth 4 item)))
+                  (insert-char ?\s menu-center)
+                  (insert-text-button (concat (if (fboundp 'all-the-icons-faicon)
+                                                  (all-the-icons-faicon icon)
+                                                "•") isep label ksep "(" key ")")
+                                      'action (lambda (_) (call-interactively action))
+                                      'help-echo help
+                                      'face 'lem-splash-menu-face
+                                      'follow-link t)
+                  (insert-char ?\n 1))))
 
 
-              ;; Add footer with proper spacing
-              (goto-char (point-max))
-              (let ((footer-padding (max 1 (- window-height (line-number-at-pos) 3))))
-                (insert-char ?\n footer-padding))
+            ;; Add footer with proper spacing
+            (goto-char (point-max))
+            (let ((footer-padding (max 1 (- window-height (line-number-at-pos) 3))))
+              (insert-char ?\n footer-padding))
 
-              ;; Footer text centered
-              (defvar lem-splash-footer "   " "Footer text.")
-              (let ((footer-center (max 0 (/ (- window-width (length lem-splash-footer)) 2))))
-                (insert-char ?\s footer-center)
-                (insert (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
+            ;; Footer text centered
+            (defvar lem-splash-footer "   " "Footer text.")
+            (let ((footer-center (max 0 (/ (- window-width (length lem-splash-footer)) 2))))
+              (insert-char ?\s footer-center)
+              (insert (propertize lem-splash-footer 'face 'lem-splash-footer-face)))
 
-              (goto-char (point-min))
-              (display-buffer-same-window splash-buffer nil)))
-          (switch-to-buffer "*splash*"))
-        (lem-splash-mode))))
+            (goto-char (point-min))
+            (display-buffer-same-window splash-buffer nil)))
+        (switch-to-buffer "*splash*"))
+      (lem-splash-mode)))
 
 (defun lem-splash-screen-bury ()
   "Bury the splash screen buffer (immediately)."
@@ -360,15 +360,15 @@
       (lem-splash-terminal)) 
     (add-hook 'window-state-change-hook #'lem-splash-refresh)
     (add-hook 'window-configuration-change-hook  #'lem-splash-refresh)
-    (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh)))
+    (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh))
 
-;; Install hook after frame parameters have been applied and only if
-;; no option on the command line
-(when (and (not (member "--no-splash" command-line-args))
-           (not (member "--file"      command-line-args))
-           (not (member "--insert"    command-line-args))
-           (not (member "--find-file" command-line-args)))
-  (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks))
+  ;; Install hook after frame parameters have been applied and only if
+  ;; no option on the command line
+  (when (and (not (member "--no-splash" command-line-args))
+             (not (member "--file"      command-line-args))
+             (not (member "--insert"    command-line-args))
+             (not (member "--find-file" command-line-args)))
+    (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks)))
 
 (provide 'lem-setup-splash)
 
