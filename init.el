@@ -29,11 +29,7 @@
 
 ;;;;; Use-Package
 
-;; Install use-package to manage package setup. If using Emacs 29 or later
-;; use-package is built-in.
-(when (version< emacs-version "29")
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; use-package is built-in since Emacs 29
 
 ;; Use-Package Settings
 (use-package use-package

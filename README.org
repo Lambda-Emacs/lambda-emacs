@@ -2,7 +2,7 @@
 #+html: <a href="https://discord.gg/NtYcrRtTxg"><img alt="Discord Server" src="https://img.shields.io/badge/Lambda-Discord-1004037022824013905?style=flat&logo=discord&logoColor=lightgrey"/></a>
 #+html: <a href="https://www.buymeacoffee.com/fxpy8fzgyxg" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 23px !important;width: 120px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
-Lambda-Emacs (𝛌-Emacs) is an Emacs configuration aimed at those engaged in writing and academic work in the humanities (for discussion of my view of the use of text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]), rather than opposed to, e.g., a programming language emphasis, though I've tried to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is to provide enough commentary on the configuration such that it might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally. In either case it is intended to serve as a useful starting point for one's own custom configuration. *Note* that Lambda-Emacs is only compatible with Emacs 29+. However, parts of the configuration may easily be backported to older versions of Emacs. 
+Lambda-Emacs (𝛌-Emacs) is an Emacs configuration aimed at those engaged in writing and academic work in the humanities (for discussion of my view of the use of text editors in the humanities [[https://www.colinmclear.net/posts/texteditor/][see here]]), rather than opposed to, e.g., a programming language emphasis, though I've tried to make it user-friendly for programmers as well. Another goal of 𝛌-Emacs is to provide enough commentary on the configuration such that it might be useful to those new to emacs or even [[https://en.wikipedia.org/wiki/Text_editor][text-editors]] generally. In either case it is intended to serve as a useful starting point for one's own custom configuration. *Note* that Lambda-Emacs requires Emacs 30.1+ to take advantage of native compilation, built-in packages, and enhanced tree-sitter support. 
 
 #+BEGIN_HTML
 <div>
@@ -37,7 +37,9 @@ There are a great number of amazing Emacs "distros" out there, such as (if you u
     and tab-bar, with [[https://github.com/mclear-tools/tabspaces][buffer-isolated tab/workspaces]]
 11. A configurable splash page
 12. A writing-centric configuration with great citation support, markdown, [[https://github.com/jgm/pandoc][pandoc]],
-    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]] and note-taking (using [[https://github.com/protesilaos/denote][denote]]), and settings for org-mode 
+    [[https://github.com/mclear-tools/consult-notes][dedicated functions for notes]] and note-taking (using [[https://github.com/protesilaos/denote][denote]]), and settings for org-mode
+13. Built-in LSP support using Eglot for modern programming workflows
+14. LLM integration with Claude and other AI assistants for coding assistance 
 
 * 𝛌-Emacs Modules
 
@@ -63,7 +65,10 @@ elisp files grouped according to the following areas (*NOTE*: these are still wo
   styling with =org-modern=. Note that no capture templates, etc., are set here.
   The interested user might want to consult my [[https://github.com/mclear-tools/dotemacs/blob/master/cpm-setup-org.el][dotfiles org]] setup as well as the
   [[https://systemcrafters.cc/emacs-from-scratch/organize-your-life-with-org-mode/][System Crafters]] tutorial.
-- *Programming & Languages*: Editing and Language specific settings. 
+- *Programming & Languages*: Editing and Language specific settings with enhanced
+  LSP support using built-in Eglot.
+- *LSP*: Language Server Protocol configuration for modern development workflows.
+- *LLM*: Large Language Model integration for AI-assisted coding and writing.
 - *Shell*: Configuration for compilation, shell, and terminal (vterm).
 - *Eshell*: Configuration for the Emacs eshell  
 - *Workspaces*: Version control, tab settings, buffer-isolation, and other

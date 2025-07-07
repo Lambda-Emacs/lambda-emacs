@@ -19,10 +19,11 @@
 
 ;;; Commentary:
 
-;; This is the early-init file. Only for use with emacs 27 or higher. See
-;; https://www.reddit.com/r/emacs/comments/7yns85/emacs_adds_support_for_a_second_read_earlier_init/
-;; and https://lists.gnu.org/archive/html/emacs-devel/2017-10/msg00372.html for
-;; more information.
+;; Lambda-Emacs requires Emacs 30.1 or higher
+(when (version< emacs-version "30.1")
+  (error "Lambda-Emacs requires Emacs 30.1 or higher, but you're running %s" emacs-version))
+
+;; Early initialization for Lambda-Emacs (Emacs 30.1+).
 
 ;;; Code:
 
@@ -60,17 +61,9 @@
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=53891
 ;; https://emacs.stackexchange.com/a/70478/11934
 
-;; See if native-comp is available
-(cond ((not (and (fboundp 'native-comp-available-p)
-                 (native-comp-available-p)))
-       (message "Native complation is *not* available"))
-      ;; Put eln-cache dir in cache directory
-      ;; NOTE the method for setting the eln-cache dir depends on the emacs version
-      ((version< emacs-version "29")
-       (setcar native-comp-eln-load-path
-               (expand-file-name (convert-standard-filename "var/cache/eln-cache/") user-emacs-directory)))
-      (t
-       (startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/cache/eln-cache/" user-emacs-directory)))))
+;; Native compilation is enabled by default in Emacs 30+
+;; Put eln-cache dir in cache directory
+(startup-redirect-eln-cache (convert-standard-filename (expand-file-name "var/cache/eln-cache/" user-emacs-directory)))
 
 ;; Silence nativecomp warnings popping up
 (setopt native-comp-async-report-warnings-errors nil)
@@ -249,23 +242,12 @@ Any customized libraries not available via standard package repos like elpa or m
 ;; This can be set to `t' interactively when debugging.
 (setopt debug-on-error nil)
 
-;;;; When-let errors
-;; https://github.com/alphapapa/frame-purpose.el/issues/3
-(eval-and-compile
-  (when (version< emacs-version "26")
-    (with-no-warnings
-      (defalias 'when-let* #'when-let)
-      (function-put #'when-let* 'lisp-indent-function 1)
-      (defalias 'if-let* #'if-let)
-      (function-put #'if-let* 'lisp-indent-function 2))))
+;;;; When-let is built-in since Emacs 26
+;; No compatibility code needed for Emacs 30+
 
 ;;;; Variable Binding Depth
-;; This variable controls the number of lisp bindings that can exists at a time.
-;; We should make it fairly large for modern machines.
-;; NOTE: Obsolete on Emacs 29+
-;; https://www.reddit.com/r/emacs/comments/9jp9zt/anyone_know_what_variable_binding_depth_exceeds/
-(when (version< emacs-version "29")
-  (setq max-specpdl-size 13000))
+;; This variable is automatically managed in Emacs 29+
+;; No manual setting needed for Emacs 30+
 
 ;;;; Custom Settings & Default Theme
 ;; Ordinarily we might leave theme loading until later in the init process, but
@@ -324,3 +306,20 @@ Any customized libraries not available via standard package repos like elpa or m
          (message "Loading default settings."))))
 
 ;;; early-init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-vc-selected-packages
+   '((org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent")
+     (org-devonthink :url "https://github.com/lasvice/org-devonthink" :branch "master")
+     (pulsing-cursor :url "https://github.com/jasonjckn/pulsing-cursor" :branch "main")
+     (bibtex-capf :url "https://github.com/mclear-tools/bibtex-capf.git" :branch "main")
+     (zotxt-emacs :url "https://github.com/egh/zotxt-emacs.git" :branch "master"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
