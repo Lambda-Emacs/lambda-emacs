@@ -28,9 +28,6 @@
 ;; Enable vertico for vertical completion
 ;; This and selectrum are great packages, but vertico is preferable if I can get feature parity with what I was using in selectrum
 (use-package vertico
-  ;; :straight (:host github :repo "minad/vertico"
-  ;;            :includes (vertico-repeat vertico-directory vertico-buffer)
-  ;;            :files (:defaults "extensions/vertico-directory.el" "extensions/vertico-buffer.el" "extensions/vertico-repeat.el"))
   :bind (:map vertico-map
          ("<escape>" . #'minibuffer-keyboard-quit)
          ("M-RET"    . #'vertico-exit))
@@ -198,6 +195,7 @@
   ;; Use keymap -- completing-read on C-h
   (embark-prompter 'embark-keymap-prompter)
   :bind (("C-." . embark-act)
+         ("C->" . embark-act-all)
          ("M-." . embark-dwim)
          ("C-h B" . embark-bindings)
          :map minibuffer-local-completion-map
@@ -242,21 +240,35 @@ current target followed by an ellipsis if there are further
 targets."
     (lambda (&optional keymap targets prefix)
       (if (null keymap)
-          (which-key--hide-popup-ignore-command)
-        (which-key--show-keymap
-         (if (eq (plist-get (car targets) :type) 'embark-become)
-             "Become"
-           (format "Act on %s '%s'%s"
-                   (plist-get (car targets) :type)
-                   (embark--truncate-target (plist-get (car targets) :target))
-                   (if (cdr targets) "…" "")))
-         (if prefix
-             (pcase (lookup-key keymap prefix 'accept-default)
-               ((and (pred keymapp) km) km)
-               (_ (key-binding prefix 'accept-default)))
-           keymap)
-         nil nil t (lambda (binding)
-                     (not (string-suffix-p "-argument" (cdr binding))))))))
+          ;; Support both external and built-in which-key
+          (if (fboundp 'which-key--hide-popup-ignore-command)
+              (which-key--hide-popup-ignore-command)
+            (when (fboundp 'which-key-hide-popup)
+              (which-key-hide-popup)))
+        ;; Support both external and built-in which-key
+        (if (fboundp 'which-key--show-keymap)
+            (which-key--show-keymap
+             (if (eq (plist-get (car targets) :type) 'embark-become)
+                 "Become"
+               (format "Act on %s '%s'%s"
+                       (plist-get (car targets) :type)
+                       (embark--truncate-target (plist-get (car targets) :target))
+                       (if (cdr targets) "…" "")))
+             (if prefix
+                 (pcase (lookup-key keymap prefix 'accept-default)
+                   ((and (pred keymapp) km) km)
+                   (_ (key-binding prefix 'accept-default)))
+               keymap)
+             nil nil t (lambda (binding)
+                         (not (string-suffix-p "-argument" (cdr binding)))))
+          (when (fboundp 'which-key-show-keymap)
+            (which-key-show-keymap
+             (if (eq (plist-get (car targets) :type) 'embark-become)
+                 "Become"
+               (format "Act on %s '%s'%s"
+                       (plist-get (car targets) :type)
+                       (embark--truncate-target (plist-get (car targets) :target))
+                       (if (cdr targets) "…" "")))))))))
 
   (setq embark-indicators
         '(embark-which-key-indicator
@@ -265,7 +277,11 @@ targets."
 
   (defun embark-hide-which-key-indicator (fn &rest args)
     "Hide the which-key indicator immediately when using the completing-read prompter."
-    (which-key--hide-popup-ignore-command)
+    ;; Support both external and built-in which-key
+    (cond ((fboundp 'which-key--hide-popup-ignore-command)
+           (which-key--hide-popup-ignore-command))
+          ((fboundp 'which-key-hide-popup)
+           (which-key-hide-popup)))
     (let ((embark-indicators
            (remq #'embark-which-key-indicator embark-indicators)))
       (apply fn args)))
@@ -470,7 +486,7 @@ targets."
          ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
          ("C-c p f" . cape-file)
          ("C-c p k" . cape-keyword)
-         ("C-c p s" . cape-symbol)
+         ;; ("C-c p s" . cape-symbol)
          ("C-c p a" . cape-abbrev)
          ("C-c p i" . cape-ispell)
          ("C-c p l" . cape-line)
@@ -485,7 +501,7 @@ targets."
   (add-to-list 'completion-at-point-functions #'cape-file)
   (add-to-list 'completion-at-point-functions #'cape-tex)
   (add-to-list 'completion-at-point-functions #'cape-keyword)
-  (add-to-list 'completion-at-point-functions #'cape-symbol)
+  ;; (add-to-list 'completion-at-point-functions #'cape-symbol)
   ;; (add-to-list 'completion-at-point-functions #'cape-ispell)
   ;; (add-to-list 'completion-at-point-functions #'cape-dict)
   ;; (add-to-list 'completion-at-point-functions #'cape-line)

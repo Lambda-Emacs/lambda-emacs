@@ -75,7 +75,6 @@
 ;;;;; Help Focus
 (use-package help
   :ensure nil
-  ;; :straight (:type built-in)
   :custom
   ;; Always focus on help window/buffer
   (help-window-select 't))
@@ -83,7 +82,6 @@
 ;;;;; Help At Point
 (use-package help-at-pt
   :ensure nil
-  ;; :straight (:type built-in)
   :custom
   (help-at-pt-timer-delay 0.1)
   (help-at-pt-display-when-idle '(flymake-diagnostic)))

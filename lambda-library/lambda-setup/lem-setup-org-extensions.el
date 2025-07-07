@@ -28,23 +28,23 @@
   (org-modern-label-border .25)
   ;; Note that these stars allow differentiation of levels
   ;; "①" "②" "③" "④" "⑤" "⑥" "⑦"
-  (org-modern-star ["⦶" "⦷" "⦹" "⊕" "⍟" "⊛" "⏣" "❂"]))
+  (org-modern-star 'replace)
+  (org-modern-replace-stars "⦶⦷⦹⊕⍟⊛⏣❂"))
 
 ;;; Org Autolist (Smart Lists)
 ;; Better list behavior
-  (use-package org-autolist
-    ;; :straight (:type git :host github :repo "calvinwyoung/org-autolist")
-    :hook (org-mode . org-autolist-mode))
+(use-package org-autolist
+  :hook (org-mode . org-autolist-mode))
 
 ;;; Org Babel
-  ;; Avoid `org-babel-do-load-languages' since it does an eager require.
-  (use-package ob-python
-    :ensure nil
-    :defer t
-    :commands (org-babel-execute:python)
-    :config
-    (progn
-      (setq org-babel-python-command "python3"))) ;Default to python 3.x
+;; Avoid `org-babel-do-load-languages' since it does an eager require.
+(use-package ob-python
+  :ensure nil
+  :defer t
+  :commands (org-babel-execute:python)
+  :config
+  (progn
+    (setq org-babel-python-command "python3"))) ;Default to python 3.x
 
 (use-package ob-ditaa
   :ensure nil

@@ -69,7 +69,6 @@
 ;; using Elfeed, the RSS feed reader for Emacs.
 
 (use-package elfeed-tube
-  ;; :straight (:type git :host github :repo "karthink/elfeed-tube")
   :after elfeed
   :demand t
   :bind (:map elfeed-show-mode-map
