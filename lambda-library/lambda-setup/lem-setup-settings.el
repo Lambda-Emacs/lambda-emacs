@@ -196,9 +196,12 @@
     (interactive)
     (save-excursion
       (dolist (buf (buffer-list))
-        (set-buffer buf)
-        (if (and (buffer-file-name) (buffer-modified-p))
-            (basic-save-buffer)))))
+        (when (buffer-live-p buf)  ; Check if buffer is still valid
+          (with-current-buffer buf  ; Use with-current-buffer instead of set-buffer
+            (when (and (buffer-file-name) (buffer-modified-p))
+              (condition-case nil  ; Catch any errors during save
+                  (basic-save-buffer)
+                (error nil))))))))
 
   (add-hook 'auto-save-hook 'lem-full-auto-save)
 

@@ -7,6 +7,7 @@
 ;;; Org Appearance
 ;;;; Org-Appear (Show Markup/Pretty Entities)
 ;; show markup at point -- this should be part of org!
+;; PATCHED: added nil check to prevent "wrong-type-argument number-or-marker-p nil" error
 (use-package org-appear
   :commands (org-appear-mode)
   :custom
@@ -25,7 +26,7 @@
   (org-modern-todo nil)
   (org-modern-tag t)
   ;; Customize this per your font
-  (org-modern-label-border .25)
+  (org-modern-label-border 1)
   ;; Note that these stars allow differentiation of levels
   ;; "①" "②" "③" "④" "⑤" "⑥" "⑦"
   (org-modern-star 'replace)
