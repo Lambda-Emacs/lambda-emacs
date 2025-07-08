@@ -231,43 +231,65 @@
                     (init-info (funcall lem-splash-init-info)))
                 
                 ;; Welcome text
-                (insert-char ?\s (+ center-col (/ (- 60 (length welcome-text)) 2)))
-                (insert (propertize welcome-text 'face 'lem-splash-title-face))
-                (insert-char ?\n 2)
+                (let ((welcome-center (max 0 (/ (- window-width (length welcome-text)) 2))))
+                  (insert-char ?\s welcome-center)
+                  (insert (propertize welcome-text 'face 'lem-splash-title-face))
+                  (insert-char ?\n 2))
                 
                 ;; Version text
-                (insert-char ?\s (+ center-col (/ (- 60 (length version-text)) 2)))
-                (insert (propertize version-text 'face 'lem-splash-header-face))
-                (insert-char ?\n 1)
+                (let ((version-center (max 0 (/ (- window-width (length version-text)) 2))))
+                  (insert-char ?\s version-center)
+                  (insert (propertize version-text 'face 'lem-splash-header-face))
+                  (insert-char ?\n 1))
                 
                 ;; Init info
-                (insert-char ?\s (+ center-col (/ (- 60 (length init-info)) 2)))
-                (insert (propertize init-info 'face 'lem-splash-header-face))
-                (insert-char ?\n 4)))
+                (let ((init-center (max 0 (/ (- window-width (length init-info)) 2))))
+                  (insert-char ?\s init-center)
+                  (insert (propertize init-info 'face 'lem-splash-header-face))
+                  (insert-char ?\n 4))))
 
-            ;; Insert menu buttons centered
+            ;; Insert menu buttons - left-aligned as a group, group is centered
             (goto-char (point-max))
-            (let ((menu-center (+ (max 0 (/ (- window-width 60) 2)) 10))
-                  (menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
-                                ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")
-                                ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
-                                ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
-                                ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace"))))
+            (let* ((menu-items '(("calendar" "Agenda" "a" lem-open-agenda-in-workspace "Open Agenda")
+                                 ("code" "Config" "c" lem-open-emacsd-in-workspace "Visit config directory")  
+                                 ("envelope-o" "Mail" "m" lem-open-email-in-workspace "Open Email in Mu4e")
+                                 ("book" "Notes" "n" lem-open-notes-in-workspace "Open notes directory")
+                                 ("folder" "Projects" "p" tabspaces-open-existing-project-and-workspace "Open project & workspace")))
+                   ;; Find max label width for alignment
+                   (max-label-width 0))
+              
+              ;; First pass: calculate max label width
               (dolist (item menu-items)
-                (let ((icon (nth 0 item))
-                      (label (nth 1 item))
-                      (key (nth 2 item))
-                      (action (nth 3 item))
-                      (help (nth 4 item)))
-                  (insert-char ?\s menu-center)
-                  (insert-text-button (concat (if (fboundp 'all-the-icons-faicon)
-                                                  (all-the-icons-faicon icon)
-                                                "•") isep label ksep "(" key ")")
-                                      'action (lambda (_) (call-interactively action))
-                                      'help-echo help
-                                      'face 'lem-splash-menu-face
-                                      'follow-link t)
-                  (insert-char ?\n 1))))
+                (let ((label (nth 1 item)))
+                  (setq max-label-width (max max-label-width (length label)))))
+              
+              ;; Calculate left margin to align with "Welcome" text
+              ;; The welcome text "Welcome to λ-Emacs" has its 'W' aligned where we want the icons
+              (let* ((welcome-text "Welcome to λ-Emacs")
+                     (welcome-center (max 0 (/ (- window-width (length welcome-text)) 2)))
+                     (left-margin welcome-center))
+                
+                ;; Insert the buttons with proper alignment
+                (dolist (item menu-items)
+                  (let* ((icon (nth 0 item))
+                         (label (nth 1 item))
+                         (key (nth 2 item))
+                         (action (nth 3 item))
+                         (help (nth 4 item))
+                         (icon-str (if (fboundp 'all-the-icons-faicon)
+                                       (all-the-icons-faicon icon)
+                                     "•"))
+                         ;; Pad label to ensure alignment
+                         (padded-label (format (format "%%-%ds" max-label-width) label))
+                         (button-text (concat icon-str isep padded-label ksep "(" key ")")))
+                    
+                    (insert-char ?\s left-margin)
+                    (insert-text-button button-text
+                                        'action (lambda (_) (call-interactively action))
+                                        'help-echo help
+                                        'face 'lem-splash-menu-face
+                                        'follow-link t)
+                    (insert-char ?\n 1)))))
 
 
             ;; Add footer with proper spacing
@@ -360,15 +382,15 @@
       (lem-splash-terminal)) 
     (add-hook 'window-state-change-hook #'lem-splash-refresh)
     (add-hook 'window-configuration-change-hook  #'lem-splash-refresh)
-    (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh))
+    (add-hook 'lem-switch-buffer-hook #'lem-splash-refresh)))
 
-  ;; Install hook after frame parameters have been applied and only if
-  ;; no option on the command line
-  (when (and (not (member "--no-splash" command-line-args))
-             (not (member "--file"      command-line-args))
-             (not (member "--insert"    command-line-args))
-             (not (member "--find-file" command-line-args)))
-    (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks)))
+;; Install hook after frame parameters have been applied and only if
+;; no option on the command line
+(when (and (not (member "--no-splash" command-line-args))
+           (not (member "--file"      command-line-args))
+           (not (member "--insert"    command-line-args))
+           (not (member "--find-file" command-line-args)))
+  (add-hook 'window-setup-hook #'lem-splash--setup-splash-hooks))
 
 (provide 'lem-setup-splash)
 
