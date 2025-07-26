@@ -103,6 +103,18 @@
   (define-key flymake-mode-map (kbd "C-c ! n") #'flymake-goto-next-error)
   (define-key flymake-mode-map (kbd "C-c ! p") #'flymake-goto-prev-error))
 
+;;;; Flyover - Enhanced Error Display
+(use-package flyover
+  :hook (flymake-mode . flyover-mode)
+  :custom
+  ;; Customize error display
+  (flyover-icon-enable t)
+  (flyover-error-icon-char "●")
+  (flyover-warning-icon-char "●")
+  (flyover-info-icon-char "●")
+  ;; Auto-update overlays
+  (flyover-update-frequency 0.3))
+
 ;;;; Tree-sitter Enhanced Features
 (use-package treesit
   :ensure nil
@@ -184,16 +196,24 @@
   ;; Better project detection for LSP
   (defun lem-project-try-lsp (dir)
     "Find project root by looking for LSP config files."
-    (let ((lsp-files '(".lsp" ".ccls" "compile_commands.json" 
-                       "compile_flags.txt" ".clangd" "tsconfig.json"
-                       "package.json" "Cargo.toml" "go.mod" "pom.xml"
-                       "build.gradle" "CMakeLists.txt" "Makefile")))
-      (locate-dominating-file dir (lambda (d)
-                                   (cl-some (lambda (f) 
-                                             (file-exists-p (expand-file-name f d)))
-                                           lsp-files)))))
+    (when-let ((root (locate-dominating-file 
+                      dir 
+                      (lambda (d)
+                        (let ((lsp-files '(".lsp" ".ccls" "compile_commands.json" 
+                                           "compile_flags.txt" ".clangd" "tsconfig.json"
+                                           "package.json" "Cargo.toml" "go.mod" "pom.xml"
+                                           "build.gradle" "CMakeLists.txt" "Makefile")))
+                          (cl-some (lambda (f) 
+                                     (file-exists-p (expand-file-name f d)))
+                                   lsp-files))))))
+      (cons 'lsp-project root)))
   
-  (add-to-list 'project-find-functions #'lem-project-try-lsp))
+  (add-to-list 'project-find-functions #'lem-project-try-lsp)
+  
+  ;; Define project-root method for lsp-project backend
+  (cl-defmethod project-root ((project (head lsp-project)))
+    "Return root directory of LSP project."
+    (cdr project)))
 
 ;;;; Language-specific LSP configurations
 
