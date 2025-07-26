@@ -63,9 +63,9 @@
       (dired-sort-other "-laFh1vX --group-directories-first"))
 
     (defun dired-sort-by-time ()
-      "Sort by modification time within extension groups."
+      "Sort by modification time, newest first (directories first)."
       (interactive)
-      (dired-sort-other "-laFh1vtX --group-directories-first"))
+      (dired-sort-other "-laFh1vt --group-directories-first"))
 
     (defun dired-sort-by-name-only ()
       "Sort alphabetically only (directories first)."
@@ -73,15 +73,19 @@
       (dired-sort-other "-laFh1v --group-directories-first"))
 
     (defun dired-sort-by-size ()
-      "Sort by file size within extension groups."
+      "Sort by file size, largest first (directories first)."
       (interactive)
-      (dired-sort-other "-laFh1vSX --group-directories-first"))
+      (dired-sort-other "-laFh1vS --group-directories-first"))
 
     ;; Keybindings for sorting functions
+    ;; First unbind the default 's' key to allow our prefix bindings to work
+    (define-key dired-mode-map (kbd "s") nil)
     (define-key dired-mode-map (kbd "s e") 'dired-sort-by-extension-and-name)
     (define-key dired-mode-map (kbd "s t") 'dired-sort-by-time)
     (define-key dired-mode-map (kbd "s n") 'dired-sort-by-name-only)
-    (define-key dired-mode-map (kbd "s z") 'dired-sort-by-size))
+    (define-key dired-mode-map (kbd "s z") 'dired-sort-by-size)
+    ;; Keep the original sort toggle on 's s' for compatibility
+    (define-key dired-mode-map (kbd "s s") 'dired-sort-toggle-or-edit))
   ;; Like with ls, append "@" to file names if they're symlinks
   (setq dired-ls-F-marks-symlinks t)
   ;; don't ask about killing buffer visiting file
