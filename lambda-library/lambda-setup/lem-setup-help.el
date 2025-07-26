@@ -47,8 +47,7 @@
 
 ;;;;; Transient Menus
 (use-package transient
-  :ensure nil
-  :defer 1
+  :commands (transient-setup transient-show transient-help)
   :custom
   (transient-levels-file (concat lem-cache-dir "transient/levels.el"))
   (transient-values-file (concat lem-cache-dir "transient/values.el"))
