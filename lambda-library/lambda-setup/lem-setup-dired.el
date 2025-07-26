@@ -20,9 +20,10 @@
 ;;; Commentary:
 ;; Dired is the perfect filesystem navigator. See
 ;; https://www.emacswiki.org/emacs/DiredReuseDirectoryBuffer for discussion of
-;; how to avoid creating lots of dired buffers.
+;; how to avoid creating lots of Dired buffers.
 
 ;;; Code:
+
 
 ;;;; Dired Settings
 (use-package dired
@@ -38,23 +39,49 @@
     (interactive)
     (find-alternate-file ".."))
 
-  (when sys-mac
-    (when (executable-find "gls")
-      ;; Use GNU ls as `gls' from `coreutils' if available.
-      (setq insert-directory-program "gls")
-      ;; Enable --dired option when using gls
-      (setq dired-use-ls-dired t))
-    (unless (executable-find "gls")
-      ;; Suppress the warning: `ls does not support --dired'.
-      (setq dired-use-ls-dired nil)))
+  ;; Configure directory listing program and switches
+  ;; Use absolute path to gls since it might not be in exec-path during startup
+  (let ((gls-path "/opt/homebrew/bin/gls"))
+    (if (file-executable-p gls-path)
+        (progn
+          (message "Setting up gls for dired using absolute path...")
+          (setq insert-directory-program gls-path)
+          (setq dired-use-ls-dired t)
+          (setq ls-lisp-use-insert-directory-program t)
+          (setq dired-listing-switches "-laFh1v --group-directories-first")
+          (message "Dired configured: insert-directory-program=%s, dired-listing-switches=%s" 
+                   insert-directory-program dired-listing-switches))
+      (message "gls not found at %s, using fallback dired settings" gls-path)
+      (setq dired-use-ls-dired nil)
+      (setq ls-lisp-use-insert-directory-program nil)))
 
-  (when (or (and sys-mac (executable-find "gls"))
-            (and (not sys-mac) (executable-find "ls")))
-    ;; Using `insert-directory-program'
-    (setq ls-lisp-use-insert-directory-program t)
-    ;; list directories first
-    (setq dired-listing-switches "-laFh1v --group-directories-first"))
+  ;; Enhanced sorting functions when gls is available
+  (when (file-executable-p "/opt/homebrew/bin/gls")
+    (defun dired-sort-by-extension-and-name ()
+      "Sort by extension, then name (groups file types together)."
+      (interactive)
+      (dired-sort-other "-laFh1vX --group-directories-first"))
 
+    (defun dired-sort-by-time ()
+      "Sort by modification time within extension groups."
+      (interactive)
+      (dired-sort-other "-laFh1vtX --group-directories-first"))
+
+    (defun dired-sort-by-name-only ()
+      "Sort alphabetically only (directories first)."
+      (interactive)
+      (dired-sort-other "-laFh1v --group-directories-first"))
+
+    (defun dired-sort-by-size ()
+      "Sort by file size within extension groups."
+      (interactive)
+      (dired-sort-other "-laFh1vSX --group-directories-first"))
+
+    ;; Keybindings for sorting functions
+    (define-key dired-mode-map (kbd "s e") 'dired-sort-by-extension-and-name)
+    (define-key dired-mode-map (kbd "s t") 'dired-sort-by-time)
+    (define-key dired-mode-map (kbd "s n") 'dired-sort-by-name-only)
+    (define-key dired-mode-map (kbd "s z") 'dired-sort-by-size))
   ;; Like with ls, append "@" to file names if they're symlinks
   (setq dired-ls-F-marks-symlinks t)
   ;; don't ask about killing buffer visiting file
@@ -69,26 +96,15 @@
   ;; open PDF files in external viewer
   (setq dired-guess-shell-alist-user '(("\.pdf$" . default)))
   ;; Allow dired, gnus, & mu4e to work together
-  (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode))
+  (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+  
+)
 
 ;;;; Narrow Dired to Match Filter
 (use-package dired-narrow
   :bind* (:map dired-mode-map
           ("/" . dired-narrow)))
 
-;;;; Dired Sort
-(use-package dired-quick-sort
-  :bind* (:map dired-mode-map
-          ("s" . hydra-dired-quick-sort/body))
-  :config
-  ;; Fix for macOS - ensure dired-quick-sort uses the same ls program as dired
-  (when sys-mac
-    (when (executable-find "gls")
-      ;; Use GNU ls if available on macOS
-      (setq dired-quick-sort-ls-program "gls"))
-    (unless (executable-find "gls")
-      ;; Fall back to system ls if gls not available
-      (setq dired-quick-sort-ls-program "ls"))))
 
 ;;;; Dired Colors
 (use-package diredfl
