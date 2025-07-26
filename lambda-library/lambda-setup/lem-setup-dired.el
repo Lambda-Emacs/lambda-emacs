@@ -39,11 +39,14 @@
     (find-alternate-file ".."))
 
   (when sys-mac
-    ;; Suppress the warning: `ls does not support --dired'.
-    (setq dired-use-ls-dired nil)
     (when (executable-find "gls")
       ;; Use GNU ls as `gls' from `coreutils' if available.
-      (setq insert-directory-program "gls")))
+      (setq insert-directory-program "gls")
+      ;; Enable --dired option when using gls
+      (setq dired-use-ls-dired t))
+    (unless (executable-find "gls")
+      ;; Suppress the warning: `ls does not support --dired'.
+      (setq dired-use-ls-dired nil)))
 
   (when (or (and sys-mac (executable-find "gls"))
             (and (not sys-mac) (executable-find "ls")))
@@ -76,13 +79,24 @@
 ;;;; Dired Sort
 (use-package dired-quick-sort
   :bind* (:map dired-mode-map
-          ("s" . hydra-dired-quick-sort/body)))
+          ("s" . hydra-dired-quick-sort/body))
+  :config
+  ;; Fix for macOS - ensure dired-quick-sort uses the same ls program as dired
+  (when sys-mac
+    (when (executable-find "gls")
+      ;; Use GNU ls if available on macOS
+      (setq dired-quick-sort-ls-program "gls"))
+    (unless (executable-find "gls")
+      ;; Fall back to system ls if gls not available
+      (setq dired-quick-sort-ls-program "ls"))))
 
 ;;;; Dired Colors
 (use-package diredfl
   :hook (dired-mode . diredfl-global-mode))
 
 ;;;; Peep Dired
+;; This package is no longer maintained
+;; Perhaps switch to https://protesilaos.com/emacs/dired-preview
 (use-package peep-dired
   :after dired
   :commands (peep-dired)
