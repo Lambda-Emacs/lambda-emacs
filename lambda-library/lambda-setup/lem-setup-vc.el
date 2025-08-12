@@ -103,7 +103,9 @@
     (magit-display-buffer-traditional buffer)))
 
 ;; settings for committing using magit
+;; Note: git-commit is now included with magit, no separate installation needed
 (use-package git-commit
+  :ensure nil  ; Don't try to install, it's part of magit
   :after magit
   :hook (git-commit-mode . cpm/git-commit-auto-fill-everywhere)
   :custom (git-commit-summary-max-length 50)
