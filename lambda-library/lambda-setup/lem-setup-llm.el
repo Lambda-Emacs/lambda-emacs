@@ -123,7 +123,7 @@
 
 ;;;; Claudemacs Integration
 (use-package claudemacs
-  :vc (:fetcher github :repo "cpoile/claudemacs")
+  :vc (:url "https://github.com/cpoile/claudemacs.git")
   :commands (claudemacs-transient-menu
              claudemacs-start-or-switch
              claudemacs-fix-error
