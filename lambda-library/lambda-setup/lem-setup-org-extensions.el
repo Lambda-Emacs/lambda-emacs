@@ -98,6 +98,11 @@ Instead it's simpler to use bash."
   :commands
   (org-babel-execute:latex))
 
+(use-package ob-gnuplot
+  :ensure nil
+  :defer t
+  :commands (org-babel-execute:gnuplot))
+
 ;;; Org Babel Tangle
 (use-package ob-tangle
   :ensure nil

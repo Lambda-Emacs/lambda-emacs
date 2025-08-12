@@ -1,5 +1,10 @@
+;;; package --- summary
 ;; -*- lexical-binding: t -*-
+
+;;; Commentary:
 ;; Project Management -- using project.el, bookmarks, and git
+
+;;; Code:
 
 ;;; Project
 ;; Use project to switch to, and search in, projects (replaces projectile)
@@ -25,17 +30,17 @@
   ;; Use Ripgrep if installed
   (when (shell-command-to-string "command rg --version")
     (setq xref-search-program 'ripgrep))
-  (setq lem-project-dir "~/Dropbox/Work/projects")
+  (setq lem-project-dir "~/Work/projects")
   ;; remove deleted projects from list
   (project-forget-zombie-projects))
 
 (defun lem--project-name ()
-  "Return name of project without path"
+  "Return name of project without path."
   (file-name-nondirectory (directory-file-name (if (vc-root-dir) (vc-root-dir) "-"))))
 
 ;; magit function for project
 (defun project-magit-dir ()
-  "Run magit in the current project's root"
+  "Run magit in the current project's root."
   (interactive)
   (magit-status))
 ;; Add to keymap
@@ -63,7 +68,7 @@ to directory DIR."
 
 ;;; New Git Project
 (defun lem-git-new-project ()
-  "Initializes a new git repo and adds it to project.el's known projects."
+  "Initialize a new git repo and add it to project.el's known projects."
   (interactive)
   (let ((project-dir (expand-file-name
                       (read-directory-name "New project root:"))))
@@ -76,7 +81,7 @@ to directory DIR."
 ;;; Clone a Git Repo from Clipboard
 ;; http://xenodium.com/emacs-clone-git-repo-from-clipboard/
 (defun lem-git-clone-clipboard-url ()
-  "Clone git URL in clipboard asynchronously and open in dired when finishe.
+  "Clone git URL in clipboard asynchronously and open in Dired when finishe.
 Git repo is cloned to directory set by `lem-user-elisp-dir'."
   (interactive)
   (cl-assert (string-match-p "^\\(http\\|https\\|ssh\\)://" (current-kill 0)) nil "No URL in clipboard")
@@ -115,3 +120,5 @@ Git repo is cloned to directory set by `lem-user-elisp-dir'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (provide 'lem-setup-projects)
+
+;;; lem-setup-projects.el ends here

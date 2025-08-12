@@ -36,8 +36,8 @@
   (lambda-line-prefix t)
   (lambda-line-prefix-padding nil)
   (lambda-line-status-invert nil)
-  (lambda-line-gui-ro-symbol  " ⨂")  ;; ⬤◯⨂
-  (lambda-line-gui-mod-symbol " ⬤") ;; ⨀⬤
+  (lambda-line-gui-ro-symbol  " ⨂")  ;; ⬤◯⨂ⓧ
+  (lambda-line-gui-mod-symbol " ⬤") ;; ⨀⬤ ◉
   (lambda-line-gui-rw-symbol  " ◯")  ;; ◉ ◎ ⬤◯
   (lambda-line-vc-symbol "⎇ ")  ;; Git branch symbol
   (lambda-line-space-top +.50)
