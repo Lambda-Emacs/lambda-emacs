@@ -38,7 +38,8 @@
              tab-bar-switch-to-next-tab
              tab-bar-switch-to-prev-tab)
   :custom
-  (tab-bar-show 1)
+  ;; Set this to nil unless tab bar is in use
+  (tab-bar-show nil)
   (tab-bar-tab-hints t) ;; show numbers in tabs
   ;; Unless another file/buffer is designated, start from workspace scratch buffer
   (tab-bar-new-tab-choice "*scratch*")
@@ -49,6 +50,8 @@
   (tab-bar-tab-name-format-function #'lem--tab-bar-tab-name-format)
   (tab-bar-new-button nil)
   (tab-bar-close-button nil)
+  (tab-bar-close-button-show nil)
+  (tab-bar-new-button nil)
   (tab-bar-auto-width nil)
   (tab-bar-format '(tab-bar-format-history
                     tab-bar-format-tabs
