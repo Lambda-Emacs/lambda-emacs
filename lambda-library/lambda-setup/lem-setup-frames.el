@@ -33,10 +33,11 @@
   (setq-default default-frame-alist
                 (append (list
                          '(frame-title-format . nil)
-                         '(internal-border-width . 18)
+                         '(internal-border-width . 30)
                          '(tool-bar-lines . 0)
                          '(vertical-scroll-bars . nil)
-                         '(horizontal-scroll-bars . nil))))
+                         '(horizontal-scroll-bars . nil)
+                         '(undecorated . t))))
   ;; Resize pixel-wise to avoid gaps
   (setq-default window-resize-pixelwise t)
   (setq-default frame-resize-pixelwise t)
@@ -57,6 +58,26 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; un/comment this hook if you want frames recentered
 (add-hook 'after-make-frame-functions #'lem-frame-recenter)
 
+;;;; Window Margins for Text Indentation
+;; Add margins to windows to maintain text indentation with smaller frame borders
+(defun lem-set-window-margins ()
+  "Set left and right margins for all windows to maintain text indentation."
+  (walk-windows
+   (lambda (window)
+     (unless (window-minibuffer-p window)
+       (set-window-margins window 2 2)))))
+
+;; Apply margins when windows change
+(add-hook 'window-configuration-change-hook #'lem-set-window-margins)
+
+;; Apply margins to initial frame
+(add-hook 'after-init-hook #'lem-set-window-margins)
+
+;; Apply margins to new frames
+(add-hook 'after-make-frame-functions
+          (lambda (frame)
+            (select-frame frame)
+            (lem-set-window-margins)))
 
 ;;;; Fix titlebar titling colors
 ;; see also https://github.com/d12frosted/homebrew-emacs-plus/issues/55
