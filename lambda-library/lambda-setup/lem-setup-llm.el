@@ -155,15 +155,12 @@
   ;; Add to programming mode hook
   (add-hook 'prog-mode-hook #'lem-claudemacs-programming-setup)
 
-  ;; Add C-c C-e keybinding to specific mode maps
+  ;; Add C-c C-a keybinding for AI/assistant menu
+  ;; Note: C-c C-e conflicts with eval-last-sexp in elisp modes
   (with-eval-after-load 'prog-mode
-    (define-key prog-mode-map (kbd "C-c C-e") #'claudemacs-transient-menu))
-  (with-eval-after-load 'emacs-lisp-mode
-    (define-key emacs-lisp-mode-map (kbd "C-c C-e") #'claudemacs-transient-menu))
+    (define-key prog-mode-map (kbd "C-c C-a") #'claudemacs-transient-menu))
   (with-eval-after-load 'text-mode
-    (define-key text-mode-map (kbd "C-c C-e") #'claudemacs-transient-menu))
-  (with-eval-after-load 'python
-    (define-key python-base-mode-map (kbd "C-c C-e") #'claudemacs-transient-menu)))
+    (define-key text-mode-map (kbd "C-c C-a") #'claudemacs-transient-menu)))
 
 ;;;; Custom Transient Menu for Claudemacs
 ;; NOTE: The package provides `claudemacs-transient-menu' with full functionality.
@@ -294,7 +291,7 @@
     (if agent-shell-available
         (message "✓ agent-shell is available")
       (message "ℹ agent-shell not loaded"))
-    (message "Setup complete. Use C-c C-e for claudemacs, C-c c i for Claude Code IDE.")))
+    (message "Setup complete. Use C-c C-a for claudemacs, C-c c i for Claude Code IDE.")))
 
 (provide 'lem-setup-llm)
 ;;; lem-setup-llm.el ends here
