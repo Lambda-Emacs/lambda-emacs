@@ -127,12 +127,13 @@
 
 (use-package diff-hl
   :hook
-  ((prog-mode . diff-hl-mode)
+  ((prog-mode . (lambda () (when (cpm--should-enable-diff-hl) (diff-hl-mode))))
    (text-mode . diff-hl-mode)
    (dired-mode . diff-hl-dired-mode)
    (magit-pre-refresh . diff-hl-magit-pre-refresh)
    (magit-post-refresh . diff-hl-magit-post-refresh))
   :custom
+  (diff-hl-update-async t)
   (diff-hl-side 'left)
   (diff-hl-fringe-bmp-function 'cpm--diff-hl-fringe-bmp-from-type)
   (diff-hl-fringe-face-function 'cpm--diff-hl-fringe-face-from-type)
@@ -141,7 +142,8 @@
      (delete . "┃")
      (change . "┃")
      (unknown . "?")
-     (ignored . "i")))
+     (ignored . "i")
+     (reference . "*")))
   :init
   (defun cpm--diff-hl-fringe-face-from-type (type _pos)
     (intern (format "cpm--diff-hl-%s" type)))
@@ -159,6 +161,12 @@
     [#b00000011] nil nil '(center repeated))
   (define-fringe-bitmap 'diff-hl-delete
     [#b00000011] nil nil '(center repeated)))
+
+(defun cpm--should-enable-diff-hl ()
+  "Check if diff-hl should be enabled in current buffer."
+  (and buffer-file-name
+       (not (string-match-p "/\\.#" buffer-file-name)) ; avoid lockfiles
+       (vc-backend buffer-file-name))) ; only if under version control
 
 ;;;; Diff Files with Vdiff
 (use-package vdiff-magit
