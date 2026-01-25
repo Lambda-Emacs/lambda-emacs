@@ -4,6 +4,30 @@
 ;; Author: Colin McLear <mclear@unl.edu>
 ;; Keywords: terminals, lisp, emulations
 
+;; Define required faces FIRST, before any other code
+(eval-and-compile
+  ;; Try to load lambda themes
+  (require 'lambda-themes nil t)
+  
+  ;; Ensure all required faces are defined
+  (unless (facep 'lambda-meek)
+    (defface lambda-meek
+      '((t :inherit shadow))
+      "Fallback meek face for eshell."
+      :group 'faces))
+  
+  (unless (facep 'lambda-mild)
+    (defface lambda-mild  
+      '((t :inherit shadow))
+      "Fallback mild face for eshell."
+      :group 'faces))
+  
+  (unless (facep 'lambda-yellow)
+    (defface lambda-yellow
+      '((t :inherit warning))
+      "Fallback yellow face for eshell."
+      :group 'faces)))
+
 ;;; Commentary
 ;; https://www.masteringemacs.org/article/complete-guide-mastering-eshell
 ;; Eshell is an elisp shell. It has its own configuration parameters, distinct
@@ -141,9 +165,9 @@ PWD is not in a git repo (or the git command is not found)."
              (eshell-search-path "git")
              (locate-dominating-file pwd ".git"))
     (let* ((git-url (shell-command-to-string "git config --get remote.origin.url"))
-           (git-repo (file-name-base (s-trim git-url)))
+           (git-repo (file-name-base (string-trim git-url)))
            (git-output (shell-command-to-string (concat "git rev-parse --abbrev-ref HEAD")))
-           (git-branch (s-trim git-output))
+           (git-branch (string-trim git-output))
            (git-icon  "\xe0a0")
            (git-icon2 (propertize "\xf020" 'face `(:family "octicons")))
            (git-sep (propertize "" 'face 'lambda-meek)))
@@ -443,6 +467,9 @@ If closed, toggle open and jump to buffer.
 If open, and not in eshell, jump to eshell.
 If open and in eshell, toggle closed."
   (interactive "P")
+  ;; Load eshell configuration if not already loaded
+  (unless (featurep 'lem-setup-eshell)
+    (require 'lem-setup-eshell))
   (require 'eshell)
   (let ((eshell-exists nil)
         (eshell-buffer-name nil)

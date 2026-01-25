@@ -47,13 +47,10 @@
 ;; Fix path issues when launching from GUI
 (use-package exec-path-from-shell
   :custom
-  ;; Set this to nil only if you have your startup files set correctly.
-  ;; See https://github.com/purcell/exec-path-from-shell#setting-up-your-shell-startup-files-correctly
   (exec-path-from-shell-arguments nil)
   :config
   (when (memq window-system '(mac ns x))
     (exec-path-from-shell-initialize)))
-
 
 ;;; Terminal
 ;;;; Settings
@@ -101,7 +98,8 @@
         eat-enable-shell-prompt-annotation t
         eat-term-scrollback-size nil)
   ;; For `eat-eshell-mode' -- integration with eshell.
-  (add-hook 'eshell-load-hook #'eat-eshell-mode))
+  (with-eval-after-load 'eshell
+    (eat-eshell-mode)))
 
 ;;; Tramp
 ;; An easy way to ssh
