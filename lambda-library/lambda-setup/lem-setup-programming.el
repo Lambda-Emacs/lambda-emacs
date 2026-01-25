@@ -26,11 +26,6 @@
 
 ;;; Code:
 
-;;;; Load LSP and LLM support
-;; Load modern programming features
-(require 'lem-setup-lsp nil t)
-(require 'lem-setup-llm nil t)
-
 ;;;; Show Pretty Symbols
 (use-package prog-mode
   :ensure nil
@@ -69,7 +64,7 @@
 ;;;;; Surround & Change Delimiters
 
 (use-package embrace
-  :bind (("C-M-s-#" . embrace-commander))
+  :bind (("C-s-s" . embrace-commander))
   :config
   (add-hook 'org-mode-hook 'embrace-org-mode-hook)
   (defun embrace-markdown-mode-hook ()
@@ -114,6 +109,7 @@
         (toml "https://github.com/tree-sitter/tree-sitter-toml")
         (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
         (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+        (typst "https://github.com/Ziqi-Yang/tree-sitter-typst")
         (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;; Install all languages
@@ -130,7 +126,8 @@
         (typescript-mode . typescript-ts-mode)
         (json-mode . json-ts-mode)
         (css-mode . css-ts-mode)
-        (python-mode . python-ts-mode)))
+        (python-mode . python-ts-mode)
+        (typst-mode . typst-ts-mode)))
 
 ;;;; Multiple Cursors
 (use-package iedit
