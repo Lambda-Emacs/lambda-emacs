@@ -131,7 +131,13 @@ Instead it's simpler to use bash."
 ;; Export w/pandoc
 (use-package ox-pandoc
   :if (executable-find "pandoc")
-  :after ox
+  :defer t  ;; Defer loading until needed for export
+  :commands (org-pandoc-export-to-html5
+             org-pandoc-export-to-html5-and-open
+             org-pandoc-export-to-markdown
+             org-pandoc-export-to-pdf
+             org-pandoc-export-to-latex
+             org-pandoc-export-to-docx)
   :custom
   (org-pandoc-command (executable-find "pandoc"))
   (org-pandoc-options '((standalone .  t)))
@@ -270,7 +276,11 @@ Instead it's simpler to use bash."
 ;; Export to Hugo with Org
 ;; https://github.com/kaushalmodi/ox-hugo
 (use-package ox-hugo
-  :after ox
+  :defer t  ;; Defer loading until needed for Hugo export
+  :commands (org-hugo-export-as-md
+             org-hugo-export-to-md
+             org-hugo-export-wim-to-md
+             org-hugo-export-subtree-to-md)
   :config
   ;; https://ox-hugo.scripter.co/doc/org-cite-citations/
   ;; Modify this to have a different header for references
@@ -302,6 +312,14 @@ Instead it's simpler to use bash."
 (use-package htmlize
   :commands (htmlize-buffer))
 
+;;; Org Mac Link
+(when sys-mac
+  (use-package org-mac-link
+    :ensure t
+    :after org
+    :hook (org-mode . (lambda ()
+                        (define-key org-mode-map (kbd "C-c g")
+                          'org-mac-link-get-link)))))
 ;;; Org Pomodoro
 ;; Helps with time tracking
 (use-package org-pomodoro

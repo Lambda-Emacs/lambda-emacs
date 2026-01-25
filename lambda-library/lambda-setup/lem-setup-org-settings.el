@@ -291,9 +291,7 @@ _vr_ reset      ^^                       ^^                 ^^
 ;; Load additional org modules
 (add-to-list 'org-modules 'org-habit t)
 (add-to-list 'org-modules 'org-tempo t)
-(add-to-list 'org-modules 'org-protocol t)
-(when sys-mac
-  (add-to-list 'org-modules 'org-mac-link t)))
+(add-to-list 'org-modules 'org-protocol t))
 
 ;;;; Org TODO Keywords
 (customize-set-variable 'org-todo-keywords

@@ -50,18 +50,24 @@
 ;; Use csl
 (use-package oc-csl
   :ensure nil
-  :after oc
+  :defer t  ;; Defer loading until actually needed
+  :commands (org-cite-csl-activate
+             org-cite-csl-render-bibliography
+             org-cite-csl-render-item)
   :init
-  ;; make sure to download csl
-  ;; https://citationstyles.org
-  ;; https://github.com/citation-style-language
-  ;; repos for styles & locales
-  (setq org-cite-csl-styles-dir "~/.local/share/csl/styles")
-  (setq org-cite-csl-locales-dir "~/.local/share/csl/locales"))
+  ;; Set these variables early so they're available when needed
+  (with-eval-after-load 'oc
+    ;; make sure to download csl
+    ;; https://citationstyles.org
+    ;; https://github.com/citation-style-language
+    ;; repos for styles & locales
+    (setq org-cite-csl-styles-dir "~/.local/share/csl/styles")
+    (setq org-cite-csl-locales-dir "~/.local/share/csl/locales")))
 
 ;;;; Citeproc
 (use-package citeproc
-  :after (oc oc-csl))
+  :defer t  ;; Defer loading until oc-csl needs it
+  :after oc)
 
 ;;;; Citar
 (use-package citar

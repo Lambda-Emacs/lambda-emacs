@@ -137,9 +137,10 @@
                              (setq-local electric-pair-inhibit-predicate
                                          `(lambda (c)
                                             (if (char-equal c ?<) t (,electric-pair-inhibit-predicate c))))))
-  ;; Setup further org config
-  (require 'lem-setup-org-settings)
-  (require 'lem-setup-org-extensions))
+  ;; Setup further org config - moved to config.el to avoid circular loading
+  ;; (require 'lem-setup-org-settings)
+  ;; (require 'lem-setup-org-extensions)
+  )
 
 ;;; Provide Org-Setup
 (provide 'lem-setup-org-base)
