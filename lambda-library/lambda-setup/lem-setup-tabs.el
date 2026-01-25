@@ -126,6 +126,7 @@ questions.  Otherwise use completion to select the tab."
 
 ;;;; Tab Workspaces
 (use-package tabspaces
+  :load-path (lambda () (concat lem-user-elisp-dir "tabspaces/"))
   ;; Add some functions to the project map
   :bind (:map project-prefix-map
          ("p" . tabspaces-open-or-create-project-and-workspace))
@@ -137,13 +138,17 @@ questions.  Otherwise use completion to select the tab."
   (defun lem--consult-tabspaces ()
     "Deactivate isolated buffers when not using tabspaces."
     (require 'consult)
-    (cond (tabspaces-mode
-           ;; hide full buffer list (still available with "b")
-           (consult-customize consult--source-buffer :hidden t :default nil)
-           (add-to-list 'consult-buffer-sources 'consult--source-workspace))
-          (t
-           (consult-customize consult--source-buffer :hidden nil :default t)
-           (setq consult-buffer-sources (remove #'consult--source-workspace consult-buffer-sources)))))
+    (when (boundp 'consult-source-buffer)
+      (cond (tabspaces-mode
+             ;; hide full buffer list (still available with "b")
+             ;; Use plist-put instead of consult-customize for internal sources
+             (plist-put consult-source-buffer :hidden t)
+             (plist-put consult-source-buffer :default nil)
+             (add-to-list 'consult-buffer-sources 'consult-source-workspace))
+            (t
+             (plist-put consult-source-buffer :hidden nil)
+             (plist-put consult-source-buffer :default t)
+             (setq consult-buffer-sources (remove #'consult-source-workspace consult-buffer-sources))))))
   (add-hook 'tabspaces-mode-hook #'lem--consult-tabspaces))
 
 ;;;;; Consult Isolated Workspace Buffers
@@ -154,9 +159,13 @@ questions.  Otherwise use completion to select the tab."
 
 (with-eval-after-load 'consult
   ;; hide full buffer list (still available with "b" prefix)
-  (consult-customize consult--source-buffer :hidden t :default nil)
+  ;; Use plist-put instead of consult-customize for internal sources
+  ;; Use boundp check to handle package-quickstart timing issues
+  (when (boundp 'consult-source-buffer)
+    (plist-put consult-source-buffer :hidden t)
+    (plist-put consult-source-buffer :default nil))
   ;; set consult-workspace buffer list
-  (defvar consult--source-workspace
+  (defvar consult-source-workspace
     (list :name     "Workspace Buffers"
           :narrow   ?w
           :history  'buffer-name-history
