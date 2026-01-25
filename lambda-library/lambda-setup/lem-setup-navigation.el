@@ -24,6 +24,17 @@
 
 ;;; Code:
 
+;;;;; Dired Sidebar
+(use-package dired-sidebar
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :custom
+  ;; Auto-fit width to content
+  (dired-sidebar-resize-on-open t)
+  (dired-sidebar-width 40)
+  ;; Set horizontal fitting to only when needed
+  (fit-window-to-buffer-horizontally 'only))
+
 ;;;; Imenu list outline
 ;; Make a useful outline buffer
 ;; Binding set to toggle "o"
@@ -32,7 +43,7 @@
   :config
   (setq imenu-list-focus-after-activation t
         imenu-list-auto-resize t
-        imenu-list-position 'left))
+        imenu-list-position 'right))
 
 ;;;; Save place
 ;; Everyone remember where we parked.
