@@ -313,3 +313,25 @@ emacs-version string on the kill ring."
                                                  (float-time
                                                   (time-subtract after-init-time before-init-time)) gcs-done)
                                          (put 'narrow-to-page 'disabled nil))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages nil)
+ '(package-vc-selected-packages
+   '((claudemacs :url "https://github.com/cpoile/claudemacs" :branch "main")
+     (org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent")
+     (org-devonthink :url "https://github.com/lasvice/org-devonthink" :branch
+		     "master")
+     (pulsing-cursor :url "https://github.com/jasonjckn/pulsing-cursor" :branch
+		     "main")
+     (bibtex-capf :url "https://github.com/mclear-tools/bibtex-capf.git" :branch
+		  "main")
+     (zotxt-emacs :url "https://github.com/egh/zotxt-emacs.git" :branch "master"))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

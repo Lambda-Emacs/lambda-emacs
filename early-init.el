@@ -72,6 +72,18 @@
 (setopt native-comp-speed 2)
 (setopt native-comp-deferred-compilation t)
 
+;; Fix native compilation on macOS
+(when (and (eq system-type 'darwin)
+           (featurep 'native-compile))
+  ;; Set library paths for GCC/libgccjit
+  (setenv "LIBRARY_PATH" 
+          (string-join 
+           '("/opt/homebrew/lib"
+             "/opt/homebrew/lib/gcc/current"
+             "/opt/homebrew/lib/gcc/current/gcc/aarch64-apple-darwin24/15"
+             "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib")
+           ":")))
+
 ;;;; Garbage collection
 ;; Defer garbage collection further back in the startup process. We'll lower
 ;; this to a more reasonable number at the end of the init process (i.e. at end of
@@ -319,14 +331,14 @@ Any customized libraries not available via standard package repos like elpa or m
  ;; If there is more than one, they won't work right.
  '(package-vc-selected-packages
    '((claudemacs :url "https://github.com/cpoile/claudemacs" :branch "main")
-     (zotxt-emacs :url "https://github.com/egh/zotxt-emacs.git" :branch "master")
-     (bibtex-capf :url "https://github.com/mclear-tools/bibtex-capf.git" :branch
-		  "main")
-     (pulsing-cursor :url "https://github.com/jasonjckn/pulsing-cursor" :branch
-		     "main")
+     (org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent")
      (org-devonthink :url "https://github.com/lasvice/org-devonthink" :branch
 		     "master")
-     (org-modern-indent :url "https://github.com/jdtsmith/org-modern-indent"))))
+     (pulsing-cursor :url "https://github.com/jasonjckn/pulsing-cursor" :branch
+		     "main")
+     (bibtex-capf :url "https://github.com/mclear-tools/bibtex-capf.git" :branch
+		  "main")
+     (zotxt-emacs :url "https://github.com/egh/zotxt-emacs.git" :branch "master"))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
