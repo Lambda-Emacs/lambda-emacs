@@ -348,8 +348,8 @@ targets."
   (consult-customize
    consult-ripgrep consult-git-grep consult-grep
    consult-bookmark consult-recent-file consult-xref
-   consult--source-bookmark consult--source-recent-file
-   consult--source-project-recent-file consult-theme
+   consult-source-bookmark consult-source-recent-file
+   consult-source-project-recent-file consult-theme
    :preview-key '(:debounce 0.2 any))
 
   ;; Configure the register formatting. This improves the register
@@ -573,10 +573,12 @@ targets."
   (yas-global-mode 1))
 
 ;; the official snippet collection https://github.com/AndreaCrotti/yasnippet-snippets
-(use-package yasnippet-snippets
-  :after (yasnippet)
-  :custom
-  (yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
+;; NOTE: Snippets are manually maintained in lem-all-snippets-dir/yasnippet-snippets/
+;; The package itself has installation issues, but the snippets work via yasnippet config above.
+;; (use-package yasnippet-snippets
+;;   :after (yasnippet)
+;;   :custom
+;;   (yasnippet-snippets-dir (concat lem-all-snippets-dir "yasnippet-snippets")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (provide 'lem-setup-completion)
