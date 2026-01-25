@@ -100,6 +100,14 @@
          ;; Display file commentary section
          ("C-h C-c" . finder-commentary)))
 
+;;;;; Democratize (Elisp Examples)
+;; DISABLED: requires xht package which has dependency issues
+;; (use-package democratize
+;;   :vc (:url "https://git.sr.ht/~flandrew/democratize")
+;;   :config
+;;   (democratize-enable-examples-in-helpful)
+;;   (democratize-enable-examples-in-help))
+
 ;;;;; Elisp Demos
 ;; Provide examples of Elisp code
 (use-package elisp-demos

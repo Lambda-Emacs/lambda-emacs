@@ -57,6 +57,11 @@ Get it from:  <http://hasseg.org/trash/>"
                    nil ;; Name of output buffer
                    "*Trash Error Buffer*"))
 
+  (defun move-file-to-trash (filename)
+    "Move FILENAME to trash using the custom system function.
+This overrides the built-in function to use our macOS-specific trash implementation."
+    (system-move-file-to-trash filename))
+
 ;;;; Frames & Fullscreen
 
   ;; (Do not) make new frames when opening a new file with Emacs unless on scratch buffer

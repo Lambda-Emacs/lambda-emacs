@@ -125,6 +125,7 @@
         markdown-nested-imenu-heading-index t
         markdown-open-command "~/bin/mark.sh"
         markdown-footnote-location 'immediately
+
         markdown-unordered-list-item-prefix "-   "
         markdown-header-scaling t
         markdown-use-pandoc-style-yaml-metadata t)
@@ -165,7 +166,7 @@
 (use-package writeroom-mode
   :commands (writeroom-mode)
   :config
-  (setq writeroom-fullscreen-effect 'maximized)
+  ;; (setq writeroom-fullscreen-effect 'maximized)
   (setq writeroom-width 95)
   (setq writeroom-mode-line t)
   (setq writeroom-bottom-divider-width 0)

@@ -26,9 +26,10 @@
 ;;;; Lambda Line
 (use-package lambda-line
   :ensure nil
-  :init
-  (unless (package-installed-p 'lambda-line)
-    (package-vc-install "https://github.com/Lambda-Emacs/lambda-line.git"))
+  :load-path (lambda () (concat lem-user-elisp-dir "lambda-line"))
+  ;; :init
+  ;; (unless (package-installed-p 'lambda-line)
+  ;;   (package-vc-install "https://github.com/Lambda-Emacs/lambda-line.git"))
   :custom
   (lambda-line-abbrev t)
   (lambda-line-position 'top)
@@ -43,6 +44,7 @@
   (lambda-line-space-top +.50)
   (lambda-line-space-bottom -.50)
   (lambda-line-symbol-position 0.1)
+  (lambda-line-word-count-enabled t)
   :custom-face
   (lambda-line-visual-bell ((t (:background "red3"))))
   :config

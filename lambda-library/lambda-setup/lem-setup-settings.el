@@ -148,7 +148,8 @@
   :init
   (unless (package-installed-p 'ws-butler)
     (package-vc-install "https://github.com/lewang/ws-butler.git"))
-  :hook (prog-mode . ws-butler-mode))
+  :hook ((text-mode . ws-butler-mode)
+         (prog-mode . ws-butler-mode)))
 
 ;; Better than the default 'just-one-space', which was M-SPC before
 (global-set-key (kbd "S-s-SPC") #'cycle-spacing)
