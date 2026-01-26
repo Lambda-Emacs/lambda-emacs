@@ -515,8 +515,8 @@ targets."
   :config
   ;; Sanitize the `pcomplete-completions-at-point' Capf.
   ;; The Capf has undesired side effects on Emacs 28 and earlier.
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
+  ;; Note: cape-wrap-purify was removed in cape 2.x
+  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent))
 
 ;;;;; Kind Icon (For Corfu)
 (use-package kind-icon
